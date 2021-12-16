@@ -2,9 +2,14 @@
 import { BarChartWithDH } from './BarChart';
 import { BarChartDataPoint } from './types';
 
+let createdClassObject: BarChartWithDH;
 export function createBarChart(dataInput: BarChartDataPoint[], width: number, height: number) {
-    const BarChart = new BarChartWithDH(dataInput, width, height);
-    return BarChart.createBarChart();
+    createdClassObject = new BarChartWithDH(dataInput, width, height);
+    return createdClassObject.createBarChart();
+}
+
+export function getRecordsOnBar() {
+    return createdClassObject.savedDataHunches;
 }
 
 
