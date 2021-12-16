@@ -1,24 +1,25 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "es6"
+    "compilerOptions": {
+        "target": "es5",
+        "lib": [
+            "es6",
+            "DOM"
+        ],
+        "module": "commonjs",
+        "declaration": true,
+        "outDir": "./lib",
+        "strict": true,
+        "skipLibCheck": true,
+        "typeRoots": [
+            "./@types",
+            "./node_modules/@types"
+        ],
+    },
+    "include": [
+        "src"
     ],
-    "module": "commonjs",
-    "declaration": true,
-    "outDir": "./lib",
-    "strict": true,
-    "skipLibCheck": true,
-    "typeRoots": [
-      "./@types",
-      "./node_modules/@types"
-    ],
-  },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/__tests__/*"
-  ]
+    "exclude": [
+        "node_modules",
+        "**/__tests__/*"
+    ]
 }

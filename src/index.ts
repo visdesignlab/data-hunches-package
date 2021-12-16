@@ -8,8 +8,6 @@ export function createBarChart(dataInput: BarChartDataPoint[], width: number, he
 }
 
 
-
-
 // It can save to array
 const arrayToIncre: number[] = [];
 export function increment(input: number) {
