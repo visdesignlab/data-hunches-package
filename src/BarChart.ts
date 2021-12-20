@@ -14,6 +14,8 @@ export class BarChartWithDH {
     savedDataHunches: Annotations[];
     private showDataHunches: boolean;
     private currentDHID: number;
+    // Add a way to select a DH from the drop down?
+    private selectedDataHunch: number | null;
 
     constructor(dataInput: BarChartDataPoint[], width: number, height: number) {
         this.data = dataInput;
@@ -24,6 +26,7 @@ export class BarChartWithDH {
         this.savedDataHunches = [];
         this.showDataHunches = true;
         this.currentDHID = 0;
+        this.selectedDataHunch = null;
     }
 
     createBarChart() {
@@ -182,7 +185,16 @@ export class BarChartWithDH {
             .attr('id', 'toggle-hunches')
             .on('click', () => {
                 that.showDataHunches = !that.showDataHunches;
+
                 controlBar.select('#toggle-hunches').html(that.showDataHunches ? 'Hide Data Hunches' : 'Show Existing Data Hunches');
+
+                if (that.showDataHunches) {
+                    that.canvas.select('svg').selectAll('.annotation-marker').attr('display', null);
+                    that.canvas.select('svg').selectAll('.annotation-rects').attr('display', null);
+                } else {
+                    that.canvas.select('svg').selectAll('.annotation-marker').attr('display', 'none');
+                    that.canvas.select('svg').selectAll('.annotation-rects').attr('display', 'none');
+                }
             });
     }
 
@@ -218,11 +230,16 @@ export class BarChartWithDH {
 
         formDiv.append('input').attr('type', 'button').attr('value', 'Submit')
             .on('click', () => {
+                const reasonInput = (this.canvas.select('#input_form').select('#reason-field') as any).node()!.value;
+                if (reasonInput) {
 
-                // save the form input to array
-                that.addNewDataHunch((formDiv.select('input[name="rating"]:checked').node() as any).value, "annotation");
-                //remove the form
-                formDiv.remove();
+                    // save the form input to array
+                    that.addNewDataHunch((formDiv.select('input[name="rating"]:checked').node() as any).value, "annotation", reasonInput);
+                    //remove the form
+                    formDiv.remove();
+                } else {
+                    alert('Please enter a reason for the data hunch!');
+                }
             });
 
     }
@@ -282,12 +299,17 @@ export class BarChartWithDH {
         form.append('input').attr('type', 'button').attr('value', 'Submit')
             .on('click', () => {
                 // save the form input to array
+                const reasonInput = (this.canvas.select('#input_form').select('#reason-field') as any).node()!.value;
+                if (reasonInput) {
 
-                that.addNewDataHunch(textfield.node()!.value, "data space");
+                    that.addNewDataHunch(textfield.node()!.value, "data space", reasonInput);
 
-                //remove the form
-                that.canvas.select('svg').select('#vertical-axis').call((axisLeft(verticalScale) as any));
-                form.remove();
+                    //remove the form
+                    that.canvas.select('svg').select('#vertical-axis').call((axisLeft(verticalScale) as any));
+                    form.remove();
+                } else {
+                    alert('Please enter a reason for the data hunch!');
+                }
             });
     }
 
@@ -324,15 +346,19 @@ export class BarChartWithDH {
         form.append('input').attr('type', 'button').attr('value', 'Submit')
             .on('click', () => {
                 // save the form input to array
-                // console.log(selectedRect.attr('height'), selectedRect.attr('y'))
+                const reasonInput = (this.canvas.select('#input_form').select('#reason-field') as any).node()!.value;
+                if (reasonInput) {
 
-                that.addNewDataHunch(heightScale.invert(that.height - margin.bottom - (selectedRect.attr('height') as any)).toFixed(2), "manipulations");
+                    that.addNewDataHunch(heightScale.invert(that.height - margin.bottom - (selectedRect.attr('height') as any)).toFixed(2), "manipulations", reasonInput);
 
-                //remove the form
-                that.canvas.select('svg').on('mousedown', null)
-                    .on('mousemove', null)
-                    .on('mouseup', null);
-                form.remove();
+                    //remove the form
+                    that.canvas.select('svg').on('mousedown', null)
+                        .on('mousemove', null)
+                        .on('mouseup', null);
+                    form.remove();
+                } else {
+                    alert('Please enter a reason for the data hunch!');
+                }
             });
     }
 
@@ -358,10 +384,15 @@ export class BarChartWithDH {
 
         form.append('input').attr('type', 'button').attr('value', 'Submit')
             .on('click', () => {
-                // save the form input to  array
-                that.addNewDataHunch(textfield.node()!.value, "annotation");
-                //remove the form
-                form.remove();
+                const reasonInput = (this.canvas.select('#input_form').select('#reason-field') as any).node()!.value;
+                if (reasonInput) {
+                    // save the form input to  array
+                    that.addNewDataHunch(textfield.node()!.value, "annotation", reasonInput);
+                    //remove the form
+                    form.remove();
+                } else {
+                    alert('Please enter a reason for the data hunch!');
+                }
             });
     }
 
@@ -369,16 +400,14 @@ export class BarChartWithDH {
         formDiv.append('input').attr('type', 'text').attr('id', 'reason-field').attr('placeholder', `Add reason for the data hunch`);
     }
 
-    private addNewDataHunch(content: string, type: "annotation" | "data space" | "manipulations") {
-
-        const reasonInput = this.canvas.select('#input_form').select('#reason-field');
+    private addNewDataHunch(content: string, type: "annotation" | "data space" | "manipulations", reasonInput: string) {
 
         this.savedDataHunches.push({
             label: this.currentSelectedLabel || "all chart",
             content: content,
             type: type,
             id: this.currentDHID,
-            reasoning: (reasonInput as any).node()!.value
+            reasoning: reasonInput
         });
         this.currentDHID += 1;
 
@@ -392,7 +421,9 @@ export class BarChartWithDH {
             .join("option")
             .text(d => d.label) // text showed in the menu
             .attr("value", (d, i) => i); // corresponding value returned by the button
+
         this.renderVisualizationWithDH();
+
     }
 
     // Call this method after saving DH
@@ -414,6 +445,7 @@ export class BarChartWithDH {
         const SVGSelection = this.canvas.select('svg');
 
         SVGSelection.selectAll('.annotation-marker').remove();
+        SVGSelection.selectAll('.annotation-rects').remove();
 
         SVGSelection.select('#rectangles')
             .selectAll("rect")
@@ -466,17 +498,56 @@ export class BarChartWithDH {
                         .attr("y", d => verticalScale(parseFloat(d.content)))
                         .attr("width", bandScale.bandwidth())
                         .attr("height", d => that.height - margin.bottom - verticalScale(parseFloat(d.content)))
-                        .attr("fill", "none")
-                        .attr('stroke', ColorPallate[index])
-                        .attr('stroke-width', 4);
+                        .attr('stroke', ColorPallate[index]);
+
                 }
             });
         }
 
+        //styling all the rectangle indicators and make interactions
+
+        SVGSelection.selectAll('.annotation-rects')
+            .attr("fill", "none")
+            .attr('cursor', 'pointer')
+            .attr('stroke-width', 4)
+            .on('mouseover', (event, data: any) => {
+                SVGSelection.selectAll('.annotation-marker').attr('opacity', 0.3);
+                SVGSelection.selectAll('.annotation-rects').attr('opacity', 0.3);
+                const selectedIndicator = SVGSelection.selectAll('.annotation-rects').filter((d: any) => d.id === data.id);
+                selectedIndicator.attr('opacity', 1);
+
+                // display the annotation in a
+                const foreignObject = SVGSelection.append('foreignObject')
+                    .attr('id', 'indicator-text')
+                    .attr('x', (parseFloat(selectedIndicator.attr('x')) - 100) < 0 ? parseFloat(selectedIndicator.attr('x')) : (parseFloat(selectedIndicator.attr('x')) - 100))
+                    .attr('y', (parseFloat(selectedIndicator.attr('y')) + 110) < that.height ? (parseFloat(selectedIndicator.attr('y')) + 10) : (parseFloat(selectedIndicator.attr('y')) - 100))
+                    .attr('z', -1)
+                    .attr('width', 100)
+                    .attr('height', 100);
+
+                foreignObject.append('xhtml:div')
+                    .append('div')
+                    .html(`${data.label} - ${data.content}`);
+
+                foreignObject.append('xhtml:div')
+                    .append('div')
+                    .html(data.reasoning);
+
+
+                foreignObject.selectAll('div')
+                    .style('background', LightGray)
+                    .style('padding', '1px');
+
+            })
+            .on('mouseout', () => {
+                SVGSelection.select('#indicator-text').remove();
+                SVGSelection.selectAll('.annotation-marker').attr('opacity', 1);
+                SVGSelection.selectAll('.annotation-rects').attr('opacity', 1);
+            });
+
         // Styling all indicators and make indicator interactions
 
-        SVGSelection
-            .selectAll('.annotation-marker')
+        SVGSelection.selectAll('.annotation-marker')
             .attr('r', IndicatorSize)
             .attr('fill', DarkGray)
             .attr('cursor', 'pointer')
@@ -489,11 +560,12 @@ export class BarChartWithDH {
                 // display the annotation in a
                 const foreignObject = SVGSelection.append('foreignObject')
                     .attr('id', 'indicator-text')
-                    .attr('x', ((selectedIndicator.attr('cx') as any) - 100) < 0 ? (selectedIndicator.attr('cx') as any) : ((selectedIndicator.attr('cx') as any) - 100))
-                    .attr('y', selectedIndicator.attr('cy'))
+                    .attr('x', (parseFloat(selectedIndicator.attr('cx')) - 100) < 0 ? parseFloat(selectedIndicator.attr('cx')) : (parseFloat(selectedIndicator.attr('cx')) - 100))
+                    .attr('y', (parseFloat(selectedIndicator.attr('cy')) + 100) > that.height ? (parseFloat(selectedIndicator.attr('cy')) - 100) : parseFloat(selectedIndicator.attr('cy')))
                     .attr('z', -1)
                     .attr('width', 100)
-                    .attr('height', 50);
+                    .attr('height', 100);
+
 
                 foreignObject.append('xhtml:div')
                     .append('div')
@@ -506,9 +578,11 @@ export class BarChartWithDH {
                     .style('background', LightGray);
             })
             .on('mouseout', () => {
+
                 SVGSelection.select('#indicator-text').remove();
                 SVGSelection.selectAll('.annotation-marker').attr('opacity', 1);
                 SVGSelection.selectAll('.annotation-rects').attr('opacity', 1);
+
             });
     }
 
