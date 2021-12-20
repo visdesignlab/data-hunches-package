@@ -1,13 +1,14 @@
 import { Selection } from "d3-selection";
 
 export interface BarChartDataPoint {
-  label: string;
-  value: number;
+    label: string;
+    value: number;
 }
 
 export interface Annotations {
-  label: string;
-  content: string;
+    type: "annotation" | "data space" | "manipulations";
+    label: string;
+    content: string;
 }
 
 

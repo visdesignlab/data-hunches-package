@@ -12,6 +12,7 @@ export class BarChartWithDH {
     readonly height: number;
     currentSelectedLabel: string;
     savedDataHunches: Annotations[];
+    private showDataHunches: boolean;
 
     constructor(dataInput: BarChartDataPoint[], width: number, height: number) {
         this.data = dataInput;
@@ -20,6 +21,7 @@ export class BarChartWithDH {
         this.height = height;
         this.currentSelectedLabel = "";
         this.savedDataHunches = [];
+        this.showDataHunches = true;
     }
 
     createBarChart() {
@@ -36,8 +38,6 @@ export class BarChartWithDH {
 
         this.makeDetailedControlPanel(specificBar);
         this.makeGeneralControlPanel(controlBar);
-
-
 
         controlBar.selectAll('button').style('margin', '10px');
         specificBar.selectAll('button').style('margin', '10px');
@@ -166,7 +166,22 @@ export class BarChartWithDH {
                         that.currentSelectedLabel = data.label;
                         that.canvas.select('#specific-controlbar').selectAll('.dh-button').attr('disabled', null);
                     });
+            });
 
+        controlBar.append('select')
+            .attr('id', 'hunches-dropdown')
+            .selectAll('option')
+            .data(this.savedDataHunches)
+            .join("option")
+            .text(d => d.label) // text showed in the menu
+            .attr("value", (d, i) => i); // corresponding value returned by the button
+
+        controlBar.append('button')
+            .html(that.showDataHunches ? 'Hide Data Hunches' : 'Show Existing Data Hunches')
+            .attr('id', 'toggle-hunches')
+            .on('click', () => {
+                that.showDataHunches = !that.showDataHunches;
+                controlBar.select('#toggle-hunches').html(that.showDataHunches ? 'Hide Data Hunches' : 'Show Existing Data Hunches');
             });
     }
 
@@ -200,7 +215,11 @@ export class BarChartWithDH {
         formDiv.append('input').attr('type', 'button').attr('value', 'Submit')
             .on('click', () => {
                 // save the form input to array
-                that.savedDataHunches.push({ label: that.currentSelectedLabel || "all chart", content: (formDiv.select('input[name="rating"]:checked').node() as any).value });
+                that.savedDataHunches.push({
+                    type: "annotation",
+                    label: that.currentSelectedLabel || "all chart",
+                    content: (formDiv.select('input[name="rating"]:checked').node() as any).value
+                });
                 //remove the form
                 that.finishDataPointEntry();
                 formDiv.remove();
@@ -213,10 +232,6 @@ export class BarChartWithDH {
         this.canvas.select('#input_form').remove();
 
         const verticalScale = this.makeVerticalScale();
-
-        let rectangles = this.canvas.select('svg').select('#rectangles')
-            .selectAll("rect");
-
 
         const form = this.canvas
             .append('div').attr('id', 'input_form')
@@ -265,7 +280,11 @@ export class BarChartWithDH {
         form.append('input').attr('type', 'button').attr('value', 'Submit')
             .on('click', () => {
                 // save the form input to array
-                that.savedDataHunches.push({ label: that.currentSelectedLabel, content: textfield.node()!.value });
+                that.savedDataHunches.push({
+                    label: that.currentSelectedLabel,
+                    content: textfield.node()!.value,
+                    type: "data space"
+                });
                 //remove the form
                 that.renderWithOriginalData();
                 that.canvas.select('svg').select('#vertical-axis').call((axisLeft(verticalScale) as any));
@@ -281,7 +300,15 @@ export class BarChartWithDH {
     private finishDataPointEntry() {
         this.canvas.select('svg').select('#rectangles').selectAll('rect').attr('fill', "#00468b");
         this.canvas.select('#specific-controlbar').style('display', 'none').selectAll('.dh-button').attr('disabled', 'true');
-        this.canvas.select('#general-controlbar').style('display', 'table');
+        this.canvas.select('#general-controlbar')
+            .style('display', 'table')
+            .select('#hunches-dropdown')
+            .selectAll('option')
+            .data(this.savedDataHunches)
+            .join("option")
+            .text(d => d.label) // text showed in the menu
+            .attr("value", (d, i) => i); // corresponding value returned by the button
+        this.renderWithOriginalData();
     }
 
     private manipulation() {
@@ -315,7 +342,8 @@ export class BarChartWithDH {
                 that.savedDataHunches.push(
                     {
                         label: that.currentSelectedLabel || "all chart",
-                        content: heightScale.invert(that.height - margin.bottom - (selectedRect.attr('height') as any)).toFixed(2)
+                        content: heightScale.invert(that.height - margin.bottom - (selectedRect.attr('height') as any)).toFixed(2),
+                        type: "manipulations"
                     });
                 //remove the form
                 that.finishDataPointEntry();
@@ -344,16 +372,30 @@ export class BarChartWithDH {
         form.append('input').attr('type', 'button').attr('value', 'Submit')
             .on('click', () => {
                 // save the form input to array
-                that.savedDataHunches.push({ label: that.currentSelectedLabel || "all chart", content: textfield.node()!.value });
+                that.savedDataHunches.push({
+                    label: that.currentSelectedLabel || "all chart",
+                    content: textfield.node()!.value,
+                    type: "annotation"
+                });
                 //remove the form
                 that.finishDataPointEntry();
                 form.remove();
             });
     }
 
+    // Call this method after saving DH
     private renderWithOriginalData() {
 
         const verticalScale = this.makeVerticalScale();
+        const that = this;
+
+        const bandScale = this.makeBandScale();
+
+        const existingAnnotation: {
+            label: string;
+            annotaiton: string[];
+        }[] = bandScale.domain().map(d => { return { label: d, annotaiton: [] }; });
+
         this.canvas.select('svg').select('#rectangles')
             .selectAll("rect")
             .data(this.data)
@@ -361,5 +403,35 @@ export class BarChartWithDH {
             .attr("y", d => verticalScale(d.value))
             .attr("height", d => this.height - margin.bottom - verticalScale(d.value))
             .attr("fill", "#00468b");
+
+        // Show all existing data hunches
+
+        if (this.showDataHunches) {
+            // only show the last 5 data hunches
+            this.savedDataHunches.slice(-5).forEach((dataHunch) => {
+                if (dataHunch.type === "annotation") {
+                    // an indicator for annotation data hunches
+                    if (dataHunch.label === "all chart") {
+                        that.canvas.select('svg');
+                    } else {
+                        existingAnnotation.filter(d => d.label === dataHunch.label)[0].annotaiton.push(dataHunch.content);
+
+                        // change the attributes here
+
+                        that.canvas.select('svg')
+                            .append('circle')
+                            .attr('class', 'annotation-marker')
+                            .attr('cx', bandScale(dataHunch.label) || 0)
+                            .attr('cy', 30)
+                            .attr('r', 10);
+                    }
+                }
+                else if (dataHunch.type === "data space") {
+                    // data space data hunches
+                } else {
+                    // Manipulation data hunches
+                }
+            });
+        }
     }
 }
