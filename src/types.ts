@@ -9,6 +9,8 @@ export interface Annotations {
     type: "annotation" | "data space" | "manipulations";
     label: string;
     content: string;
+    reasoning: string;
+    id: number;
 }
 
 
