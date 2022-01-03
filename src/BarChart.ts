@@ -4,6 +4,7 @@ import { Annotations, BarChartDataPoint, SelectionType } from './types';
 import { ColorPallate, DarkGray, IndicatorSize, LargeNumber, LightGray, margin } from './Constants';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { max } from 'd3-array';
+import 'd3-transition';
 
 export class BarChartWithDH {
     readonly data: BarChartDataPoint[];
@@ -17,13 +18,19 @@ export class BarChartWithDH {
     // Add a way to select a DH from the drop down?
     private selectedDataHunch: number | null;
 
-    constructor(dataInput: BarChartDataPoint[], width: number, height: number) {
+    constructor(dataInput: BarChartDataPoint[], width: number, height: number, //previousSavedDatahunches:string
+    ) {
         this.data = dataInput;
         this.canvas = create('div');
         this.width = width;
         this.height = height;
         this.currentSelectedLabel = "";
         this.savedDataHunches = [];
+        // Whenever something is appended to this savedDataHunches, you do console log that
+
+        //a button to input user name
+        // the name will be associated with the color
+        // this.userName =
         this.showDataHunches = true;
         this.currentDHID = 0;
         this.selectedDataHunch = null;
@@ -32,20 +39,20 @@ export class BarChartWithDH {
     createBarChart() {
         const that = this;
 
+
+        // Ask the user name
+
         const controlBar = this.canvas.append('div').attr('id', 'general-controlbar');
-        controlBar.style("display", "table").style("background", "#eb9800");;
-        const specificBar = this.canvas.append('div').attr('id', 'specific-controlbar');
-        specificBar.style("display", "none").style("background", "#b87700");
+        controlBar.style("display", "table").style("background", "#eb9800");
 
 
         const bandScale = this.makeBandScale();
         const verticalScale = this.makeVerticalScale();
 
-        this.makeDetailedControlPanel(specificBar);
+
         this.makeGeneralControlPanel(controlBar);
 
         controlBar.selectAll('button').style('margin', '10px');
-        specificBar.selectAll('button').style('margin', '10px');
 
         // get the SVG set up
 
@@ -78,6 +85,21 @@ export class BarChartWithDH {
             .attr('transform', `translate(${margin.left},0)`)
             .call(axisLeft(verticalScale));
 
+        const detailedControlBar = svg.append('foreignObject')
+            .attr('id', 'specific-controlbar-container')
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('width', 150)
+            .attr('height', 200)
+            .append('xhtml:div')
+            .append('div')
+            .attr('id', 'specific-controlbar')
+            .style('text-align', 'center');
+
+        this.makeDetailedControlPanel(detailedControlBar);
+        detailedControlBar.selectAll('button').style('margin', '10px');
+        detailedControlBar.style("display", "none").style("background", "#b87700");
+
         return this.canvas;
     }
 
@@ -98,9 +120,12 @@ export class BarChartWithDH {
             .range([margin.top, this.height - margin.bottom]);
     }
 
+
+
     private makeDetailedControlPanel(controlBar: SelectionType) {
 
         // get the control bar set up
+
 
         const that = this;
 
@@ -108,18 +133,19 @@ export class BarChartWithDH {
             .html('Annotation')
             .attr('class', 'dh-button')
             .attr('id', 'dp_annotation_button')
-            .attr('disabled', 'true')
             .on('click', () => {
                 that.removeRectSelection();
+                that.hideDetailedMenu();
                 that.addInput();
             });
 
         controlBar.append('button')
             .html('Direct Manipulation')
             .attr('class', 'dh-button')
-            .attr('id', 'dp_manipulation_button').attr('disabled', 'true')
+            .attr('id', 'dp_manipulation_button')
             .on('click', () => {
                 that.removeRectSelection();
+                that.hideDetailedMenu();
                 that.manipulation();
             });
 
@@ -127,22 +153,50 @@ export class BarChartWithDH {
             .html('Rating')
             .attr('id', 'dp_rating_button')
             .attr('class', 'dh-button')
-            .attr('disabled', 'true')
             .on('click', () => {
                 that.removeRectSelection();
+                that.hideDetailedMenu();
                 that.addRating();
             });
 
         controlBar.append('button')
             .html('Data Space')
             .attr('id', 'dp_dataspace_button')
-            .attr('disabled', 'true')
             .attr('class', 'dh-button')
             .on('click', () => {
                 that.removeRectSelection();
+                that.hideDetailedMenu();
                 that.addDataSpace();
+
             });
     }
+
+    private hideDetailedMenu = () => {
+        this.canvas.select('svg').select('#specific-controlbar-container').select('div')
+            .select('#specific-controlbar')
+            .style('display', 'none');
+    };
+
+    private selectADataPointEvent = () => {
+        const that = this;
+        const rectangles = this.canvas.select('svg').select('#rectangles').selectAll('rect');
+        rectangles.attr('cursor', 'pointer')
+            .on('click', (e, data: any) => {
+                rectangles.attr('fill', "#00468b");
+                rectangles.filter((d: any) => d.label === data.label).attr('fill', "#eb9800");
+                //selection for annotation
+                that.currentSelectedLabel = data.label;
+                const xLoc = pointer(e)[0] + 150 > that.width ? pointer(e)[0] - 150 : pointer(e)[0];
+                const yLoc = pointer(e)[1] + 200 > that.height ? pointer(e)[1] - 200 : pointer(e)[1];
+                that.canvas.select('svg')
+                    .select('#specific-controlbar-container')
+                    .attr('x', xLoc)
+                    .attr('y', yLoc)
+                    .select('div')
+                    .select('#specific-controlbar')
+                    .style('display', 'table');
+            });
+    };
 
     private makeGeneralControlPanel(controlBar: SelectionType) {
 
@@ -159,17 +213,8 @@ export class BarChartWithDH {
             .html('Select Data Point')
             .attr('id', 'selection_button')
             .on("click", () => {
-                that.canvas.select('#specific-controlbar').style('display', 'table');
-                controlBar.style('display', 'none');
-                const rectangles = that.canvas.select('svg').select('#rectangles').selectAll('rect');
-                rectangles.attr('cursor', 'pointer')
-                    .on('click', (e, data: any) => {
-                        rectangles.attr('fill', "#00468b");
-                        rectangles.filter((d: any) => d.label === data.label).attr('fill', "#eb9800");
-                        //selection for annotation
-                        that.currentSelectedLabel = data.label;
-                        that.canvas.select('#specific-controlbar').selectAll('.dh-button').attr('disabled', null);
-                    });
+                that.selectADataPointEvent();
+
             });
 
         controlBar.append('select')
@@ -248,6 +293,7 @@ export class BarChartWithDH {
         const that = this;
         this.canvas.select('#input_form').remove();
 
+
         const verticalScale = this.makeVerticalScale();
 
         const form = this.canvas
@@ -270,10 +316,16 @@ export class BarChartWithDH {
                     .selectAll("rect")
                     .data(newData)
                     .join("rect")
+                    .transition()
+                    .duration(2000)
                     .attr("y", d => newVertScale(d.value))
                     .attr("height", d => that.height - margin.bottom - newVertScale(d.value));
 
-                that.canvas.select('svg').select('#vertical-axis').call((axisLeft(newVertScale) as any));
+                that.canvas.select('svg')
+                    .select('#vertical-axis')
+                    .transition()
+                    .duration(2000)
+                    .call((axisLeft(newVertScale) as any));
             });
 
         form.append('input').attr('type', 'button').attr('value', 'Reset')
@@ -283,13 +335,19 @@ export class BarChartWithDH {
 
                 textfield.attr('placeholder', `suggest alternative for ${that.currentSelectedLabel}`);
 
-                that.canvas.select('svg').select('#vertical-axis').call((axisLeft(verticalScale) as any));
+                that.canvas.select('svg')
+                    .select('#vertical-axis')
+                    .transition()
+                    .duration(2000)
+                    .call((axisLeft(verticalScale) as any));
 
                 that.canvas.select('svg')
                     .select('#rectangles')
                     .selectAll("rect")
                     .data(that.data)
                     .join("rect")
+                    .transition()
+                    .duration(2000)
                     .attr("y", d => verticalScale(d.value))
                     .attr("height", d => that.height - margin.bottom - verticalScale(d.value));
             });
@@ -412,7 +470,7 @@ export class BarChartWithDH {
         this.currentDHID += 1;
 
         this.canvas.select('svg').select('#rectangles').selectAll('rect').attr('fill', "#00468b");
-        this.canvas.select('#specific-controlbar').style('display', 'none').selectAll('.dh-button').attr('disabled', 'true');
+        // this.canvas.select('#specific-controlbar').style('display', 'none').selectAll('.dh-button').attr('disabled', 'true');
         this.canvas.select('#general-controlbar')
             .style('display', 'table')
             .select('#hunches-dropdown')
@@ -425,6 +483,12 @@ export class BarChartWithDH {
         this.renderVisualizationWithDH();
 
     }
+
+    // private getTransition() {
+    //     return transition()
+    //         .duration(1000);
+    //     // .ease(easeLinear);
+    // }
 
     // Call this method after saving DH
 
