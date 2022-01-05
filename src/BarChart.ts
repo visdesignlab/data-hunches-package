@@ -38,7 +38,6 @@ export class BarChartWithDH {
 
     createBarChart() {
         const that = this;
-        console.log(this.savedDataHunches);
 
         // Ask the user name
 
