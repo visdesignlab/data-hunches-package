@@ -15,22 +15,22 @@ export class BarChartWithDH {
     savedDataHunches: Annotations[];
     private showDataHunches: boolean;
     private currentDHID: number;
+    private userName: string;
     // Add a way to select a DH from the drop down?
     private selectedDataHunch: number | null;
 
-    constructor(dataInput: BarChartDataPoint[], width: number, height: number, //previousSavedDatahunches:string
+    constructor(dataInput: BarChartDataPoint[], width: number, height: number, userName: string, previousSavedDatahunches?: string
     ) {
         this.data = dataInput;
         this.canvas = create('div');
         this.width = width;
         this.height = height;
         this.currentSelectedLabel = "";
-        this.savedDataHunches = [];
-        // Whenever something is appended to this savedDataHunches, you do console log that
+        this.savedDataHunches = previousSavedDatahunches ? JSON.parse(previousSavedDatahunches) : [];
 
         //a button to input user name
         // the name will be associated with the color
-        // this.userName =
+        this.userName = userName;
         this.showDataHunches = true;
         this.currentDHID = 0;
         this.selectedDataHunch = null;
@@ -38,7 +38,7 @@ export class BarChartWithDH {
 
     createBarChart() {
         const that = this;
-
+        console.log(this.savedDataHunches);
 
         // Ask the user name
 
@@ -487,11 +487,16 @@ export class BarChartWithDH {
 
         this.savedDataHunches.push({
             label: this.currentSelectedLabel || "all chart",
+            user: this.userName,
             content: content,
             type: type,
             id: this.currentDHID,
             reasoning: reasonInput
         });
+
+        //console log all changes to saved DH
+        console.log(JSON.stringify(this.savedDataHunches));
+
         this.currentDHID += 1;
 
         this.canvas.select('svg').select('#rectangles').selectAll('rect').attr('fill', DarkBlue);

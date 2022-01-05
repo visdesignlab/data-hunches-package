@@ -7,6 +7,7 @@ export interface BarChartDataPoint {
 
 export interface Annotations {
     type: "annotation" | "data space" | "manipulations";
+    user: string;
     label: string;
     content: string;
     reasoning: string;

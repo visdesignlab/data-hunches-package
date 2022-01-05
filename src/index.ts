@@ -3,8 +3,8 @@ import { BarChartWithDH } from './BarChart';
 import { BarChartDataPoint } from './types';
 
 let createdClassObject: BarChartWithDH;
-export function createBarChart(dataInput: BarChartDataPoint[], width: number, height: number) {
-    createdClassObject = new BarChartWithDH(dataInput, width, height);
+export function createBarChart(dataInput: BarChartDataPoint[], width: number, height: number, userName: string, previousSavedDatahunches?: string) {
+    createdClassObject = new BarChartWithDH(dataInput, width, height, userName, previousSavedDatahunches);
     return createdClassObject.createBarChart();
 }
 
