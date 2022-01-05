@@ -1,7 +1,7 @@
 import { create, pointer } from 'd3-selection';
 import { scaleLinear, scaleBand } from 'd3-scale';
 import { Annotations, BarChartDataPoint, SelectionType } from './types';
-import { ColorPallate, DarkGray, IndicatorSize, LargeNumber, LightGray, margin } from './Constants';
+import { BrightOrange, ColorPallate, DarkBlue, DarkGray, IndicatorSize, LargeNumber, LightGray, margin } from './Constants';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { max } from 'd3-array';
 import 'd3-transition';
@@ -43,7 +43,7 @@ export class BarChartWithDH {
         // Ask the user name
 
         const controlBar = this.canvas.append('div').attr('id', 'general-controlbar');
-        controlBar.style("display", "table").style("background", "#eb9800");
+        controlBar.style("display", "table").style("background", BrightOrange);
 
 
         const bandScale = this.makeBandScale();
@@ -70,7 +70,7 @@ export class BarChartWithDH {
             .attr("y", d => verticalScale(d.value))
             .attr("width", bandScale.bandwidth())
             .attr("height", d => that.height - margin.bottom - verticalScale(d.value))
-            .attr("fill", "#00468b");
+            .attr("fill", DarkBlue);
 
         // axis
 
@@ -79,12 +79,14 @@ export class BarChartWithDH {
             .attr("transform", `translate(0,${this.height - margin.bottom})`)
             .call(axisBottom(bandScale));
 
+
+
+        svg.append('g').attr('class', 'axis').attr('id', 'axis-mask').attr('transform', `translate(${margin.left},0)`);
         svg.append('g')
             .attr('class', 'axis')
             .attr('id', 'vertical-axis')
             .attr('transform', `translate(${margin.left},0)`)
             .call(axisLeft(verticalScale));
-
         const detailedControlBar = svg.append('foreignObject')
             .attr('id', 'specific-controlbar-container')
             .attr('x', 0)
@@ -182,8 +184,8 @@ export class BarChartWithDH {
         const rectangles = this.canvas.select('svg').select('#rectangles').selectAll('rect');
         rectangles.attr('cursor', 'pointer')
             .on('click', (e, data: any) => {
-                rectangles.attr('fill', "#00468b");
-                rectangles.filter((d: any) => d.label === data.label).attr('fill', "#eb9800");
+                rectangles.attr('fill', DarkBlue);
+                rectangles.filter((d: any) => d.label === data.label).attr('fill', BrightOrange);
                 //selection for annotation
                 that.currentSelectedLabel = data.label;
                 const xLoc = pointer(e)[0] + 150 > that.width ? pointer(e)[0] - 150 : pointer(e)[0];
@@ -312,6 +314,7 @@ export class BarChartWithDH {
                 });
 
                 const newVertScale = that.makeVerticalScale(newData);
+                const oldVerScale = scaleLinear().domain(verticalScale.domain()).range([newVertScale(verticalScale.domain()[0]), newVertScale(verticalScale.domain()[1])]);
                 that.canvas.select('svg').select('#rectangles')
                     .selectAll("rect")
                     .data(newData)
@@ -325,7 +328,22 @@ export class BarChartWithDH {
                     .select('#vertical-axis')
                     .transition()
                     .duration(2000)
+
+                    .call((axisLeft(oldVerScale) as any));
+
+                const newScale = that.canvas.select('svg')
+                    .select('#axis-mask')
+                    .call(axisLeft(verticalScale) as any)
+                    .transition()
+                    .duration(2000)
                     .call((axisLeft(newVertScale) as any));
+
+                newScale.selectAll('path')
+                    .attr('stroke', BrightOrange);
+                newScale.selectAll('g').selectAll('line').attr('stroke', BrightOrange);
+                newScale.selectAll('g').selectAll('text').attr('fill', BrightOrange);
+
+
             });
 
         form.append('input').attr('type', 'button').attr('value', 'Reset')
@@ -336,10 +354,17 @@ export class BarChartWithDH {
                 textfield.attr('placeholder', `suggest alternative for ${that.currentSelectedLabel}`);
 
                 that.canvas.select('svg')
+                    .select('#axis-mask').selectAll('*').attr('opacity', 1).transition().duration(1000).attr('opacity', 0.0001).remove();
+
+
+
+                that.canvas.select('svg')
                     .select('#vertical-axis')
                     .transition()
                     .duration(2000)
                     .call((axisLeft(verticalScale) as any));
+
+
 
                 that.canvas.select('svg')
                     .select('#rectangles')
@@ -469,7 +494,7 @@ export class BarChartWithDH {
         });
         this.currentDHID += 1;
 
-        this.canvas.select('svg').select('#rectangles').selectAll('rect').attr('fill', "#00468b");
+        this.canvas.select('svg').select('#rectangles').selectAll('rect').attr('fill', DarkBlue);
         // this.canvas.select('#specific-controlbar').style('display', 'none').selectAll('.dh-button').attr('disabled', 'true');
         this.canvas.select('#general-controlbar')
             .style('display', 'table')
@@ -517,7 +542,7 @@ export class BarChartWithDH {
             .join("rect")
             .attr("y", d => verticalScale(d.value))
             .attr("height", d => this.height - margin.bottom - verticalScale(d.value))
-            .attr("fill", "#00468b");
+            .attr("fill", DarkBlue);
 
         // Show all existing data hunches
 

@@ -10,4 +10,8 @@ export const DarkGray = '#a9a9a9';
 
 export const LightGray = '#eeeeee';
 
+export const BrightOrange = '#eb9800';
+
+export const DarkBlue = '#00468b';
+
 export const ColorPallate = schemeTableau10;
