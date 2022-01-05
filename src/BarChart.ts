@@ -56,6 +56,15 @@ export class BarChartWithDH {
 
         // get the SVG set up
 
+        this.canvas.append('div')
+            .attr('id', 'record-board')
+            .style('float', 'right')
+            .style('background-color', LightGray)
+            .style('font-size', 'xx-small')
+            .append('dl');
+
+        this.generateRecordBoardList();
+
         const svg = this.canvas.append("svg")
             .attr("width", this.width)
             .attr("height", this.height);
@@ -103,6 +112,17 @@ export class BarChartWithDH {
         detailedControlBar.style("display", "none").style("background", "#b87700");
 
         return this.canvas;
+    }
+
+    private generateRecordBoardList() {
+        const recordBoard = this.canvas.select('#record-board').select('dl');
+        recordBoard.selectAll('*').remove();
+        this.savedDataHunches.forEach(d => {
+            recordBoard.append('dt').html(d.label);
+            recordBoard.append('dd').html(d.user);
+            recordBoard.append('dd').html(d.content);
+            recordBoard.append('dd').html(d.reasoning);
+        });
     }
 
     private makeBandScale() {
@@ -385,6 +405,25 @@ export class BarChartWithDH {
                 const reasonInput = (this.canvas.select('#input_form').select('#reason-field') as any).node()!.value;
                 if (reasonInput) {
 
+                    that.canvas.select('svg')
+                        .select('#axis-mask').selectAll('*').attr('opacity', 1).transition().duration(1000).attr('opacity', 0.0001).remove();
+
+                    that.canvas.select('svg')
+                        .select('#vertical-axis')
+                        .transition()
+                        .duration(2000)
+                        .call((axisLeft(verticalScale) as any));
+
+                    that.canvas.select('svg')
+                        .select('#rectangles')
+                        .selectAll("rect")
+                        .data(that.data)
+                        .join("rect")
+                        .transition()
+                        .duration(2000)
+                        .attr("y", d => verticalScale(d.value))
+                        .attr("height", d => that.height - margin.bottom - verticalScale(d.value));
+
                     that.addNewDataHunch(textfield.node()!.value, "data space", reasonInput);
 
                     //remove the form
@@ -496,7 +535,7 @@ export class BarChartWithDH {
 
         //console log all changes to saved DH
         console.log(JSON.stringify(this.savedDataHunches));
-
+        this.generateRecordBoardList();
         this.currentDHID += 1;
 
         this.canvas.select('svg').select('#rectangles').selectAll('rect').attr('fill', DarkBlue);
