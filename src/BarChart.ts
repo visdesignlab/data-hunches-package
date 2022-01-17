@@ -3,7 +3,7 @@ import { scaleLinear, scaleBand } from 'd3-scale';
 import { Annotations, BarChartDataPoint, SelectionType } from './types';
 import { BrightOrange, ColorPallate, DarkBlue, DarkGray, IndicatorSize, LargeNumber, LightGray, margin } from './Constants';
 import { axisBottom, axisLeft } from 'd3-axis';
-import { max } from 'd3-array';
+import { filter, max } from 'd3-array';
 import 'd3-transition';
 
 export class BarChartWithDH {
@@ -126,7 +126,6 @@ export class BarChartWithDH {
 
     private makeBandScale() {
         const that = this;
-
         return scaleBand().domain(this.data.map(d => d.label)).range([margin.left, that.width]).paddingInner(0.1).paddingOuter(0.1);
     }
 
@@ -343,12 +342,21 @@ export class BarChartWithDH {
                     .attr("y", d => newVertScale(d.value))
                     .attr("height", d => that.height - margin.bottom - newVertScale(d.value));
 
+                // Matching Ticks Begin
+                // domain [0] because it was oposite?
+                const filteredTickArray = newVertScale.ticks().filter(d => d <= oldVerScale.domain()[0]);
+
+                //if the domain end is not in the tick array, we add it so it shows up
+
+                if (filteredTickArray.indexOf(oldVerScale.domain()[0]) < 0) filteredTickArray.push(oldVerScale.domain()[0]);
+
+                //Matching Ticks End
                 that.canvas.select('svg')
                     .select('#vertical-axis')
                     .transition()
                     .duration(2000)
-
-                    .call((axisLeft(oldVerScale) as any));
+                    //Remove tickValues to remove matching ticks
+                    .call((axisLeft(oldVerScale).tickValues(filteredTickArray) as any));
 
                 const newScale = that.canvas.select('svg')
                     .select('#axis-mask')
@@ -356,6 +364,7 @@ export class BarChartWithDH {
                     .transition()
                     .duration(2000)
                     .call((axisLeft(newVertScale) as any));
+
 
                 newScale.selectAll('path')
                     .attr('stroke', BrightOrange);
