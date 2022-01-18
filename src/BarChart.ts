@@ -1,9 +1,9 @@
 import { create, pointer } from 'd3-selection';
 import { scaleLinear, scaleBand } from 'd3-scale';
 import { Annotations, BarChartDataPoint, SelectionType } from './types';
-import { BrightOrange, ColorPallate, DarkBlue, DarkGray, IndicatorSize, LargeNumber, LightGray, margin } from './Constants';
+import { BrightOrange, ColorPallate, DarkBlue, DarkGray, ForeignObjectHeight, ForeignObjectWidth, IndicatorSize, LargeNumber, LightGray, margin } from './Constants';
 import { axisBottom, axisLeft } from 'd3-axis';
-import { filter, max } from 'd3-array';
+import { flatRollup, max } from 'd3-array';
 import 'd3-transition';
 
 export class BarChartWithDH {
@@ -36,18 +36,19 @@ export class BarChartWithDH {
         this.selectedDataHunch = null;
     }
 
+    // initiation
     createBarChart() {
         const that = this;
 
         // Ask the user name
 
         const controlBar = this.canvas.append('div').attr('id', 'general-controlbar');
-        controlBar.style("display", "table").style("background", BrightOrange);
-
+        controlBar.style("display", "table")
+            .style('border-style', 'groove')
+            .style('border-color', LightGray);
 
         const bandScale = this.makeBandScale();
         const verticalScale = this.makeVerticalScale();
-
 
         this.makeGeneralControlPanel(controlBar);
 
@@ -59,7 +60,7 @@ export class BarChartWithDH {
             .attr('id', 'record-board')
             .style('float', 'right')
             .style('background-color', LightGray)
-            .style('font-size', 'xx-small')
+            .style('font-size', 'small')
             .append('dl');
 
         this.generateRecordBoardList();
@@ -87,41 +88,42 @@ export class BarChartWithDH {
             .attr("transform", `translate(0,${this.height - margin.bottom})`)
             .call(axisBottom(bandScale));
 
+        svg.append('g')
+            .attr('class', 'axis')
+            .attr('id', 'axis-mask')
+            .attr('transform', `translate(${margin.left},0)`);
 
-
-        svg.append('g').attr('class', 'axis').attr('id', 'axis-mask').attr('transform', `translate(${margin.left},0)`);
         svg.append('g')
             .attr('class', 'axis')
             .attr('id', 'vertical-axis')
             .attr('transform', `translate(${margin.left},0)`)
             .call(axisLeft(verticalScale));
+
         const detailedControlBar = svg.append('foreignObject')
             .attr('id', 'specific-controlbar-container')
             .attr('x', 0)
             .attr('y', 0)
-            .attr('width', 150)
-            .attr('height', 200)
+            .attr('width', ForeignObjectWidth)
+            .attr('height', ForeignObjectHeight)
             .append('xhtml:div')
             .append('div')
-            .attr('id', 'specific-controlbar')
-            .style('text-align', 'center');
+            .attr('id', 'specific-controlbar');
+
+        detailedControlBar
+            .style('text-align', 'center')
+            .style('display', 'flex')
+            .style('flex-direction', 'column')
+            .style('background-color', 'rgb(238, 238, 238, 0.8)')
+            .style('border-style', 'groove')
+            .style('border-color', LightGray);
+
+        console.log(detailedControlBar);
 
         this.makeDetailedControlPanel(detailedControlBar);
-        detailedControlBar.selectAll('button').style('margin', '10px');
-        detailedControlBar.style("display", "none").style("background", "#b87700");
+
+        this.canvas.select('svg').select('#specific-controlbar-container').style('display', 'none');
 
         return this.canvas;
-    }
-
-    private generateRecordBoardList() {
-        const recordBoard = this.canvas.select('#record-board').select('dl');
-        recordBoard.selectAll('*').remove();
-        this.savedDataHunches.forEach(d => {
-            recordBoard.append('dt').html(d.label);
-            recordBoard.append('dd').html(d.user);
-            recordBoard.append('dd').html(d.content);
-            recordBoard.append('dd').html(d.reasoning);
-        });
     }
 
     private makeBandScale() {
@@ -140,14 +142,13 @@ export class BarChartWithDH {
             .range([margin.top, this.height - margin.bottom]);
     }
 
-
-
     private makeDetailedControlPanel(controlBar: SelectionType) {
 
         // get the control bar set up
 
-
         const that = this;
+
+        controlBar.selectAll('*').remove();
 
         controlBar.append('button')
             .html('Annotation')
@@ -155,7 +156,7 @@ export class BarChartWithDH {
             .attr('id', 'dp_annotation_button')
             .on('click', () => {
                 that.removeRectSelection();
-                that.hideDetailedMenu();
+                // that.hideInChartForeignObject();
                 that.addInput();
             });
 
@@ -165,7 +166,7 @@ export class BarChartWithDH {
             .attr('id', 'dp_manipulation_button')
             .on('click', () => {
                 that.removeRectSelection();
-                that.hideDetailedMenu();
+                // that.hideInChartForeignObject();
                 that.manipulation();
             });
 
@@ -175,7 +176,7 @@ export class BarChartWithDH {
             .attr('class', 'dh-button')
             .on('click', () => {
                 that.removeRectSelection();
-                that.hideDetailedMenu();
+                // that.hideInChartForeignObject();
                 that.addRating();
             });
 
@@ -185,16 +186,18 @@ export class BarChartWithDH {
             .attr('class', 'dh-button')
             .on('click', () => {
                 that.removeRectSelection();
-                that.hideDetailedMenu();
+                // that.hideInChartForeignObject();
                 that.addDataSpace();
-
             });
+
+        controlBar.selectAll('button').style('margin', '10px').style('width', 'auto');
     }
 
-    private hideDetailedMenu = () => {
-        this.canvas.select('svg').select('#specific-controlbar-container').select('div')
-            .select('#specific-controlbar')
-            .style('display', 'none');
+    private hideInChartForeignObject = () => {
+        this.canvas.select('svg').select('#specific-controlbar-container').style('display', 'none');
+        // this.canvas.select('svg').select('#specific-controlbar-container').select('div')
+        //     .select('#specific-controlbar')
+        //     .style('display', 'none');
     };
 
     private selectADataPointEvent = () => {
@@ -206,15 +209,17 @@ export class BarChartWithDH {
                 rectangles.filter((d: any) => d.label === data.label).attr('fill', BrightOrange);
                 //selection for annotation
                 that.currentSelectedLabel = data.label;
-                const xLoc = pointer(e)[0] + 150 > that.width ? pointer(e)[0] - 150 : pointer(e)[0];
-                const yLoc = pointer(e)[1] + 200 > that.height ? pointer(e)[1] - 200 : pointer(e)[1];
-                that.canvas.select('svg')
+                const xLoc = (pointer(e)[0] + ForeignObjectWidth) > that.width ? (pointer(e)[0] - ForeignObjectWidth) : pointer(e)[0];
+                const yLoc = (pointer(e)[1] + ForeignObjectHeight) > that.height ? (pointer(e)[1] - ForeignObjectHeight) : pointer(e)[1];
+                const detailedMenu = that.canvas.select('svg')
                     .select('#specific-controlbar-container')
+                    .style('display', null)
                     .attr('x', xLoc)
                     .attr('y', yLoc)
                     .select('div')
-                    .select('#specific-controlbar')
-                    .style('display', 'table');
+                    .select('#specific-controlbar');
+                // .style('display', 'table');
+                that.makeDetailedControlPanel(detailedMenu);
             });
     };
 
@@ -263,309 +268,28 @@ export class BarChartWithDH {
             });
     }
 
-    private addRating() {
-        this.canvas.select('#input_form').remove();
-        const that = this;
-
-        const formDiv = this.canvas
-            .append('div')
-            .attr('id', 'input_form');
-
-
-        formDiv.attr('class', 'rate').style('display', 'flex').style('flex-wrap', 'wrap');
-
-        const rateDivs = formDiv.selectAll('.rateDiv')
-            .data([1, 2, 3, 4, 5])
-            .join('div')
-            .attr('class', 'rateDiv')
-            .style('flex', ' 1 0 20%');
-
-        rateDivs.append('input')
-            .attr('type', 'radio')
-            .attr('id', d => `star${d}`)
-            .attr('name', 'rating')
-            .attr('value', d => `${d} star rating`);
-
-
-        rateDivs.append('label')
-            .attr('for', d => `star${d}`)
-            .html(d => '★'.repeat(d));
-
-        this.addReason(formDiv);
-
-        formDiv.append('input').attr('type', 'button').attr('value', 'Submit')
-            .on('click', () => {
-                const reasonInput = (this.canvas.select('#input_form').select('#reason-field') as any).node()!.value;
-                if (reasonInput) {
-
-                    // save the form input to array
-                    that.addNewDataHunch((formDiv.select('input[name="rating"]:checked').node() as any).value, "annotation", reasonInput);
-                    //remove the form
-                    formDiv.remove();
-                } else {
-                    alert('Please enter a reason for the data hunch!');
-                }
-            });
-
-    }
-
-    private addDataSpace() {
-        const that = this;
-        this.canvas.select('#input_form').remove();
-
-
-        const verticalScale = this.makeVerticalScale();
-
-        const form = this.canvas
-            .append('div').attr('id', 'input_form')
-            .append("form");
-
-        const textfield = form.append('input').attr('type', 'number').attr('step', '0.01').attr('id', 'input-field');
-        textfield.attr('placeholder', `suggest alternative for ${this.currentSelectedLabel}`);
-
-        form.append('input').attr('type', 'button').attr('value', 'Preview')
-            .on('click', () => {
-                const newData = that.data.map(d => {
-                    if (d.label === this.currentSelectedLabel && textfield.node()) {
-                        return { ...d, value: parseFloat(textfield.node()!.value) };
-                    } return d;
-                });
-
-                const newVertScale = that.makeVerticalScale(newData);
-                const oldVerScale = scaleLinear().domain(verticalScale.domain()).range([newVertScale(verticalScale.domain()[0]), newVertScale(verticalScale.domain()[1])]);
-                that.canvas.select('svg').select('#rectangles')
-                    .selectAll("rect")
-                    .data(newData)
-                    .join("rect")
-                    .transition()
-                    .duration(2000)
-                    .attr("y", d => newVertScale(d.value))
-                    .attr("height", d => that.height - margin.bottom - newVertScale(d.value));
-
-                // Matching Ticks Begin
-                // domain [0] because it was oposite?
-                const filteredTickArray = newVertScale.ticks().filter(d => d <= oldVerScale.domain()[0]);
-
-                //if the domain end is not in the tick array, we add it so it shows up
-
-                if (filteredTickArray.indexOf(oldVerScale.domain()[0]) < 0) filteredTickArray.push(oldVerScale.domain()[0]);
-
-                //Matching Ticks End
-                that.canvas.select('svg')
-                    .select('#vertical-axis')
-                    .transition()
-                    .duration(2000)
-                    //Remove tickValues to remove matching ticks
-                    .call((axisLeft(oldVerScale).tickValues(filteredTickArray) as any));
-
-                const newScale = that.canvas.select('svg')
-                    .select('#axis-mask')
-                    .call(axisLeft(verticalScale) as any)
-                    .transition()
-                    .duration(2000)
-                    .call((axisLeft(newVertScale) as any));
-
-
-                newScale.selectAll('path')
-                    .attr('stroke', BrightOrange);
-                newScale.selectAll('g').selectAll('line').attr('stroke', BrightOrange);
-                newScale.selectAll('g').selectAll('text').attr('fill', BrightOrange);
-
-
-            });
-
-        form.append('input').attr('type', 'button').attr('value', 'Reset')
-            .on('click', () => {
-                // somehow .attr('value','') doesn't work.
-                if (document.getElementById('input-field') !== null) (document.getElementById('input-field')! as any).value = '';
-
-                textfield.attr('placeholder', `suggest alternative for ${that.currentSelectedLabel}`);
-
-                that.canvas.select('svg')
-                    .select('#axis-mask').selectAll('*').attr('opacity', 1).transition().duration(1000).attr('opacity', 0.0001).remove();
-
-
-
-                that.canvas.select('svg')
-                    .select('#vertical-axis')
-                    .transition()
-                    .duration(2000)
-                    .call((axisLeft(verticalScale) as any));
-
-
-
-                that.canvas.select('svg')
-                    .select('#rectangles')
-                    .selectAll("rect")
-                    .data(that.data)
-                    .join("rect")
-                    .transition()
-                    .duration(2000)
-                    .attr("y", d => verticalScale(d.value))
-                    .attr("height", d => that.height - margin.bottom - verticalScale(d.value));
-            });
-
-        this.addReason(form);
-
-        form.append('input').attr('type', 'button').attr('value', 'Submit')
-            .on('click', () => {
-                // save the form input to array
-                const reasonInput = (this.canvas.select('#input_form').select('#reason-field') as any).node()!.value;
-                if (reasonInput) {
-
-                    that.canvas.select('svg')
-                        .select('#axis-mask').selectAll('*').attr('opacity', 1).transition().duration(1000).attr('opacity', 0.0001).remove();
-
-                    that.canvas.select('svg')
-                        .select('#vertical-axis')
-                        .transition()
-                        .duration(2000)
-                        .call((axisLeft(verticalScale) as any));
-
-                    that.canvas.select('svg')
-                        .select('#rectangles')
-                        .selectAll("rect")
-                        .data(that.data)
-                        .join("rect")
-                        .transition()
-                        .duration(2000)
-                        .attr("y", d => verticalScale(d.value))
-                        .attr("height", d => that.height - margin.bottom - verticalScale(d.value));
-
-                    that.addNewDataHunch(textfield.node()!.value, "data space", reasonInput);
-
-                    //remove the form
-                    that.canvas.select('svg').select('#vertical-axis').call((axisLeft(verticalScale) as any));
-                    form.remove();
-                } else {
-                    alert('Please enter a reason for the data hunch!');
-                }
-            });
-    }
-
     private removeRectSelection() {
         this.canvas.select('svg').select('#rectangles').selectAll('rect').attr('cursor', 'default').on('click', null);
     }
 
-    private manipulation() {
-        const that = this;
-        let dragging = false;
-
-
-        const selectedRect = this.canvas.select('svg').select('#rectangles').selectAll('rect').filter((d: any) => d.label === that.currentSelectedLabel);
-
-        const heightScale = this.makeVerticalScale();
-
-        this.canvas.select('#input_form').remove();
-        const form = this.canvas
-            .append('div').attr('id', 'input_form')
-            .append("form");
-
-        this.canvas.select('svg')
-            .on('mousedown', () => { dragging = true; })
-            .on('mousemove', (e, d) => {
-                if (dragging) {
-                    selectedRect.attr('y', pointer(e)[1]);
-                    selectedRect.attr('height', that.height - margin.bottom - pointer(e)[1]);
-                }
-            })
-            .on('mouseup', () => { dragging = false; });
-
-        this.addReason(form);
-
-        form.append('input').attr('type', 'button').attr('value', 'Submit')
-            .on('click', () => {
-                // save the form input to array
-                const reasonInput = (this.canvas.select('#input_form').select('#reason-field') as any).node()!.value;
-                if (reasonInput) {
-
-                    that.addNewDataHunch(heightScale.invert(that.height - margin.bottom - (selectedRect.attr('height') as any)).toFixed(2), "manipulations", reasonInput);
-
-                    //remove the form
-                    that.canvas.select('svg').on('mousedown', null)
-                        .on('mousemove', null)
-                        .on('mouseup', null);
-                    form.remove();
-                } else {
-                    alert('Please enter a reason for the data hunch!');
-                }
-            });
-    }
-
-
-    private addInput() {
-        const that = this;
-        this.canvas.select('#input_form').remove();
-
-        const form = this.canvas
-            .append('div').attr('id', 'input_form')
-            .append("form");
-
-        const textfield = form.append('input').attr('type', 'text').attr('id', 'input');
-        if (this.currentSelectedLabel) {
-            textfield.attr('placeholder', this.currentSelectedLabel);
-        } else {
-            textfield.attr('placeholder', 'Annotation on the chart');
-        }
-
-        this.addReason(form);
-
-
-
-        form.append('input').attr('type', 'button').attr('value', 'Submit')
-            .on('click', () => {
-                const reasonInput = (this.canvas.select('#input_form').select('#reason-field') as any).node()!.value;
-                if (reasonInput) {
-                    // save the form input to  array
-                    that.addNewDataHunch(textfield.node()!.value, "annotation", reasonInput);
-                    //remove the form
-                    form.remove();
-                } else {
-                    alert('Please enter a reason for the data hunch!');
-                }
-            });
-    }
-
     private addReason(formDiv: SelectionType) {
-        formDiv.append('input').attr('type', 'text').attr('id', 'reason-field').attr('placeholder', `Add reason for the data hunch`);
-    }
-
-    private addNewDataHunch(content: string, type: "annotation" | "data space" | "manipulations", reasonInput: string) {
-
-        this.savedDataHunches.push({
-            label: this.currentSelectedLabel || "all chart",
-            user: this.userName,
-            content: content,
-            type: type,
-            id: this.currentDHID,
-            reasoning: reasonInput
-        });
-
-        //console log all changes to saved DH
-        console.log(JSON.stringify(this.savedDataHunches));
-        this.generateRecordBoardList();
-        this.currentDHID += 1;
-
-        this.canvas.select('svg').select('#rectangles').selectAll('rect').attr('fill', DarkBlue);
-        // this.canvas.select('#specific-controlbar').style('display', 'none').selectAll('.dh-button').attr('disabled', 'true');
-        this.canvas.select('#general-controlbar')
-            .style('display', 'table')
-            .select('#hunches-dropdown')
-            .selectAll('option')
-            .data(this.savedDataHunches)
-            .join("option")
-            .text(d => d.label) // text showed in the menu
-            .attr("value", (d, i) => i); // corresponding value returned by the button
-
-        this.renderVisualizationWithDH();
+        formDiv.append('textarea').attr('id', 'reason-field').attr('placeholder', `Add reason for the data hunch`);
 
     }
 
-    // private getTransition() {
-    //     return transition()
-    //         .duration(1000);
-    //     // .ease(easeLinear);
-    // }
+    private findForeignObject() {
+
+        const foreignObjectResult = this.canvas
+            .select('svg')
+            .select('#specific-controlbar-container')
+            .select('div')
+            .select('#specific-controlbar');
+
+
+
+        return foreignObjectResult;
+    }
+
 
     // Call this method after saving DH
 
@@ -728,4 +452,324 @@ export class BarChartWithDH {
     }
 
 
+    // Major Interaction Function
+
+    private addRating() {
+
+        const that = this;
+
+        const formDiv = this.findForeignObject();
+
+        formDiv.selectAll('*').remove();
+
+        formDiv.style('display', 'flex').style('flex-wrap', 'wrap');
+
+        const rateDivs = formDiv.selectAll('.rateDiv')
+            .data([1, 2, 3, 4, 5])
+            .join('div')
+            .attr('class', 'rateDiv')
+            .style('flex', ' 1 0 100%');
+
+        rateDivs.append('input')
+            .attr('type', 'radio')
+            .attr('id', d => `star${d}`)
+            .attr('name', 'rating')
+            .attr('value', d => `${d} star rating`);
+
+
+        rateDivs.append('label')
+            .attr('for', d => `star${d}`)
+            .html(d => '★'.repeat(d));
+
+        this.addReason(formDiv);
+
+        formDiv.append('input')
+            .attr('type', 'button')
+            .attr('value', 'Submit')
+            .style('margin', 'auto')
+            .on('click', () => {
+                const reasonInput = (formDiv.select('#reason-field') as any).node()!.value;
+                if (reasonInput) {
+                    // save the form input to array
+                    that.addNewDataHunch(
+                        (formDiv.select('input[name="rating"]:checked').node() as any).value,
+                        "annotation",
+                        reasonInput
+                    );
+                    //hide the form
+                    that.hideInChartForeignObject();
+                } else {
+                    alert('Please enter a reason for the data hunch!');
+                }
+            });
+
+        formDiv.append('input')
+            .attr('type', 'button')
+            .attr('value', 'Cancel')
+            .style('margin', 'auto')
+            .on('click', () => {
+                that.clearHighlightRect();
+                that.hideInChartForeignObject();
+            });
+
+    }
+
+    private addDataSpace() {
+        const that = this;
+        this.canvas.select('#input_form').remove();
+
+
+        const verticalScale = this.makeVerticalScale();
+
+        const form = this.canvas
+            .append('div').attr('id', 'input_form')
+            .append("form");
+
+        const textfield = form.append('input').attr('type', 'number').attr('step', '0.01').attr('id', 'input-field');
+        textfield.attr('placeholder', `suggest alternative for ${this.currentSelectedLabel}`);
+
+        form.append('input').attr('type', 'button').attr('value', 'Preview')
+            .on('click', () => {
+                const newData = that.data.map(d => {
+                    if (d.label === this.currentSelectedLabel && textfield.node()) {
+                        return { ...d, value: parseFloat(textfield.node()!.value) };
+                    } return d;
+                });
+
+                const newVertScale = that.makeVerticalScale(newData);
+                const oldVerScale = scaleLinear().domain(verticalScale.domain()).range([newVertScale(verticalScale.domain()[0]), newVertScale(verticalScale.domain()[1])]);
+                that.canvas.select('svg').select('#rectangles')
+                    .selectAll("rect")
+                    .data(newData)
+                    .join("rect")
+                    .transition()
+                    .duration(2000)
+                    .attr("y", d => newVertScale(d.value))
+                    .attr("height", d => that.height - margin.bottom - newVertScale(d.value));
+
+                // Matching Ticks Begin
+                // domain [0] because it was oposite?
+                const filteredTickArray = newVertScale.ticks().filter(d => d <= oldVerScale.domain()[0]);
+
+                //if the domain end is not in the tick array, we add it so it shows up
+
+                if (filteredTickArray.indexOf(oldVerScale.domain()[0]) < 0) filteredTickArray.push(oldVerScale.domain()[0]);
+
+                //Matching Ticks End
+                that.canvas.select('svg')
+                    .select('#vertical-axis')
+                    .transition()
+                    .duration(2000)
+                    //Remove tickValues to remove matching ticks
+                    .call((axisLeft(oldVerScale).tickValues(filteredTickArray) as any));
+
+                const newScale = that.canvas.select('svg')
+                    .select('#axis-mask')
+                    .call(axisLeft(verticalScale) as any)
+                    .transition()
+                    .duration(2000)
+                    .call((axisLeft(newVertScale) as any));
+
+
+                newScale.selectAll('path')
+                    .attr('stroke', BrightOrange);
+                newScale.selectAll('g').selectAll('line').attr('stroke', BrightOrange);
+                newScale.selectAll('g').selectAll('text').attr('fill', BrightOrange);
+
+
+            });
+
+        form.append('input').attr('type', 'button').attr('value', 'Reset')
+            .on('click', () => {
+                // somehow .attr('value','') doesn't work.
+                if (document.getElementById('input-field') !== null) (document.getElementById('input-field')! as any).value = '';
+
+                textfield.attr('placeholder', `suggest alternative for ${that.currentSelectedLabel}`);
+
+                that.canvas.select('svg')
+                    .select('#axis-mask').selectAll('*').attr('opacity', 1).transition().duration(1000).attr('opacity', 0.0001).remove();
+
+
+
+                that.canvas.select('svg')
+                    .select('#vertical-axis')
+                    .transition()
+                    .duration(2000)
+                    .call((axisLeft(verticalScale) as any));
+
+
+
+                that.canvas.select('svg')
+                    .select('#rectangles')
+                    .selectAll("rect")
+                    .data(that.data)
+                    .join("rect")
+                    .transition()
+                    .duration(2000)
+                    .attr("y", d => verticalScale(d.value))
+                    .attr("height", d => that.height - margin.bottom - verticalScale(d.value));
+            });
+
+        this.addReason(form);
+
+        form.append('input').attr('type', 'button').attr('value', 'Submit')
+            .on('click', () => {
+                // save the form input to array
+                const reasonInput = (this.canvas.select('#input_form').select('#reason-field') as any).node()!.value;
+                if (reasonInput) {
+
+                    that.canvas.select('svg')
+                        .select('#axis-mask').selectAll('*').attr('opacity', 1).transition().duration(1000).attr('opacity', 0.0001).remove();
+
+                    that.canvas.select('svg')
+                        .select('#vertical-axis')
+                        .transition()
+                        .duration(2000)
+                        .call((axisLeft(verticalScale) as any));
+
+                    that.canvas.select('svg')
+                        .select('#rectangles')
+                        .selectAll("rect")
+                        .data(that.data)
+                        .join("rect")
+                        .transition()
+                        .duration(2000)
+                        .attr("y", d => verticalScale(d.value))
+                        .attr("height", d => that.height - margin.bottom - verticalScale(d.value));
+
+                    that.addNewDataHunch(textfield.node()!.value, "data space", reasonInput);
+
+                    //remove the form
+                    that.canvas.select('svg').select('#vertical-axis').call((axisLeft(verticalScale) as any));
+                    form.remove();
+                } else {
+                    alert('Please enter a reason for the data hunch!');
+                }
+            });
+    }
+
+    private manipulation() {
+        const that = this;
+        let dragging = false;
+
+
+        const selectedRect = this.canvas.select('svg').select('#rectangles').selectAll('rect').filter((d: any) => d.label === that.currentSelectedLabel);
+
+        const heightScale = this.makeVerticalScale();
+
+        this.canvas.select('#input_form').remove();
+        const form = this.canvas
+            .append('div').attr('id', 'input_form')
+            .append("form");
+
+        this.canvas.select('svg')
+            .on('mousedown', () => { dragging = true; })
+            .on('mousemove', (e, d) => {
+                if (dragging) {
+                    selectedRect.attr('y', pointer(e)[1]);
+                    selectedRect.attr('height', that.height - margin.bottom - pointer(e)[1]);
+                }
+            })
+            .on('mouseup', () => { dragging = false; });
+
+        this.addReason(form);
+
+        form.append('input').attr('type', 'button').attr('value', 'Submit')
+            .on('click', () => {
+                // save the form input to array
+                const reasonInput = (this.canvas.select('#input_form').select('#reason-field') as any).node()!.value;
+                if (reasonInput) {
+
+                    that.addNewDataHunch(heightScale.invert(that.height - margin.bottom - (selectedRect.attr('height') as any)).toFixed(2), "manipulations", reasonInput);
+
+                    //remove the form
+                    that.canvas.select('svg').on('mousedown', null)
+                        .on('mousemove', null)
+                        .on('mouseup', null);
+                    form.remove();
+                } else {
+                    alert('Please enter a reason for the data hunch!');
+                }
+            });
+    }
+
+
+    private addInput() {
+        const that = this;
+        this.canvas.select('#input_form').remove();
+
+        const form = this.canvas
+            .append('div').attr('id', 'input_form')
+            .append("form");
+
+        const textfield = form.append('input').attr('type', 'text').attr('id', 'input');
+        if (this.currentSelectedLabel) {
+            textfield.attr('placeholder', this.currentSelectedLabel);
+        } else {
+            textfield.attr('placeholder', 'Annotation on the chart');
+        }
+
+        this.addReason(form);
+
+        form.append('input').attr('type', 'button').attr('value', 'Submit')
+            .on('click', () => {
+                const reasonInput = (this.canvas.select('#input_form').select('#reason-field') as any).node()!.value;
+                if (reasonInput) {
+                    // save the form input to  array
+                    that.addNewDataHunch(textfield.node()!.value, "annotation", reasonInput);
+                    //remove the form
+                    form.remove();
+                } else {
+                    alert('Please enter a reason for the data hunch!');
+                }
+            });
+    }
+
+    // Record Related
+
+    private generateRecordBoardList() {
+        const recordBoard = this.canvas.select('#record-board').select('dl');
+        recordBoard.selectAll('*').remove();
+        this.savedDataHunches.forEach(d => {
+            recordBoard.append('dt').html(d.label);
+            recordBoard.append('dd').html(d.user);
+            recordBoard.append('dd').html(d.content);
+            recordBoard.append('dd').html(d.reasoning);
+        });
+    }
+
+    private addNewDataHunch(content: string, type: "annotation" | "data space" | "manipulations", reasonInput: string) {
+
+        this.savedDataHunches.push({
+            label: this.currentSelectedLabel || "all chart",
+            user: this.userName,
+            content: content,
+            type: type,
+            id: this.currentDHID,
+            reasoning: reasonInput
+        });
+
+        //console log all changes to saved DH
+        console.log(JSON.stringify(this.savedDataHunches));
+        this.generateRecordBoardList();
+        this.currentDHID += 1;
+
+        this.clearHighlightRect();
+        // this.canvas.select('#specific-controlbar').style('display', 'none').selectAll('.dh-button').attr('disabled', 'true');
+        this.canvas.select('#general-controlbar')
+            // .style('display', 'flex')
+            .select('#hunches-dropdown')
+            .selectAll('option')
+            .data(this.savedDataHunches)
+            .join("option")
+            .text(d => d.label) // text showed in the menu
+            .attr("value", (d, i) => i); // corresponding value returned by the button
+
+        this.renderVisualizationWithDH();
+
+    }
+
+    private clearHighlightRect() {
+        this.canvas.select('svg').select('#rectangles').selectAll('rect').attr('fill', DarkBlue);
+    }
 }

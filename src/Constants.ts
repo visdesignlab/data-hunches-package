@@ -15,3 +15,7 @@ export const BrightOrange = '#eb9800';
 export const DarkBlue = '#00468b';
 
 export const ColorPallate = schemeTableau10;
+
+export const ForeignObjectWidth = 200;
+
+export const ForeignObjectHeight = 250;
