@@ -428,7 +428,7 @@ export class BarChartWithDH {
                 //TODO draw the whole thing on hover
                 if (document.getElementById('svg-canvas') !== null) {
                     const drawingG = document.getElementById('svg-canvas') as any;
-
+                    console.log(rough, rough.default);
                     const rc = rough.default.svg(drawingG);
                     const dhValue = parseFloat(data.content);
                     const sketchyDH = rc.rectangle(bandScale(data.label) || 0, verticalScale(dhValue), bandScale.bandwidth(), this.height - margin.bottom - verticalScale(dhValue), {
