@@ -5,7 +5,7 @@ import { BrightOrange, ColorPallate, DarkBlue, DarkGray, ForeignObjectHeight, Fo
 import { axisBottom, axisLeft } from 'd3-axis';
 import { flatRollup, max } from 'd3-array';
 import 'd3-transition';
-import rough from 'roughjs';
+import { default as rough } from 'roughjs/bin/rough';
 
 export class BarChartWithDH {
     readonly data: BarChartDataPoint[];
@@ -28,7 +28,6 @@ export class BarChartWithDH {
         this.height = height;
         this.currentSelectedLabel = "";
         this.savedDataHunches = previousSavedDatahunches ? JSON.parse(previousSavedDatahunches) : [];
-
         //a button to input user name
         // the name will be associated with the color
         this.userName = userName;
@@ -40,6 +39,7 @@ export class BarChartWithDH {
     // initiation
     createBarChart() {
         const that = this;
+
 
         // Ask the user name
 
@@ -68,6 +68,7 @@ export class BarChartWithDH {
 
         const svg = this.canvas.append("svg")
             .attr("width", this.width)
+
             .attr("height", this.height);
 
         // Construct Scales
@@ -145,6 +146,9 @@ export class BarChartWithDH {
         this.makeDetailedControlPanel(detailedControlBar);
 
         this.canvas.select('svg').select('#specific-controlbar-container').style('display', 'none');
+
+
+        svg.append('g').attr('id', 'svg-canvas');
 
         return this.canvas;
     }
@@ -379,29 +383,22 @@ export class BarChartWithDH {
                         .attr("y1", d => verticalScale(parseFloat(d.content)))
                         .attr("y2", d => verticalScale(parseFloat(d.content)))
                         .attr("x2", d => (bandScale(d.label) || 0) + bandScale.bandwidth())
-                        .attr('z', -1)
                         .attr('stroke', ColorPallate[index]);
 
                 }
             });
         }
 
-        //styling all the rectangle indicators and make interactions
-
-        dhContainer.selectAll('.annotation-rects')
+        //tooltip handling
+        dhContainer.selectAll('*')
             .attr('cursor', 'pointer')
-            .attr('stroke-width', 4)
             .on('mouseover', (e, data: any) => {
-                dhContainer.selectAll('.annotation-marker').attr('opacity', 0.3);
-                dhContainer.selectAll('.annotation-rects').attr('opacity', 0.3);
-                const selectedIndicator = dhContainer.selectAll('.annotation-rects').filter((d: any) => d.id === data.id);
+                dhContainer.selectAll('*').attr('opacity', 0.3);
+                const selectedIndicator = dhContainer.selectAll('*').filter((d: any) => d.id === data.id);
                 selectedIndicator.attr('opacity', 1);
-
 
                 const xLoc = (pointer(e)[0] + 110) > that.width ? (pointer(e)[0] - 110) : pointer(e)[0] + 10;
                 const yLoc = (pointer(e)[1] + 110) > that.height ? (pointer(e)[1] - 110) : pointer(e)[1];
-                //TODO draw the whole thing on hover
-
 
                 const tooltipContainer = that.canvas.select('svg').select('#tooltip-container')
                     .attr('x', xLoc)
@@ -419,46 +416,43 @@ export class BarChartWithDH {
             .on('mouseout', () => {
                 that.canvas.select('svg').select('#tooltip-container')
                     .style('display', 'none');
-                dhContainer.selectAll('.annotation-marker').attr('opacity', 1);
-                dhContainer.selectAll('.annotation-rects').attr('opacity', 1);
+                dhContainer.selectAll('*').attr('opacity', 1);
+            });
+
+        //styling all the rectangle indicators and make interactions
+
+        dhContainer.selectAll('.annotation-rects')
+            .attr('stroke-width', 6)
+            .on('mouseover', (e, data: any) => {
+
+                //TODO draw the whole thing on hover
+                if (document.getElementById('svg-canvas') !== null) {
+                    const drawingG = document.getElementById('svg-canvas') as any;
+
+                    const rc = rough.svg(drawingG);
+                    const dhValue = parseFloat(data.content);
+                    const sketchyDH = rc.rectangle(bandScale(data.label) || 0, verticalScale(dhValue), bandScale.bandwidth(), this.height - margin.bottom - verticalScale(dhValue), {
+                        fill: 'red',
+                        stroke: 'blue',
+                        hachureAngle: 60,
+                        hachureGap: 10,
+                        fillWeight: 5,
+                        strokeWidth: 5,
+                    });
+                    drawingG.appendChild(sketchyDH);
+                }
+            })
+            .on('mouseout', () => {
+                that.canvas.select('svg').select('#svg-canvas').selectAll('*').remove();
             });
 
         // Styling all indicators and make indicator interactions
 
         dhContainer.selectAll('.annotation-marker')
             .attr('r', IndicatorSize)
-            .attr('fill', DarkGray)
-            .attr('cursor', 'pointer')
-            .on('mouseover', (e, data: any) => {
-                dhContainer.selectAll('.annotation-marker').attr('opacity', 0.3);
-                dhContainer.selectAll('.annotation-rects').attr('opacity', 0.3);
-                const selectedIndicator = dhContainer.selectAll('.annotation-marker').filter((d: any) => d.id === data.id);
-                selectedIndicator.attr('opacity', 1);
-
-                // display the annotation in a
-                const xLoc = (pointer(e)[0] + 110) > that.width ? (pointer(e)[0] - 110) : pointer(e)[0] + 10;
-                const yLoc = (pointer(e)[1] + 110) > that.height ? (pointer(e)[1] - 110) : pointer(e)[1];
-                //TODO draw the whole thing on hover
+            .attr('fill', DarkGray);
 
 
-                const tooltipContainer = that.canvas.select('svg').select('#tooltip-container')
-                    .attr('x', xLoc)
-                    .attr('y', yLoc)
-                    .style('display', null)
-                    .select('#tooltip');
-
-                tooltipContainer.select('#tooltip-title')
-                    .html(`${data.label} - ${data.content}`);
-
-                tooltipContainer.select('#tooltip-reason')
-                    .html(data.reasoning);
-            })
-            .on('mouseout', () => {
-                that.canvas.select('svg').select('#tooltip-container')
-                    .style('display', 'none');
-                dhContainer.selectAll('.annotation-marker').attr('opacity', 1);
-                dhContainer.selectAll('.annotation-rects').attr('opacity', 1);
-            });
     }
 
 
