@@ -5,6 +5,7 @@ import { BrightOrange, ColorPallate, DarkBlue, DarkGray, ForeignObjectHeight, Fo
 import { axisBottom, axisLeft } from 'd3-axis';
 import { flatRollup, max } from 'd3-array';
 import 'd3-transition';
+import rough from 'roughjs';
 
 export class BarChartWithDH {
     readonly data: BarChartDataPoint[];
@@ -70,7 +71,6 @@ export class BarChartWithDH {
             .attr("height", this.height);
 
         // Construct Scales
-
         svg.append('g').attr('id', 'rectangles')
             .selectAll("rect")
             .data(this.data)
@@ -82,7 +82,6 @@ export class BarChartWithDH {
             .attr("fill", DarkBlue);
 
         // axis
-
         svg.append('g')
             .attr('class', 'axis')
             .attr("transform", `translate(0,${this.height - margin.bottom})`)
@@ -99,10 +98,14 @@ export class BarChartWithDH {
             .attr('transform', `translate(${margin.left},0)`)
             .call(axisLeft(verticalScale));
 
+        svg.append('g')
+            .attr('id', 'dh-container');
+
         const detailedControlBar = svg.append('foreignObject')
             .attr('id', 'specific-controlbar-container')
             .attr('x', 0)
             .attr('y', 0)
+            .attr('z', 1)
             .attr('width', ForeignObjectWidth)
             .attr('height', ForeignObjectHeight)
             .append('xhtml:div')
@@ -111,11 +114,33 @@ export class BarChartWithDH {
 
         detailedControlBar
             .style('text-align', 'center')
-            // .style('display', 'flex')
-            // .style('flex-direction', 'column')
             .style('background-color', 'rgb(238, 238, 238, 0.8)')
             .style('border-style', 'groove')
             .style('border-color', LightGray);
+
+        const tooltipContainer = svg.append('foreignObject')
+            .attr('id', 'tooltip-container')
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('z', -1)
+            .attr('width', 100)
+            .attr('height', 100)
+            .style('display', 'none')
+            .append('xhtml:div');
+
+        const tooltipText = tooltipContainer
+            .append('div')
+            .attr('id', 'tooltip');
+
+        tooltipText
+            .append('div')
+            .attr('id', 'tooltip-title');
+
+        tooltipText.append('div').attr('id', 'tooltip-reason');
+
+        tooltipText.selectAll('div')
+            .style('background', LightGray)
+            .style('padding', '1px');
 
         this.makeDetailedControlPanel(detailedControlBar);
 
@@ -154,7 +179,6 @@ export class BarChartWithDH {
             .attr('id', 'dp_annotation_button')
             .on('click', () => {
                 that.removeRectSelection();
-                // that.hideInChartForeignObject();
                 that.addInput();
 
             });
@@ -165,7 +189,6 @@ export class BarChartWithDH {
             .attr('id', 'dp_manipulation_button')
             .on('click', () => {
                 that.removeRectSelection();
-                // that.hideInChartForeignObject();
                 that.manipulation();
             });
 
@@ -175,7 +198,6 @@ export class BarChartWithDH {
             .attr('class', 'dh-button')
             .on('click', () => {
                 that.removeRectSelection();
-                // that.hideInChartForeignObject();
                 that.addRating();
             });
 
@@ -185,7 +207,6 @@ export class BarChartWithDH {
             .attr('class', 'dh-button')
             .on('click', () => {
                 that.removeRectSelection();
-                // that.hideInChartForeignObject();
                 that.addDataSpace();
             });
 
@@ -194,9 +215,6 @@ export class BarChartWithDH {
 
     private hideInChartForeignObject = () => {
         this.canvas.select('svg').select('#specific-controlbar-container').style('display', 'none');
-        // this.canvas.select('svg').select('#specific-controlbar-container').select('div')
-        //     .select('#specific-controlbar')
-        //     .style('display', 'none');
     };
 
     private selectADataPointEvent = () => {
@@ -217,7 +235,6 @@ export class BarChartWithDH {
                     .attr('y', yLoc)
                     .select('div')
                     .select('#specific-controlbar');
-                // .style('display', 'table');
                 that.makeDetailedControlPanel(detailedMenu);
             });
     };
@@ -247,7 +264,6 @@ export class BarChartWithDH {
             .attr('id', 'selection_button')
             .on("click", () => {
                 that.selectADataPointEvent();
-
             });
 
         controlBar.append('select')
@@ -286,19 +302,16 @@ export class BarChartWithDH {
     }
 
     private findForeignObject(removeAll: boolean) {
-
         const foreignObjectResult = this.canvas
             .select('svg')
             .select('#specific-controlbar-container')
             .select('div')
             .select('#specific-controlbar');
 
-
         if (removeAll) foreignObjectResult.selectAll('*').remove();
 
         return foreignObjectResult;
     }
-
 
     // Call this method after saving DH
 
@@ -316,18 +329,18 @@ export class BarChartWithDH {
 
         existingAnnotation.push({ label: "all chart", annotaiton: [] });
 
-        const SVGSelection = this.canvas.select('svg');
-
-        SVGSelection.selectAll('.annotation-marker').remove();
-        SVGSelection.selectAll('.annotation-rects').remove();
-
-        SVGSelection.select('#rectangles')
+        this.canvas.select('svg').select('#rectangles')
             .selectAll("rect")
             .data(this.data)
             .join("rect")
             .attr("y", d => verticalScale(d.value))
             .attr("height", d => this.height - margin.bottom - verticalScale(d.value))
             .attr("fill", DarkBlue);
+
+        const SVGSelection = this.canvas.select('svg').select('#dh-container');
+
+        SVGSelection.selectAll('.annotation-marker').remove();
+        SVGSelection.selectAll('.annotation-rects').remove();
 
         // Show all existing data hunches
 
@@ -359,19 +372,16 @@ export class BarChartWithDH {
                             .attr('transform', `translate(0, 25)`);
                     }
                 }
-                // else if (dataHunch.type === "data space") {
-
-
-                // }
                 else {
                     // // data space data hunches and Manipulation data hunches
-                    SVGSelection.append('rect')
+                    SVGSelection.append('line')
                         .datum(dataHunch)
                         .attr('class', 'annotation-rects')
-                        .attr("x", (d) => (bandScale(d.label) || 0))
-                        .attr("y", d => verticalScale(parseFloat(d.content)))
-                        .attr("width", bandScale.bandwidth())
-                        .attr("height", d => that.height - margin.bottom - verticalScale(parseFloat(d.content)))
+                        .attr("x1", (d) => (bandScale(d.label) || 0))
+                        .attr("y1", d => verticalScale(parseFloat(d.content)))
+                        .attr("y2", d => verticalScale(parseFloat(d.content)))
+                        .attr("x2", d => (bandScale(d.label) || 0) + bandScale.bandwidth())
+                        .attr('z', -1)
                         .attr('stroke', ColorPallate[index]);
 
                 }
@@ -381,36 +391,30 @@ export class BarChartWithDH {
         //styling all the rectangle indicators and make interactions
 
         SVGSelection.selectAll('.annotation-rects')
-            .attr("fill", "none")
             .attr('cursor', 'pointer')
             .attr('stroke-width', 4)
-            .on('mouseover', (event, data: any) => {
+            .on('mouseover', (e, data: any) => {
                 SVGSelection.selectAll('.annotation-marker').attr('opacity', 0.3);
                 SVGSelection.selectAll('.annotation-rects').attr('opacity', 0.3);
                 const selectedIndicator = SVGSelection.selectAll('.annotation-rects').filter((d: any) => d.id === data.id);
                 selectedIndicator.attr('opacity', 1);
 
-                // display the annotation in a
-                const foreignObject = SVGSelection.append('foreignObject')
-                    .attr('id', 'indicator-text')
-                    .attr('x', (parseFloat(selectedIndicator.attr('x')) - 100) < 0 ? parseFloat(selectedIndicator.attr('x')) : (parseFloat(selectedIndicator.attr('x')) - 100))
-                    .attr('y', (parseFloat(selectedIndicator.attr('y')) + 110) < that.height ? (parseFloat(selectedIndicator.attr('y')) + 10) : (parseFloat(selectedIndicator.attr('y')) - 100))
-                    .attr('z', -1)
-                    .attr('width', 100)
-                    .attr('height', 100);
 
-                foreignObject.append('xhtml:div')
-                    .append('div')
+                const xLoc = (pointer(e)[0] + 110) > that.width ? (pointer(e)[0] - 110) : pointer(e)[0] + 10;
+                const yLoc = (pointer(e)[1] + 110) > that.height ? (pointer(e)[1] - 110) : pointer(e)[1];
+                //TODO draw the whole thing on hover
+
+
+                const tooltipContainer = that.canvas.select('svg').select('#tooltip-container')
+                    .attr('x', xLoc)
+                    .attr('y', yLoc)
+                    .select('#tooltip');
+
+                tooltipContainer.select('#tooltip-title')
                     .html(`${data.label} - ${data.content}`);
 
-                foreignObject.append('xhtml:div')
-                    .append('div')
+                tooltipContainer.select('#tooltip-reason')
                     .html(data.reasoning);
-
-
-                foreignObject.selectAll('div')
-                    .style('background', LightGray)
-                    .style('padding', '1px');
 
             })
             .on('mouseout', () => {
@@ -440,7 +444,6 @@ export class BarChartWithDH {
                     .attr('width', 100)
                     .attr('height', 100);
 
-
                 foreignObject.append('xhtml:div')
                     .append('div')
                     .html(`${data.label} - ${data.content}`)
@@ -452,11 +455,9 @@ export class BarChartWithDH {
                     .style('background', LightGray);
             })
             .on('mouseout', () => {
-
                 SVGSelection.select('#indicator-text').remove();
                 SVGSelection.selectAll('.annotation-marker').attr('opacity', 1);
                 SVGSelection.selectAll('.annotation-rects').attr('opacity', 1);
-
             });
     }
 
@@ -468,9 +469,6 @@ export class BarChartWithDH {
         const that = this;
 
         const form = this.findForeignObject(true);
-
-
-        // formDiv.style('display', 'flex').style('flex-wrap', 'wrap');
 
         const rateDivs = form.selectAll('.rateDiv')
             .data([1, 2, 3, 4, 5])
@@ -510,12 +508,10 @@ export class BarChartWithDH {
         that.addCancelButton(form);
 
         form.selectAll('*').style('margin', '5px');
-
     }
 
     private addDataSpace() {
         const that = this;
-
 
         const verticalScale = this.makeVerticalScale();
 
@@ -550,7 +546,6 @@ export class BarChartWithDH {
                 const filteredTickArray = newVertScale.ticks().filter(d => d <= oldVerScale.domain()[0]);
 
                 //if the domain end is not in the tick array, we add it so it shows up
-
                 if (filteredTickArray.indexOf(oldVerScale.domain()[0]) < 0) filteredTickArray.push(oldVerScale.domain()[0]);
 
                 //Matching Ticks End
@@ -572,7 +567,6 @@ export class BarChartWithDH {
                     .attr('stroke', BrightOrange);
                 newScale.selectAll('g').selectAll('line').attr('stroke', BrightOrange);
                 newScale.selectAll('g').selectAll('text').attr('fill', BrightOrange);
-
             });
 
         form.append('input')
@@ -621,17 +615,9 @@ export class BarChartWithDH {
                         .duration(2000)
                         .call((axisLeft(verticalScale) as any));
 
-                    that.canvas.select('svg')
-                        .select('#rectangles')
-                        .selectAll("rect")
-                        .data(that.data)
-                        .join("rect")
-                        .transition()
-                        .duration(2000)
-                        .attr("y", d => verticalScale(d.value))
-                        .attr("height", d => that.height - margin.bottom - verticalScale(d.value));
-
                     that.addNewDataHunch(textfield.node()!.value, "data space", reasonInput);
+
+                    that.renderVisualizationWithDH();
 
                     //remove the form
                     that.canvas.select('svg').select('#vertical-axis').call((axisLeft(verticalScale) as any));
@@ -646,15 +632,14 @@ export class BarChartWithDH {
         form.selectAll('*').style('margin', '5px');
     }
 
+
     private manipulation() {
         const that = this;
         let dragging = false;
 
-
         const selectedRect = this.canvas.select('svg').select('#rectangles').selectAll('rect').filter((d: any) => d.label === that.currentSelectedLabel);
 
         const heightScale = this.makeVerticalScale();
-
 
         const form = this.findForeignObject(true);
 
@@ -682,7 +667,9 @@ export class BarChartWithDH {
                     that.canvas.select('svg').on('mousedown', null)
                         .on('mousemove', null)
                         .on('mouseup', null);
+                    that.renderVisualizationWithDH();
                     that.hideInChartForeignObject();
+
                 } else {
                     alert('Please enter a reason for the data hunch!');
                 }
@@ -698,7 +685,6 @@ export class BarChartWithDH {
         const that = this;
 
         const form = this.findForeignObject(true);
-
 
         const textfield = form.append('input').attr('type', 'text').attr('id', 'input');
         if (this.currentSelectedLabel) {
@@ -756,7 +742,7 @@ export class BarChartWithDH {
         this.currentDHID += 1;
 
         this.clearHighlightRect();
-        // this.canvas.select('#specific-controlbar').style('display', 'none').selectAll('.dh-button').attr('disabled', 'true');
+
         this.canvas.select('#general-controlbar')
             // .style('display', 'flex')
             .select('#hunches-dropdown')
@@ -767,7 +753,6 @@ export class BarChartWithDH {
             .attr("value", (d, i) => i); // corresponding value returned by the button
 
         this.renderVisualizationWithDH();
-
     }
 
     private clearHighlightRect() {
@@ -786,7 +771,6 @@ export class BarChartWithDH {
                     .on('mousemove', null)
                     .on('mouseup', null);
             });
-
     }
 
     private addSubmitButton(formDiv: SelectionType) {
