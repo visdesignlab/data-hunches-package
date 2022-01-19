@@ -19,3 +19,5 @@ export const ColorPallate = schemeTableau10;
 export const ForeignObjectWidth = 200;
 
 export const ForeignObjectHeight = 250;
+
+export const TransitionDuration = 1000;

@@ -1,7 +1,7 @@
 import { create, pointer } from 'd3-selection';
 import { scaleLinear, scaleBand } from 'd3-scale';
 import { Annotations, BarChartDataPoint, SelectionType } from './types';
-import { BrightOrange, ColorPallate, DarkBlue, DarkGray, ForeignObjectHeight, ForeignObjectWidth, IndicatorSize, LargeNumber, LightGray, margin } from './Constants';
+import { BrightOrange, ColorPallate, DarkBlue, DarkGray, ForeignObjectHeight, ForeignObjectWidth, IndicatorSize, LargeNumber, LightGray, margin, TransitionDuration } from './Constants';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { flatRollup, max } from 'd3-array';
 import 'd3-transition';
@@ -337,10 +337,10 @@ export class BarChartWithDH {
             .attr("height", d => this.height - margin.bottom - verticalScale(d.value))
             .attr("fill", DarkBlue);
 
-        const SVGSelection = this.canvas.select('svg').select('#dh-container');
+        const dhContainer = this.canvas.select('svg').select('#dh-container');
 
-        SVGSelection.selectAll('.annotation-marker').remove();
-        SVGSelection.selectAll('.annotation-rects').remove();
+        dhContainer.selectAll('.annotation-marker').remove();
+        dhContainer.selectAll('.annotation-rects').remove();
 
         // Show all existing data hunches
 
@@ -353,8 +353,7 @@ export class BarChartWithDH {
                         const currentAnnotationIndex = existingAnnotation.filter(d => d.label === dataHunch.label)[0].annotaiton.length;
                         existingAnnotation.filter(d => d.label === dataHunch.label)[0].annotaiton.push(dataHunch.content);
 
-                        SVGSelection
-                            .append('circle')
+                        dhContainer.append('circle')
                             .datum(dataHunch)
                             .attr('class', 'annotation-marker')
                             .attr('cx', that.width - (currentAnnotationIndex + 1) * (IndicatorSize * 2 + 4))
@@ -363,8 +362,7 @@ export class BarChartWithDH {
                         const currentAnnotationIndex = existingAnnotation.filter(d => d.label === dataHunch.label)[0].annotaiton.length;
                         existingAnnotation.filter(d => d.label === dataHunch.label)[0].annotaiton.push(dataHunch.content);
 
-                        SVGSelection
-                            .append('circle')
+                        dhContainer.append('circle')
                             .datum(dataHunch)
                             .attr('class', 'annotation-marker')
                             .attr('cx', (0.2 * bandScale.bandwidth()) + (bandScale(dataHunch.label) || 0) + 2 * (IndicatorSize + 4) * (currentAnnotationIndex % 2))
@@ -374,7 +372,7 @@ export class BarChartWithDH {
                 }
                 else {
                     // // data space data hunches and Manipulation data hunches
-                    SVGSelection.append('line')
+                    dhContainer.append('line')
                         .datum(dataHunch)
                         .attr('class', 'annotation-rects')
                         .attr("x1", (d) => (bandScale(d.label) || 0))
@@ -390,13 +388,13 @@ export class BarChartWithDH {
 
         //styling all the rectangle indicators and make interactions
 
-        SVGSelection.selectAll('.annotation-rects')
+        dhContainer.selectAll('.annotation-rects')
             .attr('cursor', 'pointer')
             .attr('stroke-width', 4)
             .on('mouseover', (e, data: any) => {
-                SVGSelection.selectAll('.annotation-marker').attr('opacity', 0.3);
-                SVGSelection.selectAll('.annotation-rects').attr('opacity', 0.3);
-                const selectedIndicator = SVGSelection.selectAll('.annotation-rects').filter((d: any) => d.id === data.id);
+                dhContainer.selectAll('.annotation-marker').attr('opacity', 0.3);
+                dhContainer.selectAll('.annotation-rects').attr('opacity', 0.3);
+                const selectedIndicator = dhContainer.selectAll('.annotation-rects').filter((d: any) => d.id === data.id);
                 selectedIndicator.attr('opacity', 1);
 
 
@@ -408,6 +406,7 @@ export class BarChartWithDH {
                 const tooltipContainer = that.canvas.select('svg').select('#tooltip-container')
                     .attr('x', xLoc)
                     .attr('y', yLoc)
+                    .style('display', null)
                     .select('#tooltip');
 
                 tooltipContainer.select('#tooltip-title')
@@ -418,46 +417,47 @@ export class BarChartWithDH {
 
             })
             .on('mouseout', () => {
-                SVGSelection.select('#indicator-text').remove();
-                SVGSelection.selectAll('.annotation-marker').attr('opacity', 1);
-                SVGSelection.selectAll('.annotation-rects').attr('opacity', 1);
+                that.canvas.select('svg').select('#tooltip-container')
+                    .style('display', 'none');
+                dhContainer.selectAll('.annotation-marker').attr('opacity', 1);
+                dhContainer.selectAll('.annotation-rects').attr('opacity', 1);
             });
 
         // Styling all indicators and make indicator interactions
 
-        SVGSelection.selectAll('.annotation-marker')
+        dhContainer.selectAll('.annotation-marker')
             .attr('r', IndicatorSize)
             .attr('fill', DarkGray)
             .attr('cursor', 'pointer')
-            .on('mouseover', (event, data: any) => {
-                SVGSelection.selectAll('.annotation-marker').attr('opacity', 0.3);
-                SVGSelection.selectAll('.annotation-rects').attr('opacity', 0.3);
-                const selectedIndicator = SVGSelection.selectAll('.annotation-marker').filter((d: any) => d.id === data.id);
+            .on('mouseover', (e, data: any) => {
+                dhContainer.selectAll('.annotation-marker').attr('opacity', 0.3);
+                dhContainer.selectAll('.annotation-rects').attr('opacity', 0.3);
+                const selectedIndicator = dhContainer.selectAll('.annotation-marker').filter((d: any) => d.id === data.id);
                 selectedIndicator.attr('opacity', 1);
 
                 // display the annotation in a
-                const foreignObject = SVGSelection.append('foreignObject')
-                    .attr('id', 'indicator-text')
-                    .attr('x', (parseFloat(selectedIndicator.attr('cx')) - 100) < 0 ? parseFloat(selectedIndicator.attr('cx')) : (parseFloat(selectedIndicator.attr('cx')) - 100))
-                    .attr('y', (parseFloat(selectedIndicator.attr('cy')) + 100) > that.height ? (parseFloat(selectedIndicator.attr('cy')) - 100) : parseFloat(selectedIndicator.attr('cy')))
-                    .attr('z', -1)
-                    .attr('width', 100)
-                    .attr('height', 100);
+                const xLoc = (pointer(e)[0] + 110) > that.width ? (pointer(e)[0] - 110) : pointer(e)[0] + 10;
+                const yLoc = (pointer(e)[1] + 110) > that.height ? (pointer(e)[1] - 110) : pointer(e)[1];
+                //TODO draw the whole thing on hover
 
-                foreignObject.append('xhtml:div')
-                    .append('div')
-                    .html(`${data.label} - ${data.content}`)
-                    .style('background', LightGray);
 
-                foreignObject.append('xhtml:div')
-                    .append('div')
-                    .html(data.reasoning)
-                    .style('background', LightGray);
+                const tooltipContainer = that.canvas.select('svg').select('#tooltip-container')
+                    .attr('x', xLoc)
+                    .attr('y', yLoc)
+                    .style('display', null)
+                    .select('#tooltip');
+
+                tooltipContainer.select('#tooltip-title')
+                    .html(`${data.label} - ${data.content}`);
+
+                tooltipContainer.select('#tooltip-reason')
+                    .html(data.reasoning);
             })
             .on('mouseout', () => {
-                SVGSelection.select('#indicator-text').remove();
-                SVGSelection.selectAll('.annotation-marker').attr('opacity', 1);
-                SVGSelection.selectAll('.annotation-rects').attr('opacity', 1);
+                that.canvas.select('svg').select('#tooltip-container')
+                    .style('display', 'none');
+                dhContainer.selectAll('.annotation-marker').attr('opacity', 1);
+                dhContainer.selectAll('.annotation-rects').attr('opacity', 1);
             });
     }
 
@@ -537,7 +537,7 @@ export class BarChartWithDH {
                     .data(newData)
                     .join("rect")
                     .transition()
-                    .duration(2000)
+                    .duration(TransitionDuration)
                     .attr("y", d => newVertScale(d.value))
                     .attr("height", d => that.height - margin.bottom - newVertScale(d.value));
 
@@ -552,7 +552,7 @@ export class BarChartWithDH {
                 that.canvas.select('svg')
                     .select('#vertical-axis')
                     .transition()
-                    .duration(2000)
+                    .duration(TransitionDuration)
                     //Remove tickValues to remove matching ticks
                     .call((axisLeft(oldVerScale).tickValues(filteredTickArray) as any));
 
@@ -560,7 +560,7 @@ export class BarChartWithDH {
                     .select('#axis-mask')
                     .call(axisLeft(verticalScale) as any)
                     .transition()
-                    .duration(2000)
+                    .duration(TransitionDuration)
                     .call((axisLeft(newVertScale) as any));
 
                 newScale.selectAll('path')
@@ -579,12 +579,12 @@ export class BarChartWithDH {
                 textfield.attr('placeholder', `suggest alternative for ${that.currentSelectedLabel}`);
 
                 that.canvas.select('svg')
-                    .select('#axis-mask').selectAll('*').attr('opacity', 1).transition().duration(1000).attr('opacity', 0.0001).remove();
+                    .select('#axis-mask').selectAll('*').attr('opacity', 1).transition().duration(TransitionDuration).attr('opacity', 0.0001).remove();
 
                 that.canvas.select('svg')
                     .select('#vertical-axis')
                     .transition()
-                    .duration(2000)
+                    .duration(TransitionDuration)
                     .call((axisLeft(verticalScale) as any));
 
                 that.canvas.select('svg')
@@ -593,7 +593,7 @@ export class BarChartWithDH {
                     .data(that.data)
                     .join("rect")
                     .transition()
-                    .duration(2000)
+                    .duration(TransitionDuration)
                     .attr("y", d => verticalScale(d.value))
                     .attr("height", d => that.height - margin.bottom - verticalScale(d.value));
             });
@@ -607,12 +607,12 @@ export class BarChartWithDH {
                 if (reasonInput) {
 
                     that.canvas.select('svg')
-                        .select('#axis-mask').selectAll('*').attr('opacity', 1).transition().duration(1000).attr('opacity', 0.0001).remove();
+                        .select('#axis-mask').selectAll('*').attr('opacity', 1).transition().duration(TransitionDuration).attr('opacity', 0.0001).remove();
 
                     that.canvas.select('svg')
                         .select('#vertical-axis')
                         .transition()
-                        .duration(2000)
+                        .duration(TransitionDuration)
                         .call((axisLeft(verticalScale) as any));
 
                     that.addNewDataHunch(textfield.node()!.value, "data space", reasonInput);
