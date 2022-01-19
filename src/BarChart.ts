@@ -5,7 +5,7 @@ import { BrightOrange, ColorPallate, DarkBlue, DarkGray, ForeignObjectHeight, Fo
 import { axisBottom, axisLeft } from 'd3-axis';
 import { flatRollup, max } from 'd3-array';
 import 'd3-transition';
-import { default as rough } from 'roughjs/bin/rough';
+import * as rough from 'roughjs/bin/rough';
 
 export class BarChartWithDH {
     readonly data: BarChartDataPoint[];
@@ -429,7 +429,7 @@ export class BarChartWithDH {
                 if (document.getElementById('svg-canvas') !== null) {
                     const drawingG = document.getElementById('svg-canvas') as any;
 
-                    const rc = rough.svg(drawingG);
+                    const rc = rough.default.svg(drawingG);
                     const dhValue = parseFloat(data.content);
                     const sketchyDH = rc.rectangle(bandScale(data.label) || 0, verticalScale(dhValue), bandScale.bandwidth(), this.height - margin.bottom - verticalScale(dhValue), {
                         fill: 'red',
