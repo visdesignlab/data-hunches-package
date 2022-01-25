@@ -99,8 +99,7 @@ export class BarChartWithDH {
             .attr('transform', `translate(${margin.left},0)`)
             .call(axisLeft(verticalScale));
 
-        svg.append('g')
-            .attr('id', 'dh-container');
+
 
         const detailedControlBar = svg.append('foreignObject')
             .attr('id', 'specific-controlbar-container')
@@ -149,6 +148,10 @@ export class BarChartWithDH {
 
 
         svg.append('g').attr('id', 'svg-canvas');
+
+        svg.append('g').attr('id', 'dh-container');
+
+        svg.append('g').attr('id', 'manipulation-layer');
 
         return this.canvas;
     }
@@ -432,12 +435,14 @@ export class BarChartWithDH {
                     const rc = rough.default.svg(drawingG);
                     const dhValue = parseFloat(data.content);
                     const sketchyDH = rc.rectangle(bandScale(data.label) || 0, verticalScale(dhValue), bandScale.bandwidth(), this.height - margin.bottom - verticalScale(dhValue), {
-                        fill: 'red',
-                        stroke: 'blue',
+                        fill: BrightOrange,
+                        stroke: BrightOrange,
+                        fillStyle: 'zigzag',
+                        roughness: 2.8,
                         hachureAngle: 60,
                         hachureGap: 10,
-                        fillWeight: 5,
-                        strokeWidth: 5,
+                        fillWeight: 2,
+                        strokeWidth: 2,
                     });
                     drawingG.appendChild(sketchyDH);
                 }
@@ -629,23 +634,72 @@ export class BarChartWithDH {
 
     private manipulation() {
         const that = this;
-        let dragging = false;
 
         const selectedRect = this.canvas.select('svg').select('#rectangles').selectAll('rect').filter((d: any) => d.label === that.currentSelectedLabel);
+
+        const manipulationLayer = this.canvas.select('svg')
+            .select('#manipulation-layer');
 
         const heightScale = this.makeVerticalScale();
 
         const form = this.findForeignObject(true);
 
-        this.canvas.select('svg')
-            .on('mousedown', () => { dragging = true; })
+        const manipulationRect = manipulationLayer.append('rect');
+        // Instead of making it draggable entire SVG, make a greyed out second rectanlge to be clickable.
+
+        let dragging = false;
+        let mouseDown = false;
+        let startPoint = 0;
+        const dhRect = manipulationLayer.append('rect')
+            .attr('class', 'manipulation-new')
+            .attr('x', selectedRect.attr('x'))
+            .attr('width', selectedRect.attr('width'));
+        const dhLine = manipulationLayer.append('line')
+            .attr('class', 'manipulation-new')
+            .attr('x1', selectedRect.attr('x'))
+            .attr('x2', parseFloat(selectedRect.attr('x')) + parseFloat(selectedRect.attr('width')));
+
+
+
+        manipulationRect.attr('x', selectedRect.attr('x'))
+            .attr('y', margin.top)
+            .attr('height', that.height - margin.top - margin.bottom)
+            .attr('width', selectedRect.attr('width'))
+            .attr('fill', LightGray)
+            .attr('opacity', 0.5)
+            .on('mousedown', (e) => {
+                dragging = false;
+                mouseDown = true;
+                dhRect
+                    .attr('fill', 'darkred')
+                    .attr('y', pointer(e)[1])
+                    .attr('height', 0);
+                startPoint = pointer(e)[1];
+                dhLine.attr('y1', -20)
+                    .attr('y2', -20);
+            })
             .on('mousemove', (e, d) => {
-                if (dragging) {
-                    selectedRect.attr('y', pointer(e)[1]);
-                    selectedRect.attr('height', that.height - margin.bottom - pointer(e)[1]);
+                dragging = true;
+                if (dragging && mouseDown) {
+                    if (startPoint > pointer(e)[1]) {
+                        dhRect.attr('height', Math.abs(pointer(e)[1] - startPoint));
+                        dhRect.attr('y', pointer(e)[1]);
+                    } else {
+                        dhRect.attr('height', Math.abs(pointer(e)[1] - startPoint));
+                    }
                 }
             })
-            .on('mouseup', () => { dragging = false; });
+            .on('mouseup', (e, d) => {
+                mouseDown = false;
+                if (dragging) {
+
+                } else {
+                    dhLine.attr('y1', pointer(e)[1])
+                        .attr('y2', pointer(e)[1])
+                        .attr('stroke', 'darkred')
+                        .attr('stroke-width', '4px');
+                }
+            });
 
         this.addReason(form);
 
@@ -663,6 +717,9 @@ export class BarChartWithDH {
                         .on('mouseup', null);
                     that.renderVisualizationWithDH();
                     that.hideInChartForeignObject();
+
+                    //clean up manipulation layer
+                    manipulationLayer.selectAll('*').remove();
 
                 } else {
                     alert('Please enter a reason for the data hunch!');
