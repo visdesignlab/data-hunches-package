@@ -692,7 +692,7 @@ export class BarChartWithDH {
             .on('mouseup', (e, d) => {
                 mouseDown = false;
                 if (dragging) {
-
+                    // not sure what to do here yet.
                 } else {
                     dhLine.attr('y1', pointer(e)[1])
                         .attr('y2', pointer(e)[1])
@@ -821,6 +821,7 @@ export class BarChartWithDH {
                 this.canvas.select('svg').on('mousedown', null)
                     .on('mousemove', null)
                     .on('mouseup', null);
+                this.canvas.select('svg').select('#manipulation-layer').selectAll('*').remove();
             });
     }
 
