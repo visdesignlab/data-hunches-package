@@ -1,6 +1,6 @@
 import { create, pointer } from 'd3-selection';
 import { scaleLinear, scaleBand } from 'd3-scale';
-import { Annotations, BarChartDataPoint, SelectionType } from './types';
+import { Annotations, AnnotationType, BarChartDataPoint, SelectionType } from './types';
 import { BrightOrange, ColorPallate, DarkBlue, DarkGray, ForeignObjectHeight, ForeignObjectWidth, IndicatorSize, LargeNumber, LightGray, margin, TransitionDuration } from './Constants';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { flatRollup, max } from 'd3-array';
@@ -376,6 +376,8 @@ export class BarChartWithDH {
                             .attr('cy', (that.height - margin.bottom) + 2 * (IndicatorSize + 2) * Math.floor(currentAnnotationIndex / 2))
                             .attr('transform', `translate(0, 25)`);
                     }
+                } else if (dataHunch.type === "range") {
+
                 }
                 else {
                     // // data space data hunches and Manipulation data hunches
@@ -644,11 +646,12 @@ export class BarChartWithDH {
 
         const form = this.findForeignObject(true);
 
-        const manipulationRect = manipulationLayer.append('rect');
+
         // Instead of making it draggable entire SVG, make a greyed out second rectanlge to be clickable.
 
         let dragging = false;
         let mouseDown = false;
+        let isRange = false;
         let startPoint = 0;
         const dhRect = manipulationLayer.append('rect')
             .attr('class', 'manipulation-new')
@@ -659,12 +662,12 @@ export class BarChartWithDH {
             .attr('x1', selectedRect.attr('x'))
             .attr('x2', parseFloat(selectedRect.attr('x')) + parseFloat(selectedRect.attr('width')));
 
+        const manipulationRect = manipulationLayer.append('rect');
 
-
-        manipulationRect.attr('x', selectedRect.attr('x'))
+        manipulationRect.attr('x', parseFloat(selectedRect.attr('x')) - 50)
             .attr('y', margin.top)
             .attr('height', that.height - margin.top - margin.bottom)
-            .attr('width', selectedRect.attr('width'))
+            .attr('width', parseFloat(selectedRect.attr('width')) + 100)
             .attr('fill', LightGray)
             .attr('opacity', 0.5)
             .on('mousedown', (e) => {
@@ -693,11 +696,13 @@ export class BarChartWithDH {
                 mouseDown = false;
                 if (dragging) {
                     // not sure what to do here yet.
+                    isRange = true;
                 } else {
                     dhLine.attr('y1', pointer(e)[1])
                         .attr('y2', pointer(e)[1])
                         .attr('stroke', 'darkred')
                         .attr('stroke-width', '4px');
+                    isRange = false;
                 }
             });
 
@@ -709,7 +714,16 @@ export class BarChartWithDH {
                 const reasonInput = (form.select('#reason-field') as any).node()!.value;
                 if (reasonInput) {
 
-                    that.addNewDataHunch(heightScale.invert(that.height - margin.bottom - (selectedRect.attr('height') as any)).toFixed(2), "manipulations", reasonInput);
+                    //range
+                    if (isRange) {
+                        that.addNewDataHunch([heightScale.invert((parseFloat(dhRect.attr('y') as any) + parseFloat(dhRect.attr('height') as any))).toFixed(2), heightScale.invert(dhRect.attr('y') as any).toFixed(2)].toString(), "range", reasonInput);
+                    }
+                    // single value
+                    else {
+                        that.addNewDataHunch(heightScale.invert((dhLine.attr('y1') as any)).toFixed(2), "manipulations", reasonInput);
+                    }
+
+
 
                     //remove the form
                     that.canvas.select('svg').on('mousedown', null)
@@ -776,7 +790,7 @@ export class BarChartWithDH {
         });
     }
 
-    private addNewDataHunch(content: string, type: "annotation" | "data space" | "manipulations", reasonInput: string) {
+    private addNewDataHunch(content: string, type: AnnotationType, reasonInput: string) {
 
         this.savedDataHunches.push({
             label: this.currentSelectedLabel || "all chart",

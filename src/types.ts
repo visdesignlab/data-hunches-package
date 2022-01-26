@@ -6,7 +6,7 @@ export interface BarChartDataPoint {
 }
 
 export interface Annotations {
-    type: "annotation" | "data space" | "manipulations";
+    type: AnnotationType;
     user: string;
     label: string;
     content: string;
@@ -14,6 +14,7 @@ export interface Annotations {
     id: number;
 }
 
+export type AnnotationType = "annotation" | "data space" | "manipulations" | "range";
 
 
 export type SelectionType = Selection<any, undefined, null, undefined>;
