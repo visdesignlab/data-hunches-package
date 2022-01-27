@@ -309,11 +309,9 @@ export class BarChartWithDH {
                 controlBar.select('#toggle-hunches').html(that.showDataHunches ? 'Hide Data Hunches' : 'Show Existing Data Hunches');
 
                 if (that.showDataHunches) {
-                    that.canvas.select('svg').selectAll('.annotation-marker').attr('display', null);
-                    that.canvas.select('svg').selectAll('.annotation-rects').attr('display', null);
+                    that.canvas.select('svg').select('#dh-container').selectAll('*').attr('display', null);
                 } else {
-                    that.canvas.select('svg').selectAll('.annotation-marker').attr('display', 'none');
-                    that.canvas.select('svg').selectAll('.annotation-rects').attr('display', 'none');
+                    that.canvas.select('svg').select('#dh-container').selectAll('*').attr('display', 'none');
                 }
             });
     }
@@ -406,17 +404,20 @@ export class BarChartWithDH {
                         .attr('y', verticalScale(parsedRange[0] > parsedRange[1] ? parsedRange[0] : parsedRange[1]))
                         .attr('width', bandScale.bandwidth())
                         .attr('height', Math.abs(verticalScale(parsedRange[0]) - verticalScale(parsedRange[1])))
-                        .attr('fill', d => that.userColorProfile[d.user]);
+                        .attr('fill', 'none')
+                        .attr('stroke-width', 6)
+                        .attr('stroke', d => that.userColorProfile[d.user]);
                 }
                 else {
                     // // data space data hunches and Manipulation data hunches
                     dhContainer.append('line')
                         .datum(dataHunch)
-                        .attr('class', 'annotation-rects')
+                        .attr('class', 'annotation-line')
                         .attr("x1", d => bandScale(d.label) || 0)
                         .attr("y1", d => verticalScale(parseFloat(d.content)))
                         .attr("y2", d => verticalScale(parseFloat(d.content)))
                         .attr("x2", d => (bandScale(d.label) || 0) + bandScale.bandwidth())
+                        .attr('stroke-width', 6)
                         .attr('stroke', d => that.userColorProfile[d.user]);
                 }
             });
@@ -454,8 +455,8 @@ export class BarChartWithDH {
 
         //styling all the rectangle indicators and make interactions
 
-        dhContainer.selectAll('.annotation-rects')
-            .attr('stroke-width', 6)
+        dhContainer.selectAll('.annotation-line')
+
             .on('mouseover', (e, data: any) => {
 
                 if (document.getElementById('svg-canvas') !== null) {
@@ -464,6 +465,33 @@ export class BarChartWithDH {
                     const rc = rough.default.svg(drawingG);
                     const dhValue = parseFloat(data.content);
                     const sketchyDH = rc.rectangle(bandScale(data.label) || 0, verticalScale(dhValue), bandScale.bandwidth(), this.height - margin.bottom - verticalScale(dhValue), {
+                        fill: BrightOrange,
+                        stroke: BrightOrange,
+                        fillStyle: 'zigzag',
+                        roughness: 2.8,
+                        hachureAngle: 60,
+                        hachureGap: 10,
+                        fillWeight: 2,
+                        strokeWidth: 2,
+                    });
+                    drawingG.appendChild(sketchyDH);
+                }
+            })
+            .on('mouseout', () => {
+                that.canvas.select('svg').select('#svg-canvas').selectAll('*').remove();
+            });
+
+        dhContainer.selectAll('.annotation-rects')
+
+            .on('mouseover', (e, data: any) => {
+
+                if (document.getElementById('svg-canvas') !== null) {
+
+                    const drawingG = document.getElementById('svg-canvas') as any;
+                    const rc = rough.default.svg(drawingG);
+                    const dhRange = JSON.parse('[' + data.content + ']');
+                    //x: number, y: number, width: number, height: number
+                    const sketchyDH = rc.rectangle(bandScale(data.label) || 0, verticalScale(dhRange[0] > dhRange[1] ? dhRange[0] : dhRange[1]), bandScale.bandwidth(), Math.abs(verticalScale(dhRange[0]) - verticalScale(dhRange[1])), {
                         fill: BrightOrange,
                         stroke: BrightOrange,
                         fillStyle: 'zigzag',
