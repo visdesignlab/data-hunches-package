@@ -163,7 +163,7 @@ export class BarChartWithDH {
 
         this.canvas.select('svg').select('#specific-controlbar-container').style('display', 'none');
 
-        svg.append('g').attr('id', 'svg-canvas');
+        svg.append('g').attr('id', 'sketchy-canvas');
 
         svg.append('g').attr('id', 'dh-container');
 
@@ -459,9 +459,9 @@ export class BarChartWithDH {
 
             .on('mouseover', (e, data: any) => {
 
-                if (document.getElementById('svg-canvas') !== null) {
+                if (document.getElementById('sketchy-canvas') !== null) {
 
-                    const drawingG = document.getElementById('svg-canvas') as any;
+                    const drawingG = document.getElementById('sketchy-canvas') as any;
                     const rc = rough.default.svg(drawingG);
                     const dhValue = parseFloat(data.content);
                     const sketchyDH = rc.rectangle(bandScale(data.label) || 0, verticalScale(dhValue), bandScale.bandwidth(), this.height - margin.bottom - verticalScale(dhValue), {
@@ -478,16 +478,16 @@ export class BarChartWithDH {
                 }
             })
             .on('mouseout', () => {
-                that.canvas.select('svg').select('#svg-canvas').selectAll('*').remove();
+                that.canvas.select('svg').select('#sketchy-canvas').selectAll('*').remove();
             });
 
         dhContainer.selectAll('.annotation-rects')
 
             .on('mouseover', (e, data: any) => {
 
-                if (document.getElementById('svg-canvas') !== null) {
+                if (document.getElementById('sketchy-canvas') !== null) {
 
-                    const drawingG = document.getElementById('svg-canvas') as any;
+                    const drawingG = document.getElementById('sketchy-canvas') as any;
                     const rc = rough.default.svg(drawingG);
                     const dhRange = JSON.parse('[' + data.content + ']');
                     //x: number, y: number, width: number, height: number
@@ -505,7 +505,7 @@ export class BarChartWithDH {
                 }
             })
             .on('mouseout', () => {
-                that.canvas.select('svg').select('#svg-canvas').selectAll('*').remove();
+                that.canvas.select('svg').select('#sketchy-canvas').selectAll('*').remove();
             });
 
         // Styling all indicators and make indicator interactions
