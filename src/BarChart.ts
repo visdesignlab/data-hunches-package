@@ -2,7 +2,7 @@ import { pointer, select } from 'd3-selection';
 import { scaleLinear, scaleBand } from 'd3-scale';
 import { getFirestore, collection, getDocs, Firestore, setDoc, doc, CollectionReference, DocumentData } from 'firebase/firestore/lite';
 import { Annotations, AnnotationType, BarChartDataPoint, SelectionType } from './types';
-import { BrightOrange, ColorPallate, DarkBlue, DarkGray, ForeignObjectHeight, ForeignObjectWidth, IndicatorSize, LargeNumber, LightGray, margin, TransitionDuration } from './Constants';
+import { BrightOrange, ColorPallate, DarkBlue, DarkGray, FirebaseSetup, ForeignObjectHeight, ForeignObjectWidth, IndicatorSize, LargeNumber, LightGray, margin, TransitionDuration } from './Constants';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { flatRollup, max } from 'd3-array';
 import 'd3-transition';
@@ -21,6 +21,8 @@ export class BarChartWithDH {
     private userName: string;
     private datasetName: string;
     private firebase: Firestore;
+    // {username : colorString}
+    private userColorProfile: any;
     // Add a way to select a DH from the drop down?
     private selectedDataHunch: number | null;
 
@@ -31,21 +33,14 @@ export class BarChartWithDH {
         this.width = width;
         this.height = height;
         this.currentSelectedLabel = "";
-
+        this.userColorProfile = {};
         //a button to input user name
         // the name will be associated with the color
         this.userName = userName;
         this.showDataHunches = true;
         this.currentDHID = 0;
         this.selectedDataHunch = null;
-        this.firebase = getFirestore(initializeApp({
-            apiKey: "AIzaSyAM2CAoS7L7Ix0UTgET6dB-iI-q3wb2VDQ",
-            authDomain: "data-hunch.firebaseapp.com",
-            projectId: "data-hunch",
-            storageBucket: "data-hunch.appspot.com",
-            messagingSenderId: "746016997124",
-            appId: "1:746016997124:web:ee92f17b272373d28ada51"
-        }));
+        this.firebase = getFirestore(initializeApp(FirebaseSetup));
         this.datasetName = datasetName;
         this.savedDataHunches = [];
 
@@ -61,11 +56,11 @@ export class BarChartWithDH {
         this.currentDHID = savedQuery.size;
 
         savedQuery.forEach((doc) => {
-            this.savedDataHunches.push(doc.data() as Annotations);
+            that.savedDataHunches.push(doc.data() as Annotations);
+            if (!that.userColorProfile[doc.data().user]) {
+                that.userColorProfile[doc.data().user] = ColorPallate[Object.keys(that.userColorProfile).length];
+            }
         });
-
-
-        // Ask the user name
 
         const controlBar = this.canvas.append('div').attr('id', 'general-controlbar');
         controlBar.style("display", "table")
@@ -87,8 +82,6 @@ export class BarChartWithDH {
             .style('background-color', LightGray)
             .style('font-size', 'small')
             .append('dl');
-
-
 
         const svg = this.canvas.append("svg")
             .attr("width", this.width)
@@ -169,7 +162,6 @@ export class BarChartWithDH {
         this.makeDetailedControlPanel(detailedControlBar);
 
         this.canvas.select('svg').select('#specific-controlbar-container').style('display', 'none');
-
 
         svg.append('g').attr('id', 'svg-canvas');
 
@@ -373,8 +365,7 @@ export class BarChartWithDH {
 
         const dhContainer = this.canvas.select('svg').select('#dh-container');
 
-        dhContainer.selectAll('.annotation-marker').remove();
-        dhContainer.selectAll('.annotation-rects').remove();
+        dhContainer.selectAll('*').remove();
 
         // Show all existing data hunches
 
@@ -390,6 +381,7 @@ export class BarChartWithDH {
                         dhContainer.append('circle')
                             .datum(dataHunch)
                             .attr('class', 'annotation-marker')
+                            .attr('fill', d => that.userColorProfile[d.user])
                             .attr('cx', that.width - (currentAnnotationIndex + 1) * (IndicatorSize * 2 + 4))
                             .attr('cy', IndicatorSize * 2);
                     } else {
@@ -401,22 +393,31 @@ export class BarChartWithDH {
                             .attr('class', 'annotation-marker')
                             .attr('cx', (0.2 * bandScale.bandwidth()) + (bandScale(dataHunch.label) || 0) + 2 * (IndicatorSize + 4) * (currentAnnotationIndex % 2))
                             .attr('cy', (that.height - margin.bottom) + 2 * (IndicatorSize + 2) * Math.floor(currentAnnotationIndex / 2))
-                            .attr('transform', `translate(0, 25)`);
+                            .attr('transform', `translate(0, 25)`)
+                            .attr('fill', d => that.userColorProfile[d.user]);
                     }
                 } else if (dataHunch.type === "range") {
 
+                    const parsedRange = JSON.parse('[' + dataHunch.content + ']');
+                    dhContainer.append('rect')
+                        .datum(dataHunch)
+                        .attr('class', 'annotation-rects')
+                        .attr('x', d => (bandScale(d.label) || 0))
+                        .attr('y', verticalScale(parsedRange[0] > parsedRange[1] ? parsedRange[0] : parsedRange[1]))
+                        .attr('width', bandScale.bandwidth())
+                        .attr('height', Math.abs(verticalScale(parsedRange[0]) - verticalScale(parsedRange[1])))
+                        .attr('fill', d => that.userColorProfile[d.user]);
                 }
                 else {
                     // // data space data hunches and Manipulation data hunches
                     dhContainer.append('line')
                         .datum(dataHunch)
                         .attr('class', 'annotation-rects')
-                        .attr("x1", (d) => (bandScale(d.label) || 0))
+                        .attr("x1", d => bandScale(d.label) || 0)
                         .attr("y1", d => verticalScale(parseFloat(d.content)))
                         .attr("y2", d => verticalScale(parseFloat(d.content)))
                         .attr("x2", d => (bandScale(d.label) || 0) + bandScale.bandwidth())
-                        .attr('stroke', ColorPallate[index]);
-
+                        .attr('stroke', d => that.userColorProfile[d.user]);
                 }
             });
         }
@@ -457,10 +458,9 @@ export class BarChartWithDH {
             .attr('stroke-width', 6)
             .on('mouseover', (e, data: any) => {
 
-                //TODO draw the whole thing on hover
                 if (document.getElementById('svg-canvas') !== null) {
+
                     const drawingG = document.getElementById('svg-canvas') as any;
-                    console.log(rough, rough.default);
                     const rc = rough.default.svg(drawingG);
                     const dhValue = parseFloat(data.content);
                     const sketchyDH = rc.rectangle(bandScale(data.label) || 0, verticalScale(dhValue), bandScale.bandwidth(), this.height - margin.bottom - verticalScale(dhValue), {
@@ -483,9 +483,7 @@ export class BarChartWithDH {
         // Styling all indicators and make indicator interactions
 
         dhContainer.selectAll('.annotation-marker')
-            .attr('r', IndicatorSize)
-            .attr('fill', DarkGray);
-
+            .attr('r', IndicatorSize);
 
     }
 
@@ -673,7 +671,6 @@ export class BarChartWithDH {
 
         const form = this.findForeignObject(true);
 
-
         // Instead of making it draggable entire SVG, make a greyed out second rectanlge to be clickable.
 
         let dragging = false;
@@ -838,11 +835,6 @@ export class BarChartWithDH {
             id: this.currentDHID,
             reasoning: reasonInput
         });
-
-
-        // console log all changes to saved DH;
-
-
 
         this.generateRecordBoardList();
         this.currentDHID += 1;

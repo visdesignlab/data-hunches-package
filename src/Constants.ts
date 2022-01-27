@@ -21,3 +21,12 @@ export const ForeignObjectWidth = 200;
 export const ForeignObjectHeight = 250;
 
 export const TransitionDuration = 1000;
+
+export const FirebaseSetup = {
+    apiKey: "AIzaSyAM2CAoS7L7Ix0UTgET6dB-iI-q3wb2VDQ",
+    authDomain: "data-hunch.firebaseapp.com",
+    projectId: "data-hunch",
+    storageBucket: "data-hunch.appspot.com",
+    messagingSenderId: "746016997124",
+    appId: "1:746016997124:web:ee92f17b272373d28ada51"
+};
