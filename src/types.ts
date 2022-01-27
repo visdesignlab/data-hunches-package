@@ -17,5 +17,5 @@ export interface Annotations {
 export type AnnotationType = "annotation" | "data space" | "manipulations" | "range";
 
 
-export type SelectionType = Selection<any, undefined, null, undefined>;
+export type SelectionType = Selection<any, undefined, HTMLElement, undefined>;
 

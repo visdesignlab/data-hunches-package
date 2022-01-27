@@ -1,15 +1,17 @@
-import { create, pointer } from 'd3-selection';
+import { pointer, select } from 'd3-selection';
 import { scaleLinear, scaleBand } from 'd3-scale';
+import { getFirestore, collection, getDocs, Firestore, setDoc, doc, CollectionReference, DocumentData } from 'firebase/firestore/lite';
 import { Annotations, AnnotationType, BarChartDataPoint, SelectionType } from './types';
 import { BrightOrange, ColorPallate, DarkBlue, DarkGray, ForeignObjectHeight, ForeignObjectWidth, IndicatorSize, LargeNumber, LightGray, margin, TransitionDuration } from './Constants';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { flatRollup, max } from 'd3-array';
 import 'd3-transition';
+import { initializeApp } from "firebase/app";
 import * as rough from 'roughjs/bin/rough';
 
 export class BarChartWithDH {
     readonly data: BarChartDataPoint[];
-    readonly canvas: SelectionType;
+    canvas: SelectionType;
     readonly width: number;
     readonly height: number;
     currentSelectedLabel: string;
@@ -17,28 +19,50 @@ export class BarChartWithDH {
     private showDataHunches: boolean;
     private currentDHID: number;
     private userName: string;
+    private datasetName: string;
+    private firebase: Firestore;
     // Add a way to select a DH from the drop down?
     private selectedDataHunch: number | null;
 
-    constructor(dataInput: BarChartDataPoint[], width: number, height: number, userName: string, previousSavedDatahunches?: string
+    constructor(datasetName: string, dataInput: BarChartDataPoint[], width: number, height: number, userName: string
     ) {
         this.data = dataInput;
-        this.canvas = create('div');
+        this.canvas = select('#canvas');
         this.width = width;
         this.height = height;
         this.currentSelectedLabel = "";
-        this.savedDataHunches = previousSavedDatahunches ? JSON.parse(previousSavedDatahunches) : [];
+
         //a button to input user name
         // the name will be associated with the color
         this.userName = userName;
         this.showDataHunches = true;
         this.currentDHID = 0;
         this.selectedDataHunch = null;
+        this.firebase = getFirestore(initializeApp({
+            apiKey: "AIzaSyAM2CAoS7L7Ix0UTgET6dB-iI-q3wb2VDQ",
+            authDomain: "data-hunch.firebaseapp.com",
+            projectId: "data-hunch",
+            storageBucket: "data-hunch.appspot.com",
+            messagingSenderId: "746016997124",
+            appId: "1:746016997124:web:ee92f17b272373d28ada51"
+        }));
+        this.datasetName = datasetName;
+        this.savedDataHunches = [];
+
     }
 
     // initiation
-    createBarChart() {
+    async createBarChart() {
         const that = this;
+
+        //retrieve previously saved DH
+
+        const savedQuery = await getDocs(collection(this.firebase, this.datasetName));
+        this.currentDHID = savedQuery.size;
+
+        savedQuery.forEach((doc) => {
+            this.savedDataHunches.push(doc.data() as Annotations);
+        });
 
 
         // Ask the user name
@@ -790,7 +814,7 @@ export class BarChartWithDH {
         });
     }
 
-    private addNewDataHunch(content: string, type: AnnotationType, reasonInput: string) {
+    private async addNewDataHunch(content: string, type: AnnotationType, reasonInput: string) {
 
         this.savedDataHunches.push({
             label: this.currentSelectedLabel || "all chart",
@@ -801,8 +825,22 @@ export class BarChartWithDH {
             reasoning: reasonInput
         });
 
-        //console log all changes to saved DH
-        console.log(JSON.stringify(this.savedDataHunches));
+        const databaseRef = collection(this.firebase, this.datasetName);
+
+        await setDoc(doc(databaseRef, this.currentDHID.toString()), {
+            label: this.currentSelectedLabel || "all chart",
+            user: this.userName,
+            content: content,
+            type: type,
+            id: this.currentDHID,
+            reasoning: reasonInput
+        });
+
+
+        // console log all changes to saved DH;
+
+
+
         this.generateRecordBoardList();
         this.currentDHID += 1;
 

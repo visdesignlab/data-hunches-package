@@ -27,6 +27,7 @@
     "d3-scale-chromatic": "^3.0.0",
     "d3-selection": "^3.0.0",
     "d3-transition": "^3.0.1",
+    "firebase": "^9.6.4",
     "roughjs": "^4.5.2"
   }
 }
