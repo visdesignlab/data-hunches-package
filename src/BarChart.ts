@@ -88,7 +88,7 @@ export class BarChartWithDH {
             .style('font-size', 'small')
             .append('dl');
 
-        this.generateRecordBoardList();
+
 
         const svg = this.canvas.append("svg")
             .attr("width", this.width)
@@ -176,6 +176,9 @@ export class BarChartWithDH {
         svg.append('g').attr('id', 'dh-container');
 
         svg.append('g').attr('id', 'manipulation-layer');
+
+        this.generateRecordBoardList();
+        this.renderVisualizationWithDH();
 
         return this.canvas;
     }
