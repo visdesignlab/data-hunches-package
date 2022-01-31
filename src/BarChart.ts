@@ -2,7 +2,7 @@ import { pointer, select } from 'd3-selection';
 import { scaleLinear, scaleBand } from 'd3-scale';
 import { getFirestore, collection, getDocs, Firestore, setDoc, doc, CollectionReference, DocumentData } from 'firebase/firestore/lite';
 import { Annotations, AnnotationType, BarChartDataPoint, SelectionType } from './types';
-import { BrightOrange, ColorPallate, DarkBlue, DarkGray, FirebaseSetup, ForeignObjectHeight, ForeignObjectWidth, IndicatorSize, LargeNumber, LightGray, margin, TransitionDuration } from './Constants';
+import { BrightOrange, ColorPallate, ConfidenceInput, DarkBlue, DarkGray, FirebaseSetup, ForeignObjectHeight, ForeignObjectWidth, IndicatorSize, LargeNumber, LightGray, margin, TransitionDuration } from './Constants';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { flatRollup, max } from 'd3-array';
 import 'd3-transition';
@@ -118,11 +118,16 @@ export class BarChartWithDH {
 
 
 
+        svg.append('g').attr('id', 'sketchy-canvas');
+
+        svg.append('g').attr('id', 'dh-container');
+
+        svg.append('g').attr('id', 'manipulation-layer');
+
         const detailedControlBar = svg.append('foreignObject')
             .attr('id', 'specific-controlbar-container')
             .attr('x', 0)
             .attr('y', 0)
-            .attr('z', 1)
             .attr('width', ForeignObjectWidth)
             .attr('height', ForeignObjectHeight)
             .append('xhtml:div')
@@ -134,6 +139,10 @@ export class BarChartWithDH {
             .style('background-color', 'rgb(238, 238, 238, 0.8)')
             .style('border-style', 'groove')
             .style('border-color', LightGray);
+
+        this.makeDetailedControlPanel(detailedControlBar);
+
+        this.canvas.select('svg').select('#specific-controlbar-container').style('display', 'none');
 
         const tooltipContainer = svg.append('foreignObject')
             .attr('id', 'tooltip-container')
@@ -158,16 +167,6 @@ export class BarChartWithDH {
         tooltipText.selectAll('div')
             .style('background', LightGray)
             .style('padding', '1px');
-
-        this.makeDetailedControlPanel(detailedControlBar);
-
-        this.canvas.select('svg').select('#specific-controlbar-container').style('display', 'none');
-
-        svg.append('g').attr('id', 'sketchy-canvas');
-
-        svg.append('g').attr('id', 'dh-container');
-
-        svg.append('g').attr('id', 'manipulation-layer');
 
         this.generateRecordBoardList();
         this.renderVisualizationWithDH();
@@ -321,7 +320,22 @@ export class BarChartWithDH {
     }
 
     private addReason(formDiv: SelectionType) {
-        formDiv.append('textarea').attr('id', 'reason-field').attr('placeholder', `Add reason for the data hunch`);
+        formDiv.append('textarea').attr('id', 'reason-field').attr('placeholder', `Add reason for the data hunch`).style('margin', 0);
+        const confidenceDiv = formDiv.append('div').attr('id', 'confidence-div');
+
+        confidenceDiv.append('label')
+            .attr('for', 'confidence')
+            .html('Confidence')
+            .style('font', "0.7rem 'Fira Sans', sans-serif");
+        confidenceDiv.append('input')
+            .attr('id', 'confidence-range')
+            .attr('type', 'range')
+            .attr('name', 'confidence')
+            .attr('list', 'tickmarks')
+            .style('vertical-align', 'text-top')
+            .attr('min', 0)
+            .attr('value', 2)
+            .attr('max', 4);
 
     }
 
@@ -427,25 +441,7 @@ export class BarChartWithDH {
         dhContainer.selectAll('*')
             .attr('cursor', 'pointer')
             .on('mouseover', (e, data: any) => {
-                dhContainer.selectAll('*').attr('opacity', 0.3);
-                const selectedIndicator = dhContainer.selectAll('*').filter((d: any) => d.id === data.id);
-                selectedIndicator.attr('opacity', 1);
-
-                const xLoc = (pointer(e)[0] + 110) > that.width ? (pointer(e)[0] - 110) : pointer(e)[0] + 10;
-                const yLoc = (pointer(e)[1] + 110) > that.height ? (pointer(e)[1] - 110) : pointer(e)[1];
-
-                const tooltipContainer = that.canvas.select('svg').select('#tooltip-container')
-                    .attr('x', xLoc)
-                    .attr('y', yLoc)
-                    .style('display', null)
-                    .select('#tooltip');
-
-                tooltipContainer.select('#tooltip-title')
-                    .html(`${data.label} - ${data.content}`);
-
-                tooltipContainer.select('#tooltip-reason')
-                    .html(data.reasoning);
-
+                that.onHoverDH(dhContainer, e, data);
             })
             .on('mouseout', () => {
                 that.canvas.select('svg').select('#tooltip-container')
@@ -458,6 +454,7 @@ export class BarChartWithDH {
         dhContainer.selectAll('.annotation-line')
 
             .on('mouseover', (e, data: any) => {
+                that.onHoverDH(dhContainer, e, data);
 
                 if (document.getElementById('sketchy-canvas') !== null) {
 
@@ -479,12 +476,15 @@ export class BarChartWithDH {
             })
             .on('mouseout', () => {
                 that.canvas.select('svg').select('#sketchy-canvas').selectAll('*').remove();
+                that.canvas.select('svg').select('#tooltip-container')
+                    .style('display', 'none');
+                dhContainer.selectAll('*').attr('opacity', 1);
             });
 
         dhContainer.selectAll('.annotation-rects')
 
             .on('mouseover', (e, data: any) => {
-
+                that.onHoverDH(dhContainer, e, data);
                 if (document.getElementById('sketchy-canvas') !== null) {
 
                     const drawingG = document.getElementById('sketchy-canvas') as any;
@@ -506,6 +506,9 @@ export class BarChartWithDH {
             })
             .on('mouseout', () => {
                 that.canvas.select('svg').select('#sketchy-canvas').selectAll('*').remove();
+                that.canvas.select('svg').select('#tooltip-container')
+                    .style('display', 'none');
+                dhContainer.selectAll('*').attr('opacity', 1);
             });
 
         // Styling all indicators and make indicator interactions
@@ -545,12 +548,14 @@ export class BarChartWithDH {
         this.addSubmitButton(form)
             .on('click', () => {
                 const reasonInput = (form.select('#reason-field') as any).node()!.value;
+                const confidenceLevel = (form.select('#confidence-range') as any).node()!.value;
                 if (reasonInput) {
                     // save the form input to array
                     that.addNewDataHunch(
                         (form.select('input[name="rating"]:checked').node() as any).value,
                         "annotation",
-                        reasonInput
+                        reasonInput,
+                        confidenceLevel
                     );
                     //hide the form
                     that.hideInChartForeignObject();
@@ -561,7 +566,8 @@ export class BarChartWithDH {
 
         that.addCancelButton(form);
 
-        form.selectAll('*').style('margin', '5px');
+        form.selectChildren('input').style('margin', '5px');
+        form.selectChildren('textarea').style('margin', '5px');
     }
 
     private addDataSpace() {
@@ -571,7 +577,11 @@ export class BarChartWithDH {
 
         const form = this.findForeignObject(true);
 
-        const textfield = form.append('input').attr('type', 'number').attr('step', '0.01').attr('id', 'input-field').style('width', '-webkit-fill-available');
+        const textfield = form.append('input')
+            .attr('type', 'number')
+            .attr('step', '0.01')
+            .attr('id', 'input-field')
+            .style('width', '-webkit-fill-available');
         textfield.attr('placeholder', `suggest alternative for ${this.currentSelectedLabel}`);
 
         form.append('input')
@@ -658,6 +668,7 @@ export class BarChartWithDH {
             .on('click', () => {
                 // save the form input to array
                 const reasonInput = (form.select('#reason-field') as any).node()!.value;
+                const confidenceLevel = (form.select('#confidence-range') as any).node()!.value;
                 if (reasonInput) {
 
                     that.canvas.select('svg')
@@ -669,7 +680,7 @@ export class BarChartWithDH {
                         .duration(TransitionDuration)
                         .call((axisLeft(verticalScale) as any));
 
-                    that.addNewDataHunch(textfield.node()!.value, "data space", reasonInput);
+                    that.addNewDataHunch(textfield.node()!.value, "data space", reasonInput, confidenceLevel);
 
                     that.renderVisualizationWithDH();
 
@@ -683,7 +694,8 @@ export class BarChartWithDH {
 
         that.addCancelButton(form);
 
-        form.selectAll('*').style('margin', '5px');
+        form.selectChildren('input').style('margin', '5px');
+        form.selectChildren('textarea').style('margin', '5px');
     }
 
 
@@ -764,18 +776,17 @@ export class BarChartWithDH {
             .on('click', () => {
                 // save the form input to array
                 const reasonInput = (form.select('#reason-field') as any).node()!.value;
+                const confidenceLevel = (form.select('#confidence-range') as any).node()!.value;
                 if (reasonInput) {
 
                     //range
                     if (isRange) {
-                        that.addNewDataHunch([heightScale.invert((parseFloat(dhRect.attr('y') as any) + parseFloat(dhRect.attr('height') as any))).toFixed(2), heightScale.invert(dhRect.attr('y') as any).toFixed(2)].toString(), "range", reasonInput);
+                        that.addNewDataHunch([heightScale.invert((parseFloat(dhRect.attr('y') as any) + parseFloat(dhRect.attr('height') as any))).toFixed(2), heightScale.invert(dhRect.attr('y') as any).toFixed(2)].toString(), "range", reasonInput, confidenceLevel);
                     }
                     // single value
                     else {
-                        that.addNewDataHunch(heightScale.invert((dhLine.attr('y1') as any)).toFixed(2), "manipulations", reasonInput);
+                        that.addNewDataHunch(heightScale.invert((dhLine.attr('y1') as any)).toFixed(2), "manipulations", reasonInput, confidenceLevel);
                     }
-
-
 
                     //remove the form
                     that.canvas.select('svg').on('mousedown', null)
@@ -793,8 +804,8 @@ export class BarChartWithDH {
             });
 
         that.addCancelButton(form);
-
-        form.selectAll('*').style('margin', '5px');
+        form.selectChildren('input').style('margin', '5px');
+        form.selectChildren('textarea').style('margin', '5px');
     }
 
 
@@ -803,21 +814,21 @@ export class BarChartWithDH {
 
         const form = this.findForeignObject(true);
 
-        const textfield = form.append('input').attr('type', 'text').attr('id', 'input');
-        if (this.currentSelectedLabel) {
-            textfield.attr('placeholder', this.currentSelectedLabel);
-        } else {
-            textfield.attr('placeholder', 'Annotation on the chart');
-        }
+        const textfield = form.append('input').attr('type', 'text').attr('id', 'input').style('width', '-webkit-fill-available');;
+
+
+        textfield.attr('placeholder', `Annotation on ${this.currentSelectedLabel ? this.currentSelectedLabel : 'the chart'}`);
+
 
         this.addReason(form);
 
         this.addSubmitButton(form)
             .on('click', () => {
                 const reasonInput = (form.select('#reason-field') as any).node()!.value;
+                const confidenceLevel = (form.select('#confidence-range') as any).node()!.value;
                 if (reasonInput) {
                     // save the form input to  array
-                    that.addNewDataHunch(textfield.node()!.value, "annotation", reasonInput);
+                    that.addNewDataHunch(textfield.node()!.value, "annotation", reasonInput, confidenceLevel);
                     //remove the form
                     that.hideInChartForeignObject();
                 } else {
@@ -826,7 +837,8 @@ export class BarChartWithDH {
             });
         that.addCancelButton(form);
 
-        form.selectAll('*').style('margin', '5px');
+        form.selectChildren('input').style('margin', '5px');
+        form.selectChildren('textarea').style('margin', '5px');
     }
 
     // Record Related
@@ -839,30 +851,26 @@ export class BarChartWithDH {
             recordBoard.append('dd').html(d.user);
             recordBoard.append('dd').html(d.content);
             recordBoard.append('dd').html(d.reasoning);
+            recordBoard.append('dd').html(ConfidenceInput[d.confidenceLevel]);
         });
     }
 
-    private async addNewDataHunch(content: string, type: AnnotationType, reasonInput: string) {
+    private async addNewDataHunch(content: string, type: AnnotationType, reasonInput: string, confidenceLevel: number) {
 
-        this.savedDataHunches.push({
+        const newDHObj = {
             label: this.currentSelectedLabel || "all chart",
             user: this.userName,
             content: content,
             type: type,
             id: this.currentDHID,
-            reasoning: reasonInput
-        });
+            reasoning: reasonInput,
+            confidenceLevel: confidenceLevel,
+        };
+        this.savedDataHunches.push(newDHObj);
 
         const databaseRef = collection(this.firebase, this.datasetName);
 
-        await setDoc(doc(databaseRef, this.currentDHID.toString()), {
-            label: this.currentSelectedLabel || "all chart",
-            user: this.userName,
-            content: content,
-            type: type,
-            id: this.currentDHID,
-            reasoning: reasonInput
-        });
+        await setDoc(doc(databaseRef, this.currentDHID.toString()), newDHObj);
 
         this.generateRecordBoardList();
         this.currentDHID += 1;
@@ -870,7 +878,6 @@ export class BarChartWithDH {
         this.clearHighlightRect();
 
         this.canvas.select('#general-controlbar')
-            // .style('display', 'flex')
             .select('#hunches-dropdown')
             .selectAll('option')
             .data(this.savedDataHunches)
@@ -902,5 +909,26 @@ export class BarChartWithDH {
 
     private addSubmitButton(formDiv: SelectionType) {
         return formDiv.append('input').attr('type', 'button').attr('value', 'Submit');
+    }
+
+    private onHoverDH(dhContainer: SelectionType, event: any, data: Annotations) {
+        dhContainer.selectAll('*').attr('opacity', 0.3);
+        const selectedIndicator = dhContainer.selectAll('*').filter((d: any) => d.id === data.id);
+        selectedIndicator.attr('opacity', 1);
+
+        const xLoc = (pointer(event)[0] + 110) > this.width ? (pointer(event)[0] - 110) : pointer(event)[0] + 10;
+        const yLoc = (pointer(event)[1] + 110) > this.height ? (pointer(event)[1] - 110) : pointer(event)[1];
+
+        const tooltipContainer = this.canvas.select('svg').select('#tooltip-container')
+            .attr('x', xLoc)
+            .attr('y', yLoc)
+            .style('display', null)
+            .select('#tooltip');
+
+        tooltipContainer.select('#tooltip-title')
+            .html(`${data.label} - ${data.content}`);
+
+        tooltipContainer.select('#tooltip-reason')
+            .html(data.reasoning);
     }
 }

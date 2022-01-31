@@ -30,3 +30,5 @@ export const FirebaseSetup = {
     messagingSenderId: "746016997124",
     appId: "1:746016997124:web:ee92f17b272373d28ada51"
 };
+
+export const ConfidenceInput = ['Not at all confident', 'Not very confident', 'Somewhat confident', 'Very confident', 'Extremely confident'];

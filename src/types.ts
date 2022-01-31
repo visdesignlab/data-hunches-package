@@ -12,6 +12,7 @@ export interface Annotations {
     content: string;
     reasoning: string;
     id: number;
+    confidenceLevel: number;
 }
 
 export type AnnotationType = "annotation" | "data space" | "manipulations" | "range";
