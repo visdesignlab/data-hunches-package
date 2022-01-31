@@ -1,10 +1,10 @@
 import { pointer, select } from 'd3-selection';
 import { scaleLinear, scaleBand } from 'd3-scale';
-import { getFirestore, collection, getDocs, Firestore, setDoc, doc, CollectionReference, DocumentData } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, Firestore, setDoc, doc } from 'firebase/firestore/lite';
 import { Annotations, AnnotationType, BarChartDataPoint, SelectionType } from './types';
 import { BrightOrange, ColorPallate, ConfidenceInput, DarkBlue, DarkGray, FirebaseSetup, ForeignObjectHeight, ForeignObjectWidth, IndicatorSize, LargeNumber, LightGray, margin, TransitionDuration } from './Constants';
 import { axisBottom, axisLeft } from 'd3-axis';
-import { flatRollup, max } from 'd3-array';
+import { max } from 'd3-array';
 import 'd3-transition';
 import { initializeApp } from "firebase/app";
 import * as rough from 'roughjs/bin/rough';
@@ -85,8 +85,18 @@ export class BarChartWithDH {
 
         const svg = this.canvas.append("svg")
             .attr("width", this.width)
-
             .attr("height", this.height);
+
+        // add blur
+        // need 5 filters for 5 levels
+
+        svg.selectAll('filter')
+            .data(ConfidenceInput)
+            .join('filter')
+            .attr('id', (d, i) => `blur-filter-${i}`)
+            .append('feGaussianBlur')
+            .attr('in', 'SourceGraphic')
+            .attr('stdDeviation', (d, i) => (5 - i));
 
         // Construct Scales
         svg.append('g').attr('id', 'rectangles')
@@ -424,6 +434,7 @@ export class BarChartWithDH {
                 }
                 else {
                     // // data space data hunches and Manipulation data hunches
+                    // TODO this need to change to rect. Line does not work with filter.
                     dhContainer.append('line')
                         .datum(dataHunch)
                         .attr('class', 'annotation-line')
@@ -439,6 +450,7 @@ export class BarChartWithDH {
 
         //tooltip handling
         dhContainer.selectAll('*')
+            .attr('filter', (d: any) => `url(#blur-filter-${d.confidenceLevel})`)
             .attr('cursor', 'pointer')
             .on('mouseover', (e, data: any) => {
                 that.onHoverDH(dhContainer, e, data);
@@ -514,7 +526,8 @@ export class BarChartWithDH {
         // Styling all indicators and make indicator interactions
 
         dhContainer.selectAll('.annotation-marker')
-            .attr('r', IndicatorSize);
+            .attr('r', IndicatorSize)
+            .attr('fill', DarkGray);
 
     }
 
