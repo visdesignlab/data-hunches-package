@@ -391,7 +391,6 @@ export class BarChartWithDH {
         if (this.showDataHunches) {
             // only show the last 5 data hunches
             this.savedDataHunches.slice(-5).forEach((dataHunch, index) => {
-                console.log(dataHunch, dhContainer);
                 if (dataHunch.type === "annotation") {
                     // an indicator for annotation data hunches
                     if (dataHunch.label === "all chart") {
@@ -439,6 +438,7 @@ export class BarChartWithDH {
                         .attr("x", d => bandScale(d.label) || 0)
                         .attr("y", d => (verticalScale(parseFloat(d.content)) - 3))
                         .attr("height", 6)
+                        .attr('fill', 'none')
                         .attr("width", bandScale.bandwidth())
                         .attr('stroke-width', 6)
                         .attr('stroke', d => that.userColorProfile[d.user]);
