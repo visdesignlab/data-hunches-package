@@ -92,27 +92,7 @@ export class BarChartWithDH {
             .attr('stdDeviation', (d, i) => (5 - i));
 
 
-        // Add gradient fade
 
-        const gradient = svg.append('defs')
-            .append('linearGradient')
-            .attr('id', 'opacity-gradient-1')
-            .attr('x1', 0)
-            .attr('x2', 0)
-            .attr('y1', 0)
-            .attr('y2', 1);
-        gradient.append('stop')
-            .attr('offset', '0%')
-            .attr('stop-color', ColorPallate[0])
-            .attr('stop-opacity', 0);
-        gradient.append('stop')
-            .attr('offset', '50%')
-            .attr('stop-color', ColorPallate[0])
-            .attr('stop-opacity', 1);
-        gradient.append('stop')
-            .attr('offset', '100%')
-            .attr('stop-color', ColorPallate[0])
-            .attr('stop-opacity', 0);
 
         // Construct Scales
         svg.append('g').attr('id', 'rectangles')
@@ -406,20 +386,14 @@ export class BarChartWithDH {
             .attr("fill", DarkBlue);
 
         const dhContainer = this.canvas.select('#dh-container');
-        console.log(this.canvas);
-        // const dhContainer = this.canvas.select('#svg-canvas').append('g');
+
         dhContainer.selectAll('*').remove();
-
-
-
-        // dhContainer.append('rect');
-        console.log(dhContainer);
 
         // Show all existing data hunches
 
         if (this.showDataHunches) {
-            // only show the last 5 data hunches
-            this.savedDataHunches.slice(-5).forEach((dataHunch, index) => {
+            // only show the last 10 data hunches
+            this.savedDataHunches.slice(-10).forEach((dataHunch, index) => {
                 if (dataHunch.type === "annotation") {
                     // an indicator for annotation data hunches
                     if (dataHunch.label === "all chart") {
@@ -447,29 +421,31 @@ export class BarChartWithDH {
                 } else if (dataHunch.type === "range") {
 
                     const parsedRange = JSON.parse('[' + dataHunch.content + ']');
+                    const center = 0.5 * (parsedRange[0] + parsedRange[1]);
+
                     dhContainer.append('rect')
                         .datum(dataHunch)
                         .attr('class', 'annotation-rects')
-                        .attr('x', d => (bandScale(d.label) || 0))
-                        .attr('y', verticalScale(parsedRange[0] > parsedRange[1] ? parsedRange[0] : parsedRange[1]))
-                        .attr('width', bandScale.bandwidth())
-                        .attr('height', Math.abs(verticalScale(parsedRange[0]) - verticalScale(parsedRange[1])))
+                        .attr("x", d => bandScale(d.label) || 0)
+                        .attr("y", d => (verticalScale(center) - 2))
+                        .attr("height", 4)
                         .attr('fill', 'none')
-                        .attr('stroke-width', 6)
+                        .attr("width", bandScale.bandwidth())
+                        .attr('stroke-width', 4)
                         .attr('stroke', d => that.userColorProfile[d.user]);
                 }
                 else {
                     // // data space data hunches and Manipulation data hunches
-                    // TODO this need to change to rect. Line does not work with filter.
+
                     dhContainer.append('rect')
                         .datum(dataHunch)
                         .attr('class', 'annotation-line')
                         .attr("x", d => bandScale(d.label) || 0)
-                        .attr("y", d => (verticalScale(parseFloat(d.content)) - 3))
-                        .attr("height", 6)
+                        .attr("y", d => (verticalScale(parseFloat(d.content)) - 2))
+                        .attr("height", 4)
                         .attr('fill', 'none')
                         .attr("width", bandScale.bandwidth())
-                        .attr('stroke-width', 6)
+                        .attr('stroke-width', 4)
                         .attr('stroke', d => that.userColorProfile[d.user]);
                 }
             });
@@ -478,8 +454,9 @@ export class BarChartWithDH {
         //tooltip handling
         dhContainer.selectAll('*')
             // .attr('mask', (d: any) => `url(#opacity-gradient-1)`)
-            // .attr('stroke', (d: any) => that.userColorProfile[d.user])
-            .attr('stroke', 'url(#opacity-gradient-1)')
+            .attr('stroke', (d: any) => that.userColorProfile[d.user])
+            // .attr('fill', 'url(#opacity-gradient-1)')
+            // .attr('stroke', 'none')
             .attr('cursor', 'pointer')
             .on('mouseover', (e, data: any) => {
                 that.onHoverDH(dhContainer, e, data);
@@ -502,8 +479,8 @@ export class BarChartWithDH {
                     const rc = rough.default.svg(drawingG);
                     const dhValue = parseFloat(data.content);
                     const sketchyDH = rc.rectangle(bandScale(data.label) || 0, verticalScale(dhValue), bandScale.bandwidth(), this.height - margin.bottom - verticalScale(dhValue), {
-                        fill: BrightOrange,
-                        stroke: BrightOrange,
+                        fill: that.userColorProfile[data.user],
+                        stroke: that.userColorProfile[data.user],
                         fillStyle: 'zigzag',
                         roughness: 2.8,
                         hachureAngle: 60,
@@ -520,27 +497,45 @@ export class BarChartWithDH {
                 dhContainer.selectAll('*').attr('opacity', 1);
             });
 
+        //Range
+
         dhContainer.selectAll('.annotation-rects')
             .on('mouseover', (e, data: any) => {
                 that.onHoverDH(dhContainer, e, data);
-                if (document.getElementById('sketchy-canvas') !== null) {
+                const sketchyCanvas = that.canvas.select('#sketchy-canvas');
+                //Create the gradient here according to whatever the confidence/fill is
 
-                    const drawingG = document.getElementById('sketchy-canvas') as any;
-                    const rc = rough.default.svg(drawingG);
-                    const dhRange = JSON.parse('[' + data.content + ']');
-                    //x: number, y: number, width: number, height: number
-                    const sketchyDH = rc.rectangle(bandScale(data.label) || 0, verticalScale(dhRange[0] > dhRange[1] ? dhRange[0] : dhRange[1]), bandScale.bandwidth(), Math.abs(verticalScale(dhRange[0]) - verticalScale(dhRange[1])), {
-                        fill: BrightOrange,
-                        stroke: BrightOrange,
-                        fillStyle: 'zigzag',
-                        roughness: 2.8,
-                        hachureAngle: 60,
-                        hachureGap: 10,
-                        fillWeight: 2,
-                        strokeWidth: 2,
-                    });
-                    drawingG.appendChild(sketchyDH);
-                }
+                // Add gradient fade
+
+                const gradient = sketchyCanvas.append('defs')
+                    .append('linearGradient')
+                    .attr('id', 'opacity-gradient-1')
+                    .attr('x1', 0)
+                    .attr('x2', 0)
+                    .attr('y1', 0)
+                    .attr('y2', 1);
+                gradient.append('stop')
+                    .attr('offset', '0%')
+                    .attr('stop-color', that.userColorProfile[data.user])
+                    .attr('stop-opacity', 0.2 * data.confidenceLevel);
+                gradient.append('stop')
+                    .attr('offset', '50%')
+                    .attr('stop-color', that.userColorProfile[data.user])
+                    .attr('stop-opacity', 1);
+                gradient.append('stop')
+                    .attr('offset', '100%')
+                    .attr('stop-color', that.userColorProfile[data.user])
+                    .attr('stop-opacity', 0.2 * data.confidenceLevel);
+
+                const parsedRange = JSON.parse('[' + data.content + ']');
+                sketchyCanvas.append('rect')
+                    .attr('x', d => (bandScale(data.label) || 0))
+                    .attr('y', verticalScale(parsedRange[0] > parsedRange[1] ? parsedRange[0] : parsedRange[1]))
+                    .attr('width', bandScale.bandwidth())
+                    .attr('height', Math.abs(verticalScale(parsedRange[0]) - verticalScale(parsedRange[1])))
+                    .attr('fill', 'url(#opacity-gradient-1)')
+                    .attr('stroke', d => that.userColorProfile[data.user]);
+
             })
             .on('mouseout', () => {
                 that.canvas.select('#sketchy-canvas').selectAll('*').remove();
