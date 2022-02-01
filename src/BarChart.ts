@@ -517,7 +517,7 @@ export class BarChartWithDH {
                 gradient.append('stop')
                     .attr('offset', '0%')
                     .attr('stop-color', that.userColorProfile[data.user])
-                    .attr('stop-opacity', 0.2 * data.confidenceLevel);
+                    .attr('stop-opacity', 0.9 - 0.2 * data.confidenceLevel);
                 gradient.append('stop')
                     .attr('offset', '50%')
                     .attr('stop-color', that.userColorProfile[data.user])
@@ -525,7 +525,7 @@ export class BarChartWithDH {
                 gradient.append('stop')
                     .attr('offset', '100%')
                     .attr('stop-color', that.userColorProfile[data.user])
-                    .attr('stop-opacity', 0.2 * data.confidenceLevel);
+                    .attr('stop-opacity', 0.9 - 0.2 * data.confidenceLevel);
 
                 const parsedRange = JSON.parse('[' + data.content + ']');
                 sketchyCanvas.append('rect')
