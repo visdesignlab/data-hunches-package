@@ -43,24 +43,11 @@ export class BarChartWithDH {
         this.firebase = getFirestore(initializeApp(FirebaseSetup));
         this.datasetName = datasetName;
         this.savedDataHunches = [];
-
     }
 
     // initiation
-    async createBarChart() {
+    createBarChart() {
         const that = this;
-
-        //retrieve previously saved DH
-
-        const savedQuery = await getDocs(collection(this.firebase, this.datasetName));
-        this.currentDHID = savedQuery.size;
-
-        savedQuery.forEach((doc) => {
-            that.savedDataHunches.push(doc.data() as Annotations);
-            if (!that.userColorProfile[doc.data().user]) {
-                that.userColorProfile[doc.data().user] = ColorPallate[Object.keys(that.userColorProfile).length];
-            }
-        });
 
         const controlBar = this.canvas.append('div').attr('id', 'general-controlbar');
         controlBar.style("display", "table")
@@ -74,11 +61,16 @@ export class BarChartWithDH {
 
         controlBar.selectAll('button').style('margin', '10px');
 
+        if (!this.userName) {
+            controlBar.selectAll('button').attr('disabled', true);
+        }
         // get the SVG set up
 
         this.canvas.append('div')
             .attr('id', 'record-board')
             .style('float', 'right')
+            .style('height', '50vh')
+            .style('overflow', 'auto')
             .style('background-color', LightGray)
             .style('font-size', 'small')
             .append('dl');
@@ -126,8 +118,6 @@ export class BarChartWithDH {
             .attr('transform', `translate(${margin.left},0)`)
             .call(axisLeft(verticalScale));
 
-
-
         svg.append('g').attr('id', 'sketchy-canvas');
 
         svg.append('g').attr('id', 'dh-container');
@@ -136,8 +126,8 @@ export class BarChartWithDH {
 
         const detailedControlBar = svg.append('foreignObject')
             .attr('id', 'specific-controlbar-container')
-            .attr('x', 0)
-            .attr('y', 0)
+            .attr('x', -1000)
+            .attr('y', -1000)
             .attr('width', ForeignObjectWidth)
             .attr('height', ForeignObjectHeight)
             .append('xhtml:div')
@@ -152,16 +142,15 @@ export class BarChartWithDH {
 
         this.makeDetailedControlPanel(detailedControlBar);
 
-        this.canvas.select('svg').select('#specific-controlbar-container').style('display', 'none');
+        this.canvas.select('svg').select('#specific-controlbar-container').style('display', 'none !important');
 
         const tooltipContainer = svg.append('foreignObject')
             .attr('id', 'tooltip-container')
-            .attr('x', 0)
-            .attr('y', 0)
-            .attr('z', -1)
+            .attr('x', -1000)
+            .attr('y', -1000)
             .attr('width', 100)
             .attr('height', 100)
-            .style('display', 'none')
+            .style('display', 'none !important')
             .append('xhtml:div');
 
         const tooltipText = tooltipContainer
@@ -178,10 +167,19 @@ export class BarChartWithDH {
             .style('background', LightGray)
             .style('padding', '1px');
 
-        this.generateRecordBoardList();
-        this.renderVisualizationWithDH();
-
-        return this.canvas;
+        //retrieve previously saved DH
+        getDocs(collection(this.firebase, this.datasetName))
+            .then(result => {
+                this.currentDHID = result.size;
+                result.forEach((doc) => {
+                    that.savedDataHunches.push(doc.data() as Annotations);
+                    if (!that.userColorProfile[doc.data().user]) {
+                        that.userColorProfile[doc.data().user] = ColorPallate[Object.keys(that.userColorProfile).length];
+                    }
+                });
+                this.generateRecordBoardList();
+                this.renderVisualizationWithDH();
+            });
     }
 
     private makeBandScale() {
@@ -364,10 +362,9 @@ export class BarChartWithDH {
     // Call this method after saving DH
 
     private renderVisualizationWithDH() {
-
-        const verticalScale = this.makeVerticalScale();
         const that = this;
 
+        const verticalScale = this.makeVerticalScale();
         const bandScale = this.makeBandScale();
 
         const existingAnnotation: {
@@ -394,6 +391,7 @@ export class BarChartWithDH {
         if (this.showDataHunches) {
             // only show the last 5 data hunches
             this.savedDataHunches.slice(-5).forEach((dataHunch, index) => {
+                console.log(dataHunch, dhContainer);
                 if (dataHunch.type === "annotation") {
                     // an indicator for annotation data hunches
                     if (dataHunch.label === "all chart") {
@@ -435,13 +433,13 @@ export class BarChartWithDH {
                 else {
                     // // data space data hunches and Manipulation data hunches
                     // TODO this need to change to rect. Line does not work with filter.
-                    dhContainer.append('line')
+                    dhContainer.append('rect')
                         .datum(dataHunch)
                         .attr('class', 'annotation-line')
-                        .attr("x1", d => bandScale(d.label) || 0)
-                        .attr("y1", d => verticalScale(parseFloat(d.content)))
-                        .attr("y2", d => verticalScale(parseFloat(d.content)))
-                        .attr("x2", d => (bandScale(d.label) || 0) + bandScale.bandwidth())
+                        .attr("x", d => bandScale(d.label) || 0)
+                        .attr("y", d => (verticalScale(parseFloat(d.content)) - 3))
+                        .attr("height", 6)
+                        .attr("width", bandScale.bandwidth())
                         .attr('stroke-width', 6)
                         .attr('stroke', d => that.userColorProfile[d.user]);
                 }
@@ -464,7 +462,6 @@ export class BarChartWithDH {
         //styling all the rectangle indicators and make interactions
 
         dhContainer.selectAll('.annotation-line')
-
             .on('mouseover', (e, data: any) => {
                 that.onHoverDH(dhContainer, e, data);
 
@@ -494,7 +491,6 @@ export class BarChartWithDH {
             });
 
         dhContainer.selectAll('.annotation-rects')
-
             .on('mouseover', (e, data: any) => {
                 that.onHoverDH(dhContainer, e, data);
                 if (document.getElementById('sketchy-canvas') !== null) {
@@ -528,7 +524,6 @@ export class BarChartWithDH {
         dhContainer.selectAll('.annotation-marker')
             .attr('r', IndicatorSize)
             .attr('fill', DarkGray);
-
     }
 
 
@@ -944,4 +939,12 @@ export class BarChartWithDH {
         tooltipContainer.select('#tooltip-reason')
             .html(data.reasoning);
     }
+
+    setUserName = (newUsername: string) => {
+        this.userName = newUsername;
+        if (this.userName) {
+            this.canvas.select('#general-controlbar').selectAll('button').attr('disabled', null);
+        }
+        this.renderVisualizationWithDH();
+    };
 }
