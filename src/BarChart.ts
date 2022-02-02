@@ -146,7 +146,7 @@ export class BarChartWithDH {
 
         this.makeDetailedControlPanel(detailedControlBar);
 
-        this.canvas.select('#specific-controlbar-container').style('display', 'none !important');
+        this.canvas.select('#specific-controlbar-container').style('display', 'none');
 
         const tooltipContainer = svg.append('foreignObject')
             .attr('id', 'tooltip-container')
@@ -154,7 +154,7 @@ export class BarChartWithDH {
             .attr('y', -1000)
             .attr('width', 100)
             .attr('height', 100)
-            .style('display', 'none !important')
+            .style('display', 'none')
             .append('xhtml:div');
 
         const tooltipText = tooltipContainer
@@ -302,14 +302,6 @@ export class BarChartWithDH {
             .on("click", () => {
                 that.selectADataPointEvent();
             });
-
-        controlBar.append('select')
-            .attr('id', 'hunches-dropdown')
-            .selectAll('option')
-            .data(this.savedDataHunches)
-            .join("option")
-            .text(d => d.label) // text showed in the menu
-            .attr("value", (d, i) => i); // corresponding value returned by the button
 
         controlBar.append('button')
             .html(that.showDataHunches ? 'Hide Data Hunches' : 'Show Existing Data Hunches')
@@ -909,13 +901,7 @@ export class BarChartWithDH {
 
         this.clearHighlightRect();
 
-        this.canvas.select('#general-controlbar')
-            .select('#hunches-dropdown')
-            .selectAll('option')
-            .data(this.savedDataHunches)
-            .join("option")
-            .text(d => d.label) // text showed in the menu
-            .attr("value", (d, i) => i); // corresponding value returned by the button
+
 
         this.renderVisualizationWithDH();
     }
