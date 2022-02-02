@@ -384,8 +384,8 @@ export class BarChartWithDH {
         // Show all existing data hunches
 
         if (this.showDataHunches) {
-            // only show the last 10 data hunches
-            this.savedDataHunches.slice(-10).forEach((dataHunch, index) => {
+            //remove only show last x.
+            this.savedDataHunches.forEach((dataHunch, index) => {
                 if (dataHunch.type === "annotation") {
                     // an indicator for annotation data hunches
                     if (dataHunch.label === "all chart") {
