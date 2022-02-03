@@ -1,5 +1,5 @@
 
-import { BarChartWithDH } from './BarChart';
+import { BarChartWithDH } from './BarChartWithDH';
 import { BarChartDataPoint } from './types';
 
 let createdClassObject: BarChartWithDH;
