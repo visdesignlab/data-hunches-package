@@ -112,6 +112,7 @@ export class BarChartWithDH {
         // axis
         svg.append('g')
             .attr('class', 'axis')
+            .attr('id', 'band-axis')
             .attr("transform", `translate(0,${this.height - margin.bottom})`)
             .call(axisBottom(bandScale));
 

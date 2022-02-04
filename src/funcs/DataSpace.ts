@@ -1,7 +1,7 @@
-import { axisLeft } from "d3-axis";
-import { scaleLinear } from "d3-scale";
-import { BarChartWithDH } from "../BarChartWithDH";
-import { TransitionDuration, margin, BrightOrange } from "../Constants";
+import { axisLeft } from 'd3-axis';
+import { scaleLinear } from 'd3-scale';
+import { BarChartWithDH } from '../BarChartWithDH';
+import { TransitionDuration, margin, BrightOrange } from '../Constants';
 
 export function addDataSpace(this: BarChartWithDH) {
     const that = this;
@@ -29,14 +29,15 @@ export function addDataSpace(this: BarChartWithDH) {
 
             const newVertScale = that.makeVerticalScale(newData);
             const oldVerScale = scaleLinear().domain(verticalScale.domain()).range([newVertScale(verticalScale.domain()[0]), newVertScale(verticalScale.domain()[1])]);
+
             that.canvas.select('#rectangles')
-                .selectAll("rect")
+                .selectAll('rect')
                 .data(newData)
-                .join("rect")
+                .join('rect')
                 .transition()
                 .duration(TransitionDuration)
-                .attr("y", d => newVertScale(d.value))
-                .attr("height", d => that.height - margin.bottom - newVertScale(d.value));
+                .attr('y', d => newVertScale(d.value))
+                .attr('height', d => that.height - margin.bottom - newVertScale(d.value));
 
             // Matching Ticks Begin
             // domain [0] because it was oposite?
@@ -86,13 +87,13 @@ export function addDataSpace(this: BarChartWithDH) {
 
             that.canvas
                 .select('#rectangles')
-                .selectAll("rect")
+                .selectAll('rect')
                 .data(that.data)
-                .join("rect")
+                .join('rect')
                 .transition()
                 .duration(TransitionDuration)
-                .attr("y", d => verticalScale(d.value))
-                .attr("height", d => that.height - margin.bottom - verticalScale(d.value));
+                .attr('y', d => verticalScale(d.value))
+                .attr('height', d => that.height - margin.bottom - verticalScale(d.value));
         });
 
     this.addReason(form);
@@ -113,7 +114,7 @@ export function addDataSpace(this: BarChartWithDH) {
                     .duration(TransitionDuration)
                     .call((axisLeft(verticalScale) as any));
 
-                that.addNewDataHunch(textfield.node()!.value, "data space", reasonInput, confidenceLevel);
+                that.addNewDataHunch(textfield.node()!.value, 'data space', reasonInput, confidenceLevel);
 
                 that.renderVisualizationWithDH();
 
