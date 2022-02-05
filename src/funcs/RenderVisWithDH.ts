@@ -38,63 +38,80 @@ export function renderVisualizationWithDH(this: BarChartWithDH) {
 
     if (this.showDataHunches) {
         //remove only show last x.
-        this.savedDataHunches.forEach((dataHunch, index) => {
-            if (!this.selectedUser || this.selectedUser && this.selectedUser === dataHunch.user)
-                if (dataHunch.type === "annotation") {
-                    // an indicator for annotation data hunches
-                    if (dataHunch.label === "all chart") {
-                        const currentAnnotationIndex = existingAnnotation.filter(d => d.label === dataHunch.label)[0].annotaiton.length;
-                        existingAnnotation.filter(d => d.label === dataHunch.label)[0].annotaiton.push(dataHunch.content);
+        this.savedDataHunches.forEach((dataHunch) => {
 
-                        dhContainer.append('circle')
+            // If there is no filter, or if there is a filter and user name match
+
+            if (!this.selectedUser || this.selectedUser && this.selectedUser === dataHunch.user) {
+                switch (dataHunch.type) {
+                    case "annotation":
+                        if (dataHunch.label === "all chart") {
+                            const currentAnnotationIndex = existingAnnotation.filter(d => d.label === dataHunch.label)[0].annotaiton.length;
+                            existingAnnotation.filter(d => d.label === dataHunch.label)[0].annotaiton.push(dataHunch.content);
+
+                            dhContainer.append('circle')
+                                .datum(dataHunch)
+                                .attr('class', 'annotation-marker')
+                                .attr('fill', d => that.userColorProfile[d.user])
+                                .attr('cx', that.width - (currentAnnotationIndex + 1) * (IndicatorSize * 2 + 4))
+                                .attr('cy', IndicatorSize * 2);
+                        } else {
+                            const currentAnnotationIndex = existingAnnotation.filter(d => d.label === dataHunch.label)[0].annotaiton.length;
+                            existingAnnotation.filter(d => d.label === dataHunch.label)[0].annotaiton.push(dataHunch.content);
+
+                            dhContainer.append('circle')
+                                .datum(dataHunch)
+                                .attr('class', 'annotation-marker')
+                                .attr('cx', (0.2 * bandScale.bandwidth()) + (bandScale(dataHunch.label) || 0) + 2 * (IndicatorSize + 4) * (currentAnnotationIndex % 2))
+                                .attr('cy', (that.height - margin.bottom) + 2 * (IndicatorSize + 2) * Math.floor(currentAnnotationIndex / 2))
+                                .attr('transform', `translate(0, 25)`)
+                                .attr('fill', d => that.userColorProfile[d.user]);
+                        }
+                        break;
+
+                    case "range":
+
+                        const parsedRange = JSON.parse('[' + dataHunch.content + ']');
+                        const center = 0.5 * (parsedRange[0] + parsedRange[1]);
+
+                        dhContainer.append('rect')
                             .datum(dataHunch)
-                            .attr('class', 'annotation-marker')
-                            .attr('fill', d => that.userColorProfile[d.user])
-                            .attr('cx', that.width - (currentAnnotationIndex + 1) * (IndicatorSize * 2 + 4))
-                            .attr('cy', IndicatorSize * 2);
-                    } else {
-                        const currentAnnotationIndex = existingAnnotation.filter(d => d.label === dataHunch.label)[0].annotaiton.length;
-                        existingAnnotation.filter(d => d.label === dataHunch.label)[0].annotaiton.push(dataHunch.content);
+                            .attr('class', 'annotation-rects')
+                            .attr("x", d => bandScale(d.label) || 0)
+                            .attr("y", d => (verticalScale(center) - 2))
+                            .attr("height", 4)
+                            .attr('fill', 'none')
+                            .attr("width", bandScale.bandwidth())
+                            .attr('stroke-width', 4)
+                            .attr('stroke', d => that.userColorProfile[d.user]);
 
-                        dhContainer.append('circle')
+                        break;
+
+                    case "inclusion":
+                        // Think on how to visualize this
+                        break;
+
+                    case "exclusion":
+                        // Think on how to visualize this
+                        break;
+
+                    // Double case
+                    case "data space":
+                    case "manipulations":
+                        dhContainer.append('rect')
                             .datum(dataHunch)
-                            .attr('class', 'annotation-marker')
-                            .attr('cx', (0.2 * bandScale.bandwidth()) + (bandScale(dataHunch.label) || 0) + 2 * (IndicatorSize + 4) * (currentAnnotationIndex % 2))
-                            .attr('cy', (that.height - margin.bottom) + 2 * (IndicatorSize + 2) * Math.floor(currentAnnotationIndex / 2))
-                            .attr('transform', `translate(0, 25)`)
-                            .attr('fill', d => that.userColorProfile[d.user]);
-                    }
-                } else if (dataHunch.type === "range") {
+                            .attr('class', 'annotation-line')
+                            .attr("x", d => bandScale(d.label) || 0)
+                            .attr("y", d => (verticalScale(parseFloat(d.content)) - 2))
+                            .attr("height", 4)
+                            .attr('fill', 'none')
+                            .attr("width", bandScale.bandwidth())
+                            .attr('stroke-width', 4)
+                            .attr('stroke', d => that.userColorProfile[d.user]);
+                        break;
 
-                    const parsedRange = JSON.parse('[' + dataHunch.content + ']');
-                    const center = 0.5 * (parsedRange[0] + parsedRange[1]);
-
-                    dhContainer.append('rect')
-                        .datum(dataHunch)
-                        .attr('class', 'annotation-rects')
-                        .attr("x", d => bandScale(d.label) || 0)
-                        .attr("y", d => (verticalScale(center) - 2))
-                        .attr("height", 4)
-                        .attr('fill', 'none')
-                        .attr("width", bandScale.bandwidth())
-                        .attr('stroke-width', 4)
-                        .attr('stroke', d => that.userColorProfile[d.user]);
                 }
-                else if (dataHunch.type === "data space" ||
-                    dataHunch.type === "manipulations") {
-                    // // data space data hunches and Manipulation data hunches
-
-                    dhContainer.append('rect')
-                        .datum(dataHunch)
-                        .attr('class', 'annotation-line')
-                        .attr("x", d => bandScale(d.label) || 0)
-                        .attr("y", d => (verticalScale(parseFloat(d.content)) - 2))
-                        .attr("height", 4)
-                        .attr('fill', 'none')
-                        .attr("width", bandScale.bandwidth())
-                        .attr('stroke-width', 4)
-                        .attr('stroke', d => that.userColorProfile[d.user]);
-                }
+            }
         });
     }
 
