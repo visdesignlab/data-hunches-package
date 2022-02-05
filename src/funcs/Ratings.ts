@@ -38,6 +38,8 @@ export function addRating(this: BarChartWithDH) {
                 );
                 //hide the form
                 that.hideInChartForeignObject();
+
+                that.renderVisualizationWithDH();
             } else {
                 alert('Please enter a reason for the data hunch!');
             }

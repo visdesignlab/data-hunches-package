@@ -1,5 +1,5 @@
-import { BarChartWithDH } from "../BarChartWithDH";
-import { SelectionType } from "../types";
+import { BarChartWithDH } from "../../BarChartWithDH";
+import { SelectionType } from "../../types";
 
 export function makeDetailedControlPanel(this: BarChartWithDH, controlBar: SelectionType) {
 

@@ -119,7 +119,7 @@ export function addDataSpace(this: BarChartWithDH) {
                 that.renderVisualizationWithDH();
 
                 //remove the form
-                that.canvas.select('#vertical-axis').call((axisLeft(verticalScale) as any));
+
                 that.hideInChartForeignObject();
             } else {
                 alert('Please enter a reason for the data hunch!');

@@ -1,6 +1,6 @@
-import { BarChartWithDH } from "../BarChartWithDH";
-import { ForeignObjectWidth, ForeignObjectHeight } from "../Constants";
-import { SelectionType } from "../types";
+import { BarChartWithDH } from "../../BarChartWithDH";
+import { ForeignObjectWidth, ForeignObjectHeight } from "../../Constants";
+import { SelectionType } from "../../types";
 
 export function makeGeneralControlPanel(this: BarChartWithDH, controlBar: SelectionType) {
 

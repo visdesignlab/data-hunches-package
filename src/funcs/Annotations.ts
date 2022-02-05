@@ -22,6 +22,8 @@ export function addInput(this: BarChartWithDH) {
                 that.addNewDataHunch(textfield.node()!.value, "annotation", reasonInput, confidenceLevel);
                 //remove the form
                 that.hideInChartForeignObject();
+
+                that.renderVisualizationWithDH();
             } else {
                 alert('Please enter a reason for the data hunch!');
             }

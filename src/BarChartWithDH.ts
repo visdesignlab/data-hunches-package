@@ -1,8 +1,8 @@
-import { pointer, select as d3select } from 'd3-selection';
+import { pointer, select as d3select, select } from 'd3-selection';
 import { scaleLinear, scaleBand } from 'd3-scale';
 import { getFirestore, collection, getDocs, Firestore, setDoc, doc } from 'firebase/firestore/lite';
 import { Annotations, AnnotationType, BarChartDataPoint, SelectionType } from './types';
-import { BrightOrange, ColorPallate, ConfidenceInput, DarkBlue, DarkGray, FirebaseSetup, ForeignObjectHeight, ForeignObjectWidth, IndicatorSize, LargeNumber, LightGray, margin, TransitionDuration } from './Constants';
+import { BrightOrange, ColorPallate, ConfidenceInput, DarkBlue, FirebaseSetup, ForeignObjectHeight, ForeignObjectWidth, LargeNumber, LightGray, margin } from './Constants';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { max } from 'd3-array';
 import 'd3-transition';
@@ -13,8 +13,8 @@ import { renderVisualizationWithDH } from './funcs/RenderVisWithDH';
 import { addRating } from './funcs/Ratings';
 import { addInput } from './funcs/Annotations';
 import { inclusionExclusion } from './funcs/InclusionExclusion';
-import { makeGeneralControlPanel } from './funcs/GeneralControlPanel';
-import { makeDetailedControlPanel } from './funcs/DetailedControlPanel';
+import { makeGeneralControlPanel } from './funcs/Control/GeneralControlPanel';
+import { makeDetailedControlPanel } from './funcs/Control/DetailedControlPanel';
 
 export class BarChartWithDH {
     readonly data: BarChartDataPoint[];
@@ -30,8 +30,8 @@ export class BarChartWithDH {
     protected firebase: Firestore;
     // {username : colorString}
     protected userColorProfile: any;
-    // Add a way to select a DH from the drop down?
-    protected selectedDataHunch: number | null;
+
+    protected selectedUser: string | null;
 
     constructor(datasetName: string, dataInput: BarChartDataPoint[], width: number, height: number, userName: string
     ) {
@@ -46,7 +46,7 @@ export class BarChartWithDH {
         this.userName = userName;
         this.showDataHunches = true;
         this.currentDHID = 0;
-        this.selectedDataHunch = null;
+        this.selectedUser = null;
         this.firebase = getFirestore(initializeApp(FirebaseSetup));
         this.datasetName = datasetName;
         this.savedDataHunches = [];
@@ -73,14 +73,33 @@ export class BarChartWithDH {
         }
         // get the SVG set up
 
-        this.canvas.append('div')
+        const userFilter = this.canvas.append('div')
             .attr('id', 'record-board')
             .style('float', 'right')
             .style('height', '50vh')
             .style('overflow', 'auto')
-            .style('background-color', LightGray)
+
             .style('font-size', 'small')
-            .append('dl');
+            .append('div');
+
+        userFilter.append('label')
+            .html('Filter User to Show')
+            .attr('for', 'user-filter');
+
+        userFilter.append('select')
+            .attr('name', 'user-filter')
+            .attr('id', 'user-filter-select')
+            .on('change', (d) => {
+                this.selectedUser = that.canvas.select('#user-filter-select').property("value");
+                if (this.selectedUser === 'None') this.selectedUser = null;
+
+                this.renderVisualizationWithDH();
+            })
+            .append('option')
+            .attr('value', 'None')
+            .html('None');
+
+        this.canvas.select('#record-board').append('dl').style('background-color', LightGray);
 
         const svg = this.canvas.append("svg")
             .attr('id', 'svg-canvas')
@@ -170,6 +189,14 @@ export class BarChartWithDH {
             .append('div')
             .attr('id', 'tooltip-title');
 
+        tooltipText
+            .append('div')
+            .attr('id', 'tooltip-author');
+
+        tooltipText
+            .append('div')
+            .attr('id', 'tooltip-type');
+
         tooltipText.append('div').attr('id', 'tooltip-reason');
 
         tooltipText.selectAll('div')
@@ -188,11 +215,24 @@ export class BarChartWithDH {
                 });
                 this.generateRecordBoardList();
                 this.renderVisualizationWithDH();
+
+                Object.keys(that.userColorProfile).forEach((userName) => {
+                    that.canvas
+                        .select('#user-filter-select')
+                        .append('option')
+                        .attr('value', userName)
+                        .html(userName);
+                });
+
             });
     }
 
-    makeBandScale() {
+    makeBandScale(newInputData?: BarChartDataPoint[]) {
         const that = this;
+
+        if (newInputData) {
+            return scaleBand().domain(newInputData.map(d => d.label)).range([margin.left, that.width]).paddingInner(0.1).paddingOuter(0.1);
+        }
         return scaleBand().domain(this.data.map(d => d.label)).range([margin.left, that.width]).paddingInner(0.1).paddingOuter(0.1);
     }
 
@@ -263,7 +303,6 @@ export class BarChartWithDH {
             .attr('min', 0)
             .attr('value', 2)
             .attr('max', 4);
-
     }
 
     findForeignObject(removeAll: boolean) {
@@ -307,10 +346,10 @@ export class BarChartWithDH {
 
     renderVisualizationWithDH = renderVisualizationWithDH.bind(this);
 
-    async addNewDataHunch(content: string, type: AnnotationType, reasonInput: string, confidenceLevel: number) {
+    async addNewDataHunch(content: string, type: AnnotationType, reasonInput: string, confidenceLevel: number, label?: string) {
 
         const newDHObj = {
-            label: this.currentSelectedLabel || "all chart",
+            label: label ? label : (this.currentSelectedLabel || "all chart"),
             user: this.userName,
             content: content,
             type: type,
@@ -355,9 +394,9 @@ export class BarChartWithDH {
         return formDiv.append('input').attr('type', 'button').attr('value', 'Submit');
     }
 
-    protected onHoverDH(dhContainer: SelectionType, event: any, data: Annotations) {
+    protected onHoverDH(dhContainer: SelectionType, event: any, dataHunch: Annotations) {
         dhContainer.selectAll('*').attr('opacity', 0.3);
-        const selectedIndicator = dhContainer.selectAll('*').filter((d: any) => d.id === data.id);
+        const selectedIndicator = dhContainer.selectAll('*').filter((d: any) => d.id === dataHunch.id);
         selectedIndicator.attr('opacity', 1);
 
         const xLoc = (pointer(event)[0] + 110) > this.width ? (pointer(event)[0] - 110) : pointer(event)[0] + 10;
@@ -370,17 +409,34 @@ export class BarChartWithDH {
             .select('#tooltip');
 
         tooltipContainer.select('#tooltip-title')
-            .html(`${data.label} - ${data.content}`);
+            .html(`${dataHunch.label} - ${dataHunch.content}`);
+
+        tooltipContainer.select('#tooltip-author')
+            .html(`- ${dataHunch.user}`);
+
+        tooltipContainer.select('#tooltip-type')
+            .html(`${dataHunch.type}`);
 
         tooltipContainer.select('#tooltip-reason')
-            .html(data.reasoning);
+            .html(dataHunch.reasoning);
     }
 
     setUserName = (newUsername: string) => {
         this.userName = newUsername;
         if (this.userName) {
             this.canvas.select('#general-controlbar').selectAll('button').attr('disabled', null);
+
+            if (!Object.keys(this.userColorProfile).includes(newUsername)) {
+
+                this.userColorProfile[newUsername] = ColorPallate[Object.keys(this.userColorProfile).length];
+
+                this.canvas
+                    .select('#user-filter-select')
+                    .append('option')
+                    .attr('value', newUsername)
+                    .html(newUsername);
+            }
         }
-        this.renderVisualizationWithDH();
     };
+
 }

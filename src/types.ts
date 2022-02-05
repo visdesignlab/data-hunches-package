@@ -15,7 +15,13 @@ export interface Annotations {
     confidenceLevel: number;
 }
 
-export type AnnotationType = "annotation" | "data space" | "manipulations" | "range";
+export type AnnotationType =
+    "annotation"
+    | "data space"
+    | "manipulations"
+    | "range"
+    | 'inclusion'
+    | 'exclusion';
 
 
 export type SelectionType = Selection<any, undefined, HTMLElement, undefined>;
