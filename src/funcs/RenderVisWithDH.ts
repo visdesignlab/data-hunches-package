@@ -1,3 +1,4 @@
+import { max } from 'd3-array';
 import { axisBottom, axisLeft } from 'd3-axis';
 import * as rough from 'roughjs/bin/rough';
 import { BarChartWithDH } from "../BarChartWithDH";
@@ -98,16 +99,35 @@ export function renderVisualizationWithDH(this: BarChartWithDH) {
                     // Double case
                     case "data space":
                     case "manipulations":
+                        const dhValue = parseFloat(dataHunch.content);
                         dhContainer.append('rect')
                             .datum(dataHunch)
                             .attr('class', 'annotation-line')
                             .attr("x", d => bandScale(d.label) || 0)
-                            .attr("y", d => (verticalScale(parseFloat(d.content)) - 2))
+                            .attr("y", verticalScale(dhValue) - 2)
                             .attr("height", 4)
                             .attr('fill', 'none')
                             .attr("width", bandScale.bandwidth())
                             .attr('stroke-width', 4)
                             .attr('stroke', d => that.userColorProfile[d.user]);
+                        if (dhValue > max(verticalScale.domain())!) {
+                            const extradhG = dhContainer.append('g').datum(dataHunch);
+                            extradhG.append('line')
+                                .attr('x1', (bandScale(dataHunch.label) || 0) + 0.5 * bandScale.bandwidth())
+                                .attr('x2', (bandScale(dataHunch.label) || 0) + 0.5 * bandScale.bandwidth())
+                                .attr('y1', verticalScale.range()[0])
+                                .attr('y2',
+                                    verticalScale.range()[0] - 15)
+                                .attr('stroke', that.userColorProfile[dataHunch.user])
+                                .attr('stroke-width', 4);
+                            extradhG.append('polygon')
+                                .attr('transform', `translate(${(bandScale(dataHunch.label) || 0) + 0.5 * bandScale.bandwidth()},${verticalScale.range()[0] - 20})`)
+                                .attr('stroke', 'none')
+                                .attr('points', '0,0 7,5 -7,5')
+                                .attr('fill', that.userColorProfile[dataHunch.user]);
+                            //TODO get the hover interaction
+                            // extradhG.on('mouseOver');
+                        }
                         break;
 
                 }

@@ -71,6 +71,8 @@ export class BarChartWithDH {
         if (!this.userName) {
             controlBar.selectAll('button').attr('disabled', true);
         }
+
+
         // get the SVG set up
 
         const userFilter = this.canvas.append('div')
@@ -105,6 +107,9 @@ export class BarChartWithDH {
             .attr('id', 'svg-canvas')
             .attr("width", this.width)
             .attr("height", this.height);
+
+        // add an arrow marker def
+
 
         // add blur
         // need 5 filters for 5 levels
@@ -214,7 +219,7 @@ export class BarChartWithDH {
                     }
                 });
                 this.generateRecordBoardList();
-                this.renderVisualizationWithDH();
+
 
                 Object.keys(that.userColorProfile).forEach((userName) => {
                     that.canvas
@@ -223,7 +228,7 @@ export class BarChartWithDH {
                         .attr('value', userName)
                         .html(userName);
                 });
-
+                this.renderVisualizationWithDH();
             });
     }
 
@@ -244,7 +249,8 @@ export class BarChartWithDH {
         }
         return scaleLinear()
             .domain([max(this.data.map(d => d.value)) || LargeNumber, 0])
-            .range([margin.top, this.height - margin.bottom]);
+            .range([margin.top, this.height - margin.bottom])
+            .clamp(true);
     }
 
 
