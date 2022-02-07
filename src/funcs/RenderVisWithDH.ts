@@ -135,13 +135,13 @@ export function renderVisualizationWithDH(this: BarChartWithDH) {
         });
     }
 
-    //tooltip handling
-    dhContainer.selectAll('*')
-        // .attr('mask', (d: any) => `url(#opacity-gradient-1)`)
+    dhContainer.selectAll('*').attr('cursor', 'pointer');
+
+    //annotation circle tooltip handling and styling them
+    dhContainer.selectAll('.annotation-marker')
+        .attr('r', IndicatorSize)
+        .attr('fill', DarkGray)
         .attr('stroke', (d: any) => that.userColorProfile[d.user])
-        // .attr('fill', 'url(#opacity-gradient-1)')
-        // .attr('stroke', 'none')
-        .attr('cursor', 'pointer')
         .on('mouseover', (e, data: any) => {
             that.onHoverDH(dhContainer, e, data);
         })
@@ -228,9 +228,5 @@ export function renderVisualizationWithDH(this: BarChartWithDH) {
             dhContainer.selectAll('*').attr('opacity', 1);
         });
 
-    // Styling all indicators and make indicator interactions
 
-    dhContainer.selectAll('.annotation-marker')
-        .attr('r', IndicatorSize)
-        .attr('fill', DarkGray);
 }
