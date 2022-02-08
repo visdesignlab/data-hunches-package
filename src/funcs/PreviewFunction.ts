@@ -24,8 +24,6 @@ export function previewFunction(this: BarChartWithDH, input: number | undefined,
         newData.push({ label: label, value: input });
     }
 
-    console.log(newData);
-
     const newBandScale = that.makeBandScale(newData);
 
     const newVertScale = this.makeVerticalScale(newData);

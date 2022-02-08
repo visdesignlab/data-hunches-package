@@ -122,11 +122,14 @@ export function renderVisualizationWithDH(this: BarChartWithDH) {
                                 .attr('fill', that.userColorProfile[dataHunch.user]);
 
                             // Over axis hover interactions
-                            extradhG.on('mouseover', () => {
+                            extradhG.on('mouseover', (e) => {
+                                that.onHoverDH(dhContainer, e, dataHunch);
                                 previewFunction.bind(that)(dhValue, dataHunch.label);
                             }).on('mouseout', () => {
                                 resetPreview.bind(that)();
-                                that.canvas.select('#rectangles').selectAll('rect').attr('fill', DarkBlue);
+                                that.canvas.select('#tooltip-container')
+                                    .style('display', 'none');
+                                dhContainer.selectAll('*').attr('opacity', 1);
                             });
                         }
                         break;
