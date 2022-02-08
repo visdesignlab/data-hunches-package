@@ -38,18 +38,34 @@ export function renderVisualizationWithDH(this: BarChartWithDH) {
 
             if (!this.selectedUser || this.selectedUser && this.selectedUser === dataHunch.user) {
                 switch (dataHunch.type) {
-                    case "annotation":
-                        if (dataHunch.label === "all chart") {
-                            const currentAnnotationIndex = existingAnnotation.filter(d => d.label === dataHunch.label)[0].annotaiton.length;
-                            existingAnnotation.filter(d => d.label === dataHunch.label)[0].annotaiton.push(dataHunch.content);
+                    case "inclusion":
+                    // TODO implementation
+                    // Think on how to visualize this
+                    // break;
 
-                            dhContainer.append('circle')
+                    case "exclusion":
+                    // TODO implementation
+                    // animating this would be easy, but how to show these on chart?
+                    // Think on how to visualize this
+                    // break;
+                    case "annotation":
+                        if (dataHunch.label === "all chart" || dataHunch.type === "inclusion" || dataHunch.type === "exclusion") {
+
+                            const currentAnnotationIndex = existingAnnotation.filter(d => d.label === "all chart")[0].annotaiton.length;
+
+                            existingAnnotation.filter(d => d.label === "all chart")[0].annotaiton.push(dataHunch.content);
+
+                            const appendedCircle = dhContainer.append('circle')
                                 .datum(dataHunch)
                                 .attr('class', 'annotation-marker')
                                 .attr('fill', d => that.userColorProfile[d.user])
                                 .attr('cx', that.width - (currentAnnotationIndex + 1) * (IndicatorSize * 2 + 4))
                                 .attr('cy', IndicatorSize * 2);
-                        } else {
+                            if (dataHunch.type !== 'annotation') {
+                                appendedCircle.attr('class', 'inclusion-exclusion');
+                            }
+                        }
+                        else {
                             const currentAnnotationIndex = existingAnnotation.filter(d => d.label === dataHunch.label)[0].annotaiton.length;
                             existingAnnotation.filter(d => d.label === dataHunch.label)[0].annotaiton.push(dataHunch.content);
 
@@ -80,14 +96,6 @@ export function renderVisualizationWithDH(this: BarChartWithDH) {
                             .attr('stroke-width', 4)
                             .attr('stroke', d => that.userColorProfile[d.user]);
 
-                        break;
-
-                    case "inclusion":
-                        // Think on how to visualize this
-                        break;
-
-                    case "exclusion":
-                        // Think on how to visualize this
                         break;
 
                     // Double case
@@ -123,8 +131,8 @@ export function renderVisualizationWithDH(this: BarChartWithDH) {
 
                             // Over axis hover interactions
                             extradhG.on('mouseover', (e) => {
-                                that.onHoverDH(dhContainer, e, dataHunch);
                                 previewFunction.bind(that)(dhValue, dataHunch.label);
+                                that.onHoverDH(dhContainer, e, dataHunch);
                             }).on('mouseout', () => {
                                 resetPreview.bind(that)();
                                 that.canvas.select('#tooltip-container')
@@ -139,6 +147,24 @@ export function renderVisualizationWithDH(this: BarChartWithDH) {
     }
 
     dhContainer.selectAll('*').attr('cursor', 'pointer');
+
+    dhContainer.selectAll('.inclusion-exclusion')
+        .attr('r', IndicatorSize)
+        .attr('fill', DarkGray)
+        .attr('stroke', (d: any) => that.userColorProfile[d.user])
+        .on('mouseover', (e, d: any) => {
+            previewFunction.bind(that)(d.content === 'ignore' ? undefined : parseFloat(d.content), d.label);
+            that.onHoverDH(dhContainer, e, d);
+        })
+        .on('mouseout', () => {
+            resetPreview.bind(that)();
+            that.canvas.select('#rectangles')
+                .selectAll('rect')
+                .attr("fill", (d: any) => this.containCategorical ? ((this.makeCategoricalScale()(d.categorical!) as any) || DarkBlue) : DarkBlue);
+            that.canvas.select('#tooltip-container')
+                .style('display', 'none');
+            dhContainer.selectAll('*').attr('opacity', 1);
+        });
 
     //annotation circle tooltip handling and styling them
     dhContainer.selectAll('.annotation-marker')
@@ -245,5 +271,6 @@ export function restoreRectangles(this: BarChartWithDH) {
         .attr('width', bandScale.bandwidth())
         .attr("y", d => verticalScale(d.value))
         .attr("height", d => this.height - margin.bottom - verticalScale(d.value))
-        .attr("fill", DarkBlue);
+        .attr("fill", d => this.containCategorical ? ((this.makeCategoricalScale()(d.categorical!) as any) || DarkBlue) : DarkBlue);
 }
+

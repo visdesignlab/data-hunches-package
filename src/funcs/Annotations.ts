@@ -7,9 +7,7 @@ export function addInput(this: BarChartWithDH) {
 
     const textfield = form.append('input').attr('type', 'text').attr('id', 'input').style('width', '-webkit-fill-available');;
 
-
     textfield.attr('placeholder', `Annotation on ${this.currentSelectedLabel ? this.currentSelectedLabel : 'the chart'}`);
-
 
     this.addReason(form);
 

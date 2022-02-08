@@ -3,6 +3,7 @@ import { Selection } from "d3-selection";
 export interface BarChartDataPoint {
     label: string;
     value: number;
+    categorical?: string;
 }
 
 export interface Annotations {

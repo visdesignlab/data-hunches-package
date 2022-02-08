@@ -57,7 +57,7 @@ export function previewFunction(this: BarChartWithDH, input: number | undefined,
         .attr('y', d => newVertScale(d.value))
         .attr('height', d => this.height - margin.bottom - newVertScale(d.value));
 
-    moveDH.bind(this)(newBandScale, newVertScale);
+    moveDH.bind(this)(newBandScale, newVertScale, true);
 
     // rectangles.filter((d: any) => d.label === label).attr('fill', BrightOrange);
 
@@ -91,8 +91,6 @@ export function previewFunction(this: BarChartWithDH, input: number | undefined,
     newScale.selectAll('g').selectAll('text').attr('fill', BrightOrange);
 
     that.canvas.select('#band-axis').transition().duration(TransitionDuration).call(axisBottom(newBandScale) as any);
-
-
 }
 
 export function resetPreview(this: BarChartWithDH) {
@@ -100,43 +98,73 @@ export function resetPreview(this: BarChartWithDH) {
     const verticalScale = this.makeVerticalScale();
     const bandScale = this.makeBandScale();
     moveDH.bind(this)(bandScale, verticalScale);
-    this.canvas
-        .select('#axis-mask').selectAll('*').attr('opacity', 1).transition().duration(TransitionDuration).attr('opacity', 0.0001).remove();
+    this.canvas.select('#axis-mask')
+        .selectAll('*')
+        .interrupt()
+        // .attr('opacity', 1)
+        // .transition()
+        // .duration(TransitionDuration)
+        // .attr('opacity', 0.0001)
+        .remove();
 
     this.canvas
         .select('#vertical-axis')
-        .transition()
-        .duration(TransitionDuration)
+        .selectAll('*')
+        .interrupt();
+
+    this.canvas.select('#band-axis')
+        .selectAll('*')
+        .interrupt();
+
+    this.canvas
+        .select('#vertical-axis')
         .call((axisLeft(verticalScale) as any));
 
     this.canvas
         .select('#rectangles')
         .selectAll('rect')
+        .interrupt()
         .data(this.data)
-        .join(enter => enter.append('rect')
-            .attr('x', d => bandScale(d.label) || 0)
-            .attr('width', bandScale.bandwidth())
-            .attr('height', this.height - margin.bottom - verticalScale(0))
-            .attr('y', verticalScale(0)).selection());
-
-    this.canvas.select('#rectangles')
-        .selectAll('rect')
-        .transition()
-        .duration(TransitionDuration)
+        .join('rect')
         .attr('x', (d: any) => bandScale(d.label) || 0)
         .attr('width', bandScale.bandwidth())
         .attr('y', (d: any) => verticalScale(d.value))
         .attr('height', (d: any) => this.height - margin.bottom - verticalScale(d.value));
 
-    this.canvas.select('#band-axis').transition().duration(TransitionDuration).call(axisBottom(bandScale) as any);
+
+    // this.canvas
+    //     .select('#rectangles')
+    //     .selectAll('rect')
+    //     .interrupt()
+    //     .data(this.data)
+    //     .join(enter => enter.append('rect')
+    //         .attr('x', d => bandScale(d.label) || 0)
+    //         .attr('width', bandScale.bandwidth())
+    //         .attr('height', this.height - margin.bottom - verticalScale(0))
+    //         .attr('y', verticalScale(0)).selection());
+
+    // this.canvas.select('#rectangles')
+    //     .selectAll('rect')
+    //     // .transition()
+    //     // .duration(TransitionDuration)
+    //     .attr('x', (d: any) => bandScale(d.label) || 0)
+    //     .attr('width', bandScale.bandwidth())
+    //     .attr('y', (d: any) => verticalScale(d.value))
+    //     .attr('height', (d: any) => this.height - margin.bottom - verticalScale(d.value));
+
+    this.canvas.select('#band-axis')
+        .interrupt()
+        // .transition()
+        // .duration(TransitionDuration)
+        .call(axisBottom(bandScale) as any);
 }
 
 // Moving DHs
-export function moveDH(this: BarChartWithDH, newBandScale: ScaleBand<string>, newVerticalScale: ScaleLinear<number, number, never>) {
+export function moveDH(this: BarChartWithDH, newBandScale: ScaleBand<string>, newVerticalScale: ScaleLinear<number, number, never>, withTransition?: boolean) {
     const dhContainer = this.canvas.select('#dh-container');
     dhContainer.selectAll('.annotation-rects')
         .transition()
-        .duration(TransitionDuration)
+        .duration(withTransition ? TransitionDuration : 0)
         .attr("x", (d: any) => newBandScale(d.label) || 0)
         .attr("width", newBandScale.bandwidth())
         .attr("y", (d: any) => {
@@ -144,20 +172,20 @@ export function moveDH(this: BarChartWithDH, newBandScale: ScaleBand<string>, ne
             const center = 0.5 * (parsedRange[0] + parsedRange[1]);
             return (newVerticalScale(center) || 0) - 2;
         })
-        .attr('opacity', (d: any) => (newBandScale.domain().includes(d.label) ? 1 : 0));
+        .attr('display', (d: any) => (newBandScale.domain().includes(d.label) ? null : 'none'));
 
     dhContainer.selectAll('.annotation-line')
         .transition()
-        .duration(TransitionDuration)
+        .duration(withTransition ? TransitionDuration : 0)
         .attr("width", newBandScale.bandwidth())
         .attr("x", (d: any) => newBandScale(d.label) || 0)
-        .attr('opacity', (d: any) => (newBandScale.domain().includes(d.label) ? 1 : 0))
+        .attr('display', (d: any) => (newBandScale.domain().includes(d.label) ? null : 'none'))
         .attr("y", (d: any) => newVerticalScale(parseFloat(d.content)) - 2);
 
     dhContainer.selectAll('.dp-annotation-marker')
         .transition()
-        .duration(TransitionDuration)
-        .attr('opacity', (d: any) => (newBandScale.domain().includes(d.label) ? 1 : 0))
+        .duration(withTransition ? TransitionDuration : 0)
+        .attr('display', (d: any) => (newBandScale.domain().includes(d.label) ? null : 'none'))
         .attr('cx', (d: any) => (0.2 * newBandScale.bandwidth()) + (newBandScale(d.label) || 0));
 
     // TODO move the overaxis ones to accurate places if needed

@@ -1,8 +1,8 @@
 import { pointer, select as d3select } from 'd3-selection';
-import { scaleLinear, scaleBand } from 'd3-scale';
+import { scaleLinear, scaleBand, scaleSequential, scaleOrdinal } from 'd3-scale';
 import { getFirestore, collection, getDocs, Firestore, setDoc, doc } from 'firebase/firestore/lite';
 import { Annotations, AnnotationType, BarChartDataPoint, SelectionType } from './types';
-import { BrightOrange, ColorPallate, ConfidenceInput, DarkBlue, FirebaseSetup, ForeignObjectHeight, ForeignObjectWidth, LargeNumber, LightGray, margin } from './Constants';
+import { BrightOrange, CategoricalColor, ColorPallate, ConfidenceInput, DarkBlue, FirebaseSetup, ForeignObjectHeight, ForeignObjectWidth, LargeNumber, LightGray, margin } from './Constants';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { max } from 'd3-array';
 import 'd3-transition';
@@ -15,7 +15,6 @@ import { addInput } from './funcs/Annotations';
 import { inclusionExclusion } from './funcs/InclusionExclusion';
 import { makeGeneralControlPanel } from './funcs/Control/GeneralControlPanel';
 import { makeDetailedControlPanel } from './funcs/Control/DetailedControlPanel';
-import { previewFunction } from './funcs/PreviewFunction';
 
 export class BarChartWithDH {
     readonly data: BarChartDataPoint[];
@@ -26,6 +25,7 @@ export class BarChartWithDH {
     savedDataHunches: Annotations[];
     protected showDataHunches: boolean;
     protected currentDHID: number;
+    protected containCategorical: boolean;
     protected userName: string;
     protected datasetName: string;
     protected firebase: Firestore;
@@ -51,6 +51,7 @@ export class BarChartWithDH {
         this.firebase = getFirestore(initializeApp(FirebaseSetup));
         this.datasetName = datasetName;
         this.savedDataHunches = [];
+        this.containCategorical = false;
     }
 
     // initiation
@@ -71,6 +72,11 @@ export class BarChartWithDH {
 
         if (!this.userName) {
             controlBar.selectAll('button').attr('disabled', true);
+        }
+
+        if (this.data[0].categorical) {
+            this.containCategorical = true;
+            // TODO MAKE LEGENDS
         }
 
 
@@ -109,9 +115,6 @@ export class BarChartWithDH {
             .attr("width", this.width)
             .attr("height", this.height);
 
-        // add an arrow marker def
-
-
         // add blur
         // need 5 filters for 5 levels
 
@@ -124,15 +127,8 @@ export class BarChartWithDH {
             .attr('stdDeviation', (d, i) => (5 - i));
 
         // Construct Scales
-        svg.append('g').attr('id', 'rectangles')
-            .selectAll("rect")
-            .data(this.data)
-            .join("rect")
-            .attr("x", (d) => (bandScale(d.label) || 0))
-            .attr("y", d => verticalScale(d.value))
-            .attr("width", bandScale.bandwidth())
-            .attr("height", d => that.height - margin.bottom - verticalScale(d.value))
-            .attr("fill", DarkBlue);
+        svg.append('g').attr('id', 'rectangles');
+        restoreRectangles.bind(this)();
 
         // axis
         svg.append('g')
@@ -252,6 +248,17 @@ export class BarChartWithDH {
             .domain([max(this.data.map(d => d.value)) || LargeNumber, 0])
             .range([margin.top, this.height - margin.bottom])
             .clamp(true);
+    }
+
+    makeCategoricalScale(newInputData?: BarChartDataPoint[]) {
+        if (newInputData) {
+            return scaleOrdinal()
+                .domain(newInputData.map(d => d.categorical!))
+                .range(CategoricalColor);
+        }
+        return scaleOrdinal()
+            .domain(this.data.map(d => d.categorical!))
+            .range(CategoricalColor);
     }
 
 
@@ -383,7 +390,7 @@ export class BarChartWithDH {
     }
 
     clearHighlightRect() {
-        this.canvas.select('#rectangles').selectAll('rect').attr('fill', DarkBlue);
+        this.canvas.select('#rectangles').selectAll('rect').attr("fill", (d: any) => this.containCategorical ? ((this.makeCategoricalScale()(d.categorical!) as any) || DarkBlue) : DarkBlue);
     }
 
     addCancelButton(formDiv: SelectionType) {

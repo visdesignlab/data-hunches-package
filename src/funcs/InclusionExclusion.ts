@@ -14,7 +14,6 @@ export function inclusionExclusion(this: BarChartWithDH) {
 
     const originalBandScale = this.makeBandScale();
 
-
     textfield.attr('placeholder', `Label to exclude or new label`);
 
     const valueField = form.append('input')
@@ -24,6 +23,11 @@ export function inclusionExclusion(this: BarChartWithDH) {
         .style('width', '-webkit-fill-available');
 
     valueField.attr('placeholder', `Inclusion Value (optional)`);
+
+    let categoricalField = undefined;
+    if (this.containCategorical) {
+        // TODO add a select option based on categories.? Or allow free input?
+    }
 
     form.append('input')
         .attr('type', 'button')
@@ -56,7 +60,7 @@ export function inclusionExclusion(this: BarChartWithDH) {
             resetPreview.bind(that)();
             that.canvas.select('#rectangles')
                 .selectAll('rect')
-                .attr('fill', DarkBlue);
+                .attr("fill", (d: any) => this.containCategorical ? ((this.makeCategoricalScale()(d.categorical!) as any) || DarkBlue) : DarkBlue);
 
         });
 
@@ -90,9 +94,6 @@ export function inclusionExclusion(this: BarChartWithDH) {
                     that.hideInChartForeignObject();
 
                 }
-
-
-
             } else {
                 alert('Please enter a reason for the data hunch!');
             }

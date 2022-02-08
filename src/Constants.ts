@@ -20,7 +20,7 @@ export const ForeignObjectWidth = 200;
 
 export const ForeignObjectHeight = 250;
 
-export const TransitionDuration = 1000;
+export const TransitionDuration = 500;
 
 export const FirebaseSetup = {
     apiKey: "AIzaSyAM2CAoS7L7Ix0UTgET6dB-iI-q3wb2VDQ",
@@ -32,3 +32,5 @@ export const FirebaseSetup = {
 };
 
 export const ConfidenceInput = ['Not at all confident', 'Not very confident', 'Somewhat confident', 'Very confident', 'Extremely confident'];
+
+export const CategoricalColor = [DarkBlue, '#a77c4e', '#a74e7a'];
