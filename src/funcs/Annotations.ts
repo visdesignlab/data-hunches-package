@@ -24,6 +24,8 @@ export function addInput(this: BarChartWithDH) {
                 that.hideInChartForeignObject();
 
                 that.renderVisualizationWithDH();
+
+                that.restoreRectangles();
             } else {
                 alert('Please enter a reason for the data hunch!');
             }

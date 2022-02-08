@@ -3,6 +3,7 @@ import { axisBottom, axisLeft } from 'd3-axis';
 import * as rough from 'roughjs/bin/rough';
 import { BarChartWithDH } from "../BarChartWithDH";
 import { margin, DarkBlue, IndicatorSize, DarkGray } from "../Constants";
+import { previewFunction, resetPreview } from './PreviewFunction';
 
 export function renderVisualizationWithDH(this: BarChartWithDH) {
     const that = this;
@@ -17,15 +18,7 @@ export function renderVisualizationWithDH(this: BarChartWithDH) {
 
     existingAnnotation.push({ label: "all chart", annotaiton: [] });
 
-    this.canvas.select('#rectangles')
-        .selectAll("rect")
-        .data(this.data)
-        .join("rect")
-        .attr('x', d => bandScale(d.label) || 0)
-        .attr('width', bandScale.bandwidth())
-        .attr("y", d => verticalScale(d.value))
-        .attr("height", d => this.height - margin.bottom - verticalScale(d.value))
-        .attr("fill", DarkBlue);
+
 
     that.canvas.select('#band-axis').call(axisBottom(bandScale) as any);
 
@@ -63,9 +56,10 @@ export function renderVisualizationWithDH(this: BarChartWithDH) {
                             dhContainer.append('circle')
                                 .datum(dataHunch)
                                 .attr('class', 'annotation-marker')
-                                .attr('cx', (0.2 * bandScale.bandwidth()) + (bandScale(dataHunch.label) || 0) + 2 * (IndicatorSize + 4) * (currentAnnotationIndex % 2))
+                                .classed('dp-annotation-marker', true)
+                                .attr('cx', (0.2 * bandScale.bandwidth()) + (bandScale(dataHunch.label) || 0))
                                 .attr('cy', (that.height - margin.bottom) + 2 * (IndicatorSize + 2) * Math.floor(currentAnnotationIndex / 2))
-                                .attr('transform', `translate(0, 25)`)
+                                .attr('transform', `translate(${2 * (IndicatorSize + 4) * (currentAnnotationIndex % 2)}, ${25})`)
                                 .attr('fill', d => that.userColorProfile[d.user]);
                         }
                         break;
@@ -79,7 +73,7 @@ export function renderVisualizationWithDH(this: BarChartWithDH) {
                             .datum(dataHunch)
                             .attr('class', 'annotation-rects')
                             .attr("x", d => bandScale(d.label) || 0)
-                            .attr("y", d => (verticalScale(center) - 2))
+                            .attr("y", (verticalScale(center) - 2))
                             .attr("height", 4)
                             .attr('fill', 'none')
                             .attr("width", bandScale.bandwidth())
@@ -100,9 +94,10 @@ export function renderVisualizationWithDH(this: BarChartWithDH) {
                     case "data space":
                     case "manipulations":
                         const dhValue = parseFloat(dataHunch.content);
-                        dhContainer.append('rect')
+                        const extradhG = dhContainer.append('g').datum(dataHunch).classed('above-axis-indicator', dhValue > max(verticalScale.domain())!);
+                        extradhG.append('rect')
                             .datum(dataHunch)
-                            .attr('class', 'annotation-line')
+                            .classed('annotation-line', dhValue < max(verticalScale.domain())!)
                             .attr("x", d => bandScale(d.label) || 0)
                             .attr("y", verticalScale(dhValue) - 2)
                             .attr("height", 4)
@@ -111,7 +106,7 @@ export function renderVisualizationWithDH(this: BarChartWithDH) {
                             .attr('stroke-width', 4)
                             .attr('stroke', d => that.userColorProfile[d.user]);
                         if (dhValue > max(verticalScale.domain())!) {
-                            const extradhG = dhContainer.append('g').datum(dataHunch);
+
                             extradhG.append('line')
                                 .attr('x1', (bandScale(dataHunch.label) || 0) + 0.5 * bandScale.bandwidth())
                                 .attr('x2', (bandScale(dataHunch.label) || 0) + 0.5 * bandScale.bandwidth())
@@ -125,11 +120,16 @@ export function renderVisualizationWithDH(this: BarChartWithDH) {
                                 .attr('stroke', 'none')
                                 .attr('points', '0,0 7,5 -7,5')
                                 .attr('fill', that.userColorProfile[dataHunch.user]);
-                            //TODO get the hover interaction
-                            // extradhG.on('mouseOver');
+
+                            // Over axis hover interactions
+                            extradhG.on('mouseover', () => {
+                                previewFunction.bind(that)(dhValue, dataHunch.label);
+                            }).on('mouseout', () => {
+                                resetPreview.bind(that)();
+                                that.canvas.select('#rectangles').selectAll('rect').attr('fill', DarkBlue);
+                            });
                         }
                         break;
-
                 }
             }
         });
@@ -229,4 +229,18 @@ export function renderVisualizationWithDH(this: BarChartWithDH) {
         });
 
 
+}
+
+export function restoreRectangles(this: BarChartWithDH) {
+    const verticalScale = this.makeVerticalScale();
+    const bandScale = this.makeBandScale();
+    this.canvas.select('#rectangles')
+        .selectAll("rect")
+        .data(this.data)
+        .join("rect")
+        .attr('x', d => bandScale(d.label) || 0)
+        .attr('width', bandScale.bandwidth())
+        .attr("y", d => verticalScale(d.value))
+        .attr("height", d => this.height - margin.bottom - verticalScale(d.value))
+        .attr("fill", DarkBlue);
 }

@@ -1,4 +1,4 @@
-import { pointer, select as d3select, select } from 'd3-selection';
+import { pointer, select as d3select } from 'd3-selection';
 import { scaleLinear, scaleBand } from 'd3-scale';
 import { getFirestore, collection, getDocs, Firestore, setDoc, doc } from 'firebase/firestore/lite';
 import { Annotations, AnnotationType, BarChartDataPoint, SelectionType } from './types';
@@ -9,12 +9,13 @@ import 'd3-transition';
 import { initializeApp } from "firebase/app";
 import { manipulation } from './funcs/Manipulation';
 import { addDataSpace } from './funcs/DataSpace';
-import { renderVisualizationWithDH } from './funcs/RenderVisWithDH';
+import { renderVisualizationWithDH, restoreRectangles } from './funcs/RenderVisWithDH';
 import { addRating } from './funcs/Ratings';
 import { addInput } from './funcs/Annotations';
 import { inclusionExclusion } from './funcs/InclusionExclusion';
 import { makeGeneralControlPanel } from './funcs/Control/GeneralControlPanel';
 import { makeDetailedControlPanel } from './funcs/Control/DetailedControlPanel';
+import { previewFunction } from './funcs/PreviewFunction';
 
 export class BarChartWithDH {
     readonly data: BarChartDataPoint[];
@@ -261,6 +262,8 @@ export class BarChartWithDH {
 
     selectADataPointEvent = () => {
         const that = this;
+
+        this.canvas.select('#dh-container').selectAll('*').on('mouseover', null).on('mouseon', null);
         const rectangles = this.canvas.select('#rectangles').selectAll('rect');
         rectangles.attr('cursor', 'pointer')
             .on('click', (e, data: any) => {
@@ -375,6 +378,8 @@ export class BarChartWithDH {
         this.clearHighlightRect();
 
         this.renderVisualizationWithDH();
+
+        this.restoreRectangles();
     }
 
     clearHighlightRect() {
@@ -389,9 +394,8 @@ export class BarChartWithDH {
                 this.clearHighlightRect();
                 this.hideInChartForeignObject();
                 this.renderVisualizationWithDH();
-                this.canvas.select('#svg-canvas').on('mousedown', null)
-                    .on('mousemove', null)
-                    .on('mouseup', null);
+                this.restoreRectangles();
+
                 this.canvas.select('#manipulation-layer').selectAll('*').remove();
             });
     }
@@ -445,4 +449,5 @@ export class BarChartWithDH {
         }
     };
 
+    restoreRectangles = restoreRectangles.bind(this);
 }

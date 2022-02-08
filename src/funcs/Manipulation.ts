@@ -91,11 +91,10 @@ export function manipulation(this: BarChartWithDH) {
                 }
 
                 //remove the form
-                that.canvas.select('#svg-canvas').on('mousedown', null)
-                    .on('mousemove', null)
-                    .on('mouseup', null);
-                this.renderVisualizationWithDH();
-                this.hideInChartForeignObject();
+
+                that.renderVisualizationWithDH();
+                that.restoreRectangles();
+                that.hideInChartForeignObject();
 
                 //clean up manipulation layer
                 manipulationLayer.selectAll('*').remove();
