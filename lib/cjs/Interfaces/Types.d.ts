@@ -4,7 +4,7 @@ export interface BarChartDataPoint {
     value: number;
     categorical?: string;
 }
-export interface Annotations {
+export interface DataHunch {
     type: AnnotationType;
     user: string;
     label: string;

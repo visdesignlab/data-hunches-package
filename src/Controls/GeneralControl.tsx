@@ -3,6 +3,7 @@ import { pointer, select } from "d3-selection";
 import { observer } from "mobx-react";
 import { useContext } from "react";
 import { FC } from "react";
+import { DefaultForeignObjectHeight, DefaultForeignObjectWidth } from "../Interfaces/Constants";
 
 import Store from "../Interfaces/Store";
 
@@ -14,11 +15,18 @@ const GeneralControl: FC = () => {
         store.selectADataPointMode(true);
     };
 
+    const onClickAnnotation = () => {
+        store.setInputMode('annotation');
+        select('#form-component')
+            .attr('x', store.svgWidth - DefaultForeignObjectWidth)
+            .attr('y', store.svgHeight - DefaultForeignObjectHeight);
+    };
+
 
     return (
         <Container style={{ paddingTop: '5px' }}>
             <ButtonGroup color="primary" aria-label="outlined primary button group">
-                <Button>Add Annotations</Button>
+                <Button onClick={onClickAnnotation}>Add Annotations</Button>
                 <Button>Inclusion/Exclusion</Button>
                 <Button onClick={onClickSelectADataPoint}>Select a Data Point</Button>
             </ButtonGroup>

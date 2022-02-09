@@ -9,7 +9,9 @@ export class RootStore {
     svgWidth: number;
     selectingADataPoint: boolean;
     selectedDP: string | undefined;
-
+    inputMode: string;
+    userName: string;
+    nextDHIndex: number;
 
     constructor() {
         this.showDataHunches = true;
@@ -18,7 +20,23 @@ export class RootStore {
         this.svgWidth = 500;
         this.selectingADataPoint = false;
         this.selectedDP = undefined;
+        this.inputMode = 'none';
+        this.userName = 'none';
+        this.nextDHIndex = 0;
         makeAutoObservable(this);
+    }
+
+    setUserName(input: string) {
+        this.userName = input;
+    }
+
+    setNextDHIndex(input: number) {
+        this.nextDHIndex = input;
+    }
+
+    submitDH() {
+        this.inputMode = 'none';
+        this.nextDHIndex += 1;
     }
 
     setWidthHeight(newWidth: number, newHeight: number) {
@@ -33,6 +51,10 @@ export class RootStore {
         this.showDataHunches = input;
     }
 
+    setInputMode(input: "annotation" | 'none') {
+        this.inputMode = input;
+    }
+
     selectADataPointMode(input: boolean) {
         this.selectingADataPoint = input;
         // if it is false, hiding elemtns
@@ -42,7 +64,7 @@ export class RootStore {
         }
     }
 
-    setCurrentSelectedDP(input: string) {
+    setCurrentSelectedDP(input: string | undefined) {
         this.selectedDP = input;
     }
 }

@@ -22,7 +22,7 @@ export const DefaultForeignObjectHeight = 250;
 
 export const ControlFOWidth = 150;
 
-export const ControlFOHeight = 180;
+export const ControlFOHeight = 210;
 
 export const TransitionDuration = 500;
 

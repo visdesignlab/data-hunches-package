@@ -28,10 +28,17 @@ const BarElement: FC<Props> = ({ width, height, xPos, yPos, fill, dataElement }:
             const xLoc = (pointer(e)[0] + ControlFOWidth) > store.svgWidth ? (pointer(e)[0] - ControlFOWidth) : pointer(e)[0];
             const yLoc = (pointer(e)[1] + ControlFOHeight) > store.svgHeight ? (pointer(e)[1] - ControlFOHeight) : pointer(e)[1];
 
+            const formXLoc = (pointer(e)[0] + DefaultForeignObjectWidth) > store.svgWidth ? (pointer(e)[0] - DefaultForeignObjectWidth) : pointer(e)[0];
+
+            const formYLoc = (pointer(e)[1] + DefaultForeignObjectHeight) > store.svgHeight ? (pointer(e)[1] - DefaultForeignObjectHeight) : pointer(e)[1];
+
             select('#specific-control')
                 .attr('display', null)
                 .attr('x', xLoc)
                 .attr('y', yLoc);
+            select('#form-component')
+                .attr('x', formXLoc)
+                .attr('y', formYLoc);
         }
     };
 
