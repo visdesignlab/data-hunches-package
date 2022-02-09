@@ -16,19 +16,23 @@ export const DarkBlue = '#4ea6a7';
 
 export const ColorPallate = schemeTableau10;
 
-export const ForeignObjectWidth = 200;
+export const DefaultForeignObjectWidth = 200;
 
-export const ForeignObjectHeight = 250;
+export const DefaultForeignObjectHeight = 250;
+
+export const ControlFOWidth = 150;
+
+export const ControlFOHeight = 180;
 
 export const TransitionDuration = 500;
 
 export const FirebaseSetup = {
-  apiKey: "AIzaSyAM2CAoS7L7Ix0UTgET6dB-iI-q3wb2VDQ",
-  authDomain: "data-hunch.firebaseapp.com",
-  projectId: "data-hunch",
-  storageBucket: "data-hunch.appspot.com",
-  messagingSenderId: "746016997124",
-  appId: "1:746016997124:web:ee92f17b272373d28ada51"
+    apiKey: "AIzaSyAM2CAoS7L7Ix0UTgET6dB-iI-q3wb2VDQ",
+    authDomain: "data-hunch.firebaseapp.com",
+    projectId: "data-hunch",
+    storageBucket: "data-hunch.appspot.com",
+    messagingSenderId: "746016997124",
+    appId: "1:746016997124:web:ee92f17b272373d28ada51"
 };
 
 export const ConfidenceInput = ['Not at all confident', 'Not very confident', 'Somewhat confident', 'Very confident', 'Extremely confident'];
