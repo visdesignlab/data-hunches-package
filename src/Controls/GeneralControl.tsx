@@ -33,7 +33,7 @@ const GeneralControl: FC = () => {
 
     return (
         <Container style={{ paddingTop: '5px' }}>
-            <ButtonGroup color="primary" aria-label="outlined primary button group">
+            <ButtonGroup color="primary" aria-label="outlined primary button group" disabled={!store.userName}>
                 <Button onClick={onClickAnnotation}>Add Annotations</Button>
                 <Button onClick={onClickIncExc}>Inclusion/Exclusion</Button>
                 <Button onClick={onClickSelectADataPoint}>Select a Data Point</Button>

@@ -27,7 +27,7 @@ export class RootStore {
         this.selectingADataPoint = false;
         this.selectedDP = undefined;
         this.inputMode = 'none';
-        this.userName = 'none';
+        this.userName = '';
         this.datasetName = '';
         this.nextDHIndex = 0;
         this.firebaseSetup = getFirestore(initializeApp(FirebaseSetup));
