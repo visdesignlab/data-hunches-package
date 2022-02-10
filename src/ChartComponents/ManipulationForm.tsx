@@ -6,7 +6,11 @@ import Store from "../Interfaces/Store";
 import { useStyles } from "../Interfaces/StyledComponents";
 import SubmitCancelButtons from "./SubmitCancelButtons";
 
-const ManipulationForm: FC = () => {
+export type ManipulationProps = {
+    manipulationOutput: string;
+};
+
+const ManipulationForm: FC<ManipulationProps> = ({ manipulationOutput }: ManipulationProps) => {
     const styles = useStyles();
     const store = useContext(Store);
 
@@ -15,7 +19,6 @@ const ManipulationForm: FC = () => {
         setReasonInput(event.target.value);
     };
 
-    const [manipulationOutput, setManipulationOutput] = useState<undefined | number>(undefined);
 
     const [confidenceInput, setConfidenceInput] = useState(3);
     const handleConfidenceChange = (event: any, value: any) => {
@@ -48,13 +51,13 @@ const ManipulationForm: FC = () => {
                     max={5} />
             </div>
             <SubmitCancelButtons disableSubmit={
-                reasonInput.length === 0 || manipulationOutput === undefined}
+                reasonInput.length === 0 || manipulationOutput === ''}
                 dhToSubmit={{
                     type: 'annotation',
                     user: store.userName,
                     label: `${store.selectedDP === 'none' ? 'all chart' : store.selectedDP}`,
                     // Add Content
-                    content: manipulationOutput === undefined ? '' : manipulationOutput.toString(),
+                    content: manipulationOutput,
                     reasoning: reasonInput,
                     id: store.nextDHIndex,
                     confidenceLevel: confidenceInput

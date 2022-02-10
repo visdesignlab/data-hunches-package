@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { FC, useContext } from "react";
+import { FC, useContext, useState } from "react";
 import BarElement from './ChartComponents/BarElement';
 import { makeBandScale, makeCategoricalScale, makeVerticalScale } from "./HelperFunctions/ScaleGenerator";
 import { DarkBlue, margin } from "./Interfaces/Constants";
@@ -11,6 +11,7 @@ import FormComponent from "./ChartComponents/FormComponent";
 import SpecificControl from "./Controls/SpecificControl";
 import { DataContext } from ".";
 import ManipulationLayer from "./ChartComponents/ManipulationLayer";
+import { useEffect } from "react";
 
 
 
@@ -19,6 +20,20 @@ const BarChart: FC = () => {
     const store = useContext(Store);
 
     const dataSet = useContext(DataContext);
+
+    const [manipulationResult, setManipulationResult] = useState('');
+
+    const sendManipulationToParent = (manipulationResult: string) => {
+        setManipulationResult(manipulationResult);
+    };
+
+    useEffect(() => {
+        if (store.inputMode !== 'manipulation') {
+            setManipulationResult('');
+        }
+    }, [store.inputMode]);
+
+
     // if needed useCallback
 
     const verticalValueScale = makeVerticalScale(dataSet, store.svgHeight);
@@ -57,8 +72,8 @@ const BarChart: FC = () => {
                     />;
                 })}
             </g>
-            {store.inputMode === 'manipulation' ? <ManipulationLayer /> : <></>}
-            <FormComponent />
+            {store.inputMode === 'manipulation' ? <ManipulationLayer sendManipulation={sendManipulationToParent} /> : <></>}
+            <FormComponent manipulationOutput={manipulationResult} />
             <SpecificControl />
         </svg>
     </div>;

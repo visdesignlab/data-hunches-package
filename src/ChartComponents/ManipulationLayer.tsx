@@ -6,7 +6,10 @@ import { makeVerticalScale, makeBandScale } from "../HelperFunctions/ScaleGenera
 import { BrightOrange, LightGray, margin } from "../Interfaces/Constants";
 import Store from "../Interfaces/Store";
 
-const ManipulationLayer: FC = () => {
+type Props = {
+    sendManipulation: (manipulationResult: string) => void;
+};
+const ManipulationLayer: FC<Props> = ({ sendManipulation }: Props) => {
     const store = useContext(Store);
 
     const [isMouseDown, setIsMouseDown] = useState(false);
@@ -31,11 +34,16 @@ const ManipulationLayer: FC = () => {
 
     const mouseUpHandler = (e: any) => {
         setIsMouseDown(false);
+        const dhRect = select('#result-rect');
+        let manipulationResult: string;
         if (isDragging) {
             setIsDragging(false);
+            manipulationResult =
+                [verticalValueScale.invert((parseFloat(dhRect.attr('y') as any) + parseFloat(dhRect.attr('height') as any))).toFixed(2), verticalValueScale.invert(dhRect.attr('y') as any).toFixed(2)].toString();
         } else {
-            console.log('clicked');
+            manipulationResult = verticalValueScale.invert(pointerStartY).toFixed(2).toString();
         }
+        sendManipulation(manipulationResult);
     };
 
     const mouseDownHandler = (e: any) => {

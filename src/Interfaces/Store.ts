@@ -50,7 +50,9 @@ export class RootStore {
         this.inputMode = 'none';
         const databaseRef = collection(this.firebaseSetup, this.datasetName);
 
-        setDoc(doc(databaseRef, this.nextDHIndex.toString()), dataHunchToSubmit).then(() => { this.nextDHIndex += 1; });
+        setDoc(doc(databaseRef, this.nextDHIndex.toString()), dataHunchToSubmit).then(() => {
+            this.setNextDHIndex(this.nextDHIndex + 1);
+        });
 
     }
 

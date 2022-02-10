@@ -7,10 +7,10 @@ import Store from "../Interfaces/Store";
 import { useStyles } from "../Interfaces/StyledComponents";
 import AnnotationForm from "./AnnotationForm";
 import DataSpaceForm from "./DataSpaceForm";
-import ManipulationForm from "./ManipulationForm";
+import ManipulationForm, { ManipulationProps } from "./ManipulationForm";
 import RatingForm from "./RatingForm";
 
-const FormComponent: FC = () => {
+const FormComponent: FC<ManipulationProps> = ({ manipulationOutput }: ManipulationProps) => {
 
     const store = useContext(Store);
 
@@ -23,7 +23,7 @@ const FormComponent: FC = () => {
         dataSpace:
             <DataSpaceForm isIncExc={!store.selectedDP} />,
         manipulation:
-            <ManipulationForm />
+            <ManipulationForm manipulationOutput={manipulationOutput} />
 
     };
 
