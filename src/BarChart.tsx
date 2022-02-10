@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { FC, useContext } from "react";
+import { getFirestore, collection, getDocs, Firestore, setDoc, doc } from 'firebase/firestore/lite';
 import { BarChartDataPoint } from "./Interfaces/Types";
 import BarElement from './ChartComponents/BarElement';
 import { makeBandScale, makeCategoricalScale, makeVerticalScale } from "./HelperFunctions/ScaleGenerator";
@@ -12,6 +13,7 @@ import GeneralControl from "./Controls/GeneralControl";
 import FormComponent from "./ChartComponents/FormComponent";
 import SpecificControl from "./Controls/SpecificControl";
 import { DataContext } from ".";
+import { useEffect } from "react";
 
 
 
@@ -36,6 +38,9 @@ const BarChart: FC = () => {
     select('#band-axis')
         .attr("transform", `translate(0,${store.svgHeight - margin.bottom})`)
         .call(xAxis);
+
+
+
 
 
 

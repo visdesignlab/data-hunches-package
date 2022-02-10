@@ -1,4 +1,5 @@
 /// <reference types="react" />
+import { Firestore } from 'firebase/firestore/lite';
 export declare class RootStore {
     showDataHunches: boolean;
     containCategory: boolean;
@@ -9,8 +10,11 @@ export declare class RootStore {
     inputMode: string;
     userName: string;
     nextDHIndex: number;
+    firebaseSetup: Firestore;
+    datasetName: string;
     constructor();
     setUserName(input: string): void;
+    setDataSetName(input: string): void;
     setNextDHIndex(input: number): void;
     submitDH(): void;
     setWidthHeight(newWidth: number, newHeight: number): void;

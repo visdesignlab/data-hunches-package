@@ -2,6 +2,7 @@
 import { BarChartDataPoint } from "./Interfaces/Types";
 declare type Props = {
     dataSet: BarChartDataPoint[];
+    datasetName: string;
     svgWidth: number;
     svgHeight: number;
 };

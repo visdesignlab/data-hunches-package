@@ -1,6 +1,9 @@
 import { select } from "d3-selection";
 import { makeAutoObservable } from "mobx";
 import { createContext } from "react";
+import { getFirestore, collection, getDocs, Firestore, setDoc, doc } from 'firebase/firestore/lite';
+import { initializeApp } from "firebase/app";
+import { FirebaseSetup } from "./Constants";
 
 export class RootStore {
     showDataHunches: boolean;
@@ -12,6 +15,8 @@ export class RootStore {
     inputMode: string;
     userName: string;
     nextDHIndex: number;
+    firebaseSetup: Firestore;
+    datasetName: string;
 
     constructor() {
         this.showDataHunches = true;
@@ -22,12 +27,18 @@ export class RootStore {
         this.selectedDP = undefined;
         this.inputMode = 'none';
         this.userName = 'none';
+        this.datasetName = '';
         this.nextDHIndex = 0;
+        this.firebaseSetup = getFirestore(initializeApp(FirebaseSetup));
         makeAutoObservable(this);
     }
 
     setUserName(input: string) {
         this.userName = input;
+    }
+
+    setDataSetName(input: string) {
+        this.datasetName = input;
     }
 
     setNextDHIndex(input: number) {
