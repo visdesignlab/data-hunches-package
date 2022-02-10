@@ -1,11 +1,15 @@
 import { Container, Slider, TextField, Typography, Grid } from "@material-ui/core";
+import { select } from "d3-selection";
 import { observer } from "mobx-react-lite";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useState } from "react";
 import { FC } from "react";
 import { DataContext } from "..";
+import { makeVerticalScale, makeBandScale, makeCategoricalScale, getRectFill } from "../HelperFunctions/ScaleGenerator";
+import { margin, DarkBlue, BrightOrange } from "../Interfaces/Constants";
 import Store from "../Interfaces/Store";
 import { useStyles } from "../Interfaces/StyledComponents";
+import { BarChartDataPoint, DataHunch } from "../Interfaces/Types";
 import PreviewResetButtons from "./PreviewResetButtons";
 import SubmitCancelButtons from "./SubmitCancelButtons";
 
@@ -43,15 +47,32 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
     };
 
 
+
+    const verticalScale = makeVerticalScale(data, store.svgHeight);
+    const bandScale = makeBandScale(data, store.svgWidth);
+    const categoricalScale = makeCategoricalScale(data);
+
+    select('#rectangles-preview')
+        .selectAll("rect")
+        .data(data)
+        .join("rect")
+        .attr('x', d => bandScale(d.label) || 0)
+        .attr('width', bandScale.bandwidth())
+        .attr("y", d => verticalScale(d.value))
+        .attr("height", d => store.svgHeight - margin.bottom - verticalScale(d.value))
+        .attr("fill", d => getRectFill(d, store.containCategory, store.selectedDP, categoricalScale));
+
+
+
     const checkIfDisable = () => {
         if (isIncExc && labelInput.length > 0) {
             if (!data.map(d => d.label).includes(labelInput)) {
-                return dataInput === '' || reasonInput.length === 0;
+                return dataInput === '';
             } else {
-                return reasonInput.length === 0;
+                return false;
             }
         } else {
-            return dataInput === '' || reasonInput.length === 0;
+            return dataInput === '';
         }
     };
 
@@ -87,8 +108,8 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
 
         <PreviewResetButtons
             disableButtons={checkIfDisable()}
-            labelToPreview={store.selectedDP ? store.selectedDP : ''}
-            valueToPreview={dataInput === '' ? 0 : parseFloat(dataInput)} />
+            labelToPreview={store.selectedDP ? store.selectedDP : labelInput}
+            valueToPreview={dataInput === '' ? undefined : parseFloat(dataInput)} />
         <TextField
             style={{ paddingTop: '5px' }}
             required
@@ -113,7 +134,7 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
                 min={1}
                 max={5} />
         </div>
-        <SubmitCancelButtons disableSubmit={checkIfDisable()}
+        <SubmitCancelButtons disableSubmit={checkIfDisable() || reasonInput.length === 0}
             dhToSubmit={{
                 type: 'annotation',
                 user: store.userName,

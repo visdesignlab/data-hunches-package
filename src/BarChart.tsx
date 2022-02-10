@@ -58,19 +58,20 @@ const BarChart: FC = () => {
             <g className='axis' id="band-axis" />
             <g className='axis' id="axis-mask" transform={`translate(${margin.left},0)`} />
             <g className='axis' id="vertical-axis" />
-
-            <g id="rectangles">
-                {dataSet.map((d, i) => {
-                    return <BarElement
-                        key={i}
-                        dataElement={d}
-                        height={store.svgHeight - margin.bottom - verticalValueScale(d.value)}
-                        width={honrizontalBandScale.bandwidth()}
-                        xPos={honrizontalBandScale(d.label) || 0}
-                        yPos={verticalValueScale(d.value)}
-                        fill={store.containCategory ? (categoricalColorScale(d.categorical || 'a') as string) : DarkBlue}
-                    />;
-                })}
+            <g id="rectangles-preview" display={store.inputMode === 'dataSpace' ? undefined : 'none'}></g>
+            <g id="rectangles" display={store.inputMode !== 'dataSpace' ? undefined : 'none'}>
+                {
+                    dataSet.map((d, i) => {
+                        return <BarElement
+                            key={i}
+                            dataElement={d}
+                            height={store.svgHeight - margin.bottom - verticalValueScale(d.value)}
+                            width={honrizontalBandScale.bandwidth()}
+                            xPos={honrizontalBandScale(d.label) || 0}
+                            yPos={verticalValueScale(d.value)}
+                            fill={store.containCategory ? (categoricalColorScale(d.categorical || 'a') as string) : DarkBlue}
+                        />;
+                    })}
             </g>
             {store.inputMode === 'manipulation' ? <ManipulationLayer sendManipulation={sendManipulationToParent} /> : <></>}
             <FormComponent manipulationOutput={manipulationResult} />

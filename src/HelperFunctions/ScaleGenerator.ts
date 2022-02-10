@@ -1,6 +1,6 @@
-import { CategoricalColor, LargeNumber, margin } from "../Interfaces/Constants";
+import { BrightOrange, CategoricalColor, DarkBlue, LargeNumber, margin } from "../Interfaces/Constants";
 import { BarChartDataPoint } from "../Interfaces/Types";
-import { scaleLinear, scaleBand, scaleOrdinal } from 'd3-scale';
+import { scaleLinear, scaleBand, scaleOrdinal, ScaleOrdinal } from 'd3-scale';
 import { max } from "d3-array";
 
 export const makeVerticalScale = (newInputData: BarChartDataPoint[], height: number) => {
@@ -18,4 +18,11 @@ export const makeCategoricalScale = (newInputData: BarChartDataPoint[]) => {
     return scaleOrdinal()
         .domain(newInputData.map(d => d.categorical || 'a'))
         .range(CategoricalColor);
+};
+
+export const getRectFill = (d: BarChartDataPoint, containCategory: boolean, selectedDP: string | undefined, categoricalScale: ScaleOrdinal<string, unknown, never>) => {
+    if (d.label === selectedDP) {
+        return BrightOrange;
+    }
+    return containCategory ? ((categoricalScale(d.categorical!) as any) || DarkBlue) : DarkBlue;
 };

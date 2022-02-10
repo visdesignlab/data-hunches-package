@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { FC, useContext, useState } from "react";
 import { DataContext } from "..";
 import { makeVerticalScale, makeBandScale } from "../HelperFunctions/ScaleGenerator";
-import { BrightOrange, LightGray, margin } from "../Interfaces/Constants";
+import { LightGray, margin } from "../Interfaces/Constants";
 import Store from "../Interfaces/Store";
 
 type Props = {
