@@ -13,7 +13,7 @@ export class RootStore {
     svgWidth: number;
     selectingADataPoint: boolean;
     selectedDP: string | undefined;
-    inputMode: string;
+    inputMode: "annotation" | 'none' | 'rating' | 'dataSpace' | 'manipulation';
     userName: string;
     nextDHIndex: number;
     firebaseSetup: Firestore;

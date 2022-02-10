@@ -18,6 +18,7 @@ const Table: FC = () => {
     const [savedDH, setSavedDH] = useState<DataHunch[]>([]);
 
     useEffect(() => {
+        // Retrieve saved DH from DB
         getDocs(collection(store.firebaseSetup, store.datasetName))
             .then(result => {
                 const tempDHArray: DataHunch[] = [];
@@ -51,8 +52,7 @@ const Table: FC = () => {
         { Header: "Data Hunch Content", accessor: 'content' },
         { Header: "Data Hunch Reasoning", accessor: 'reasoning' },
         { Header: "Confidence Level", accessor: 'confidenceLevel' }]
-        ,
-        []
+        , []
     );
 
 

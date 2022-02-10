@@ -1,19 +1,16 @@
 import { observer } from "mobx-react-lite";
 import { FC, useContext } from "react";
-import { getFirestore, collection, getDocs, Firestore, setDoc, doc } from 'firebase/firestore/lite';
-import { BarChartDataPoint } from "./Interfaces/Types";
 import BarElement from './ChartComponents/BarElement';
 import { makeBandScale, makeCategoricalScale, makeVerticalScale } from "./HelperFunctions/ScaleGenerator";
 import { DarkBlue, margin } from "./Interfaces/Constants";
 import Store from "./Interfaces/Store";
 import { axisBottom, axisLeft } from "d3-axis";
 import { select } from "d3-selection";
-import { Container } from "@material-ui/core";
 import GeneralControl from "./Controls/GeneralControl";
 import FormComponent from "./ChartComponents/FormComponent";
 import SpecificControl from "./Controls/SpecificControl";
 import { DataContext } from ".";
-import { useEffect } from "react";
+import ManipulationLayer from "./ChartComponents/ManipulationLayer";
 
 
 
@@ -40,16 +37,13 @@ const BarChart: FC = () => {
         .call(xAxis);
 
 
-
-
-
-
     return <div>
         <GeneralControl />
         <svg width={store.svgWidth} height={store.svgHeight} >
-            <g className='axis' id="band-axis"></g>
-            <g className='axis' id="axis-mask" transform={`translate(${margin.left},0)`}></g>
-            <g className='axis' id="vertical-axis"></g>
+            <g className='axis' id="band-axis" />
+            <g className='axis' id="axis-mask" transform={`translate(${margin.left},0)`} />
+            <g className='axis' id="vertical-axis" />
+
             <g id="rectangles">
                 {dataSet.map((d, i) => {
                     return <BarElement
@@ -63,6 +57,7 @@ const BarChart: FC = () => {
                     />;
                 })}
             </g>
+            {store.inputMode === 'manipulation' ? <ManipulationLayer /> : <></>}
             <FormComponent />
             <SpecificControl />
         </svg>
