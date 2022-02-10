@@ -35,7 +35,7 @@ const Table: FC = () => {
                 // });
                 // this.renderVisualizationWithDH();
             });
-    }, []);
+    }, [store.nextDHIndex]);
 
     const columns = useMemo(
         () => [{

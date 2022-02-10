@@ -1,5 +1,6 @@
 /// <reference types="react" />
 import { Firestore } from 'firebase/firestore/lite';
+import { DataHunch } from "./Types";
 export declare class RootStore {
     showDataHunches: boolean;
     containCategory: boolean;
@@ -16,7 +17,7 @@ export declare class RootStore {
     setUserName(input: string): void;
     setDataSetName(input: string): void;
     setNextDHIndex(input: number): void;
-    submitDH(): void;
+    submitDH(dataHunchToSubmit: DataHunch): void;
     setWidthHeight(newWidth: number, newHeight: number): void;
     setContainCategory(input: boolean): void;
     setShowDH(input: boolean): void;

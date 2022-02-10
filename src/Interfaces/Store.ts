@@ -1,9 +1,10 @@
 import { select } from "d3-selection";
 import { makeAutoObservable } from "mobx";
 import { createContext } from "react";
-import { getFirestore, collection, getDocs, Firestore, setDoc, doc } from 'firebase/firestore/lite';
+import { getFirestore, collection, Firestore, setDoc, doc } from 'firebase/firestore/lite';
 import { initializeApp } from "firebase/app";
 import { FirebaseSetup } from "./Constants";
+import { DataHunch } from "./Types";
 
 export class RootStore {
     showDataHunches: boolean;
@@ -45,9 +46,12 @@ export class RootStore {
         this.nextDHIndex = input;
     }
 
-    submitDH() {
+    submitDH(dataHunchToSubmit: DataHunch) {
         this.inputMode = 'none';
-        this.nextDHIndex += 1;
+        const databaseRef = collection(this.firebaseSetup, this.datasetName);
+
+        setDoc(doc(databaseRef, this.nextDHIndex.toString()), dataHunchToSubmit).then(() => { this.nextDHIndex += 1; });
+
     }
 
     setWidthHeight(newWidth: number, newHeight: number) {
