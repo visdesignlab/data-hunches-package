@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Container, } from "@material-ui/core";
+import { Button, ButtonGroup, Container, IconButton, } from "@material-ui/core";
 import { observer } from "mobx-react-lite";
 import { useContext, } from "react";
 import { FC } from "react";
@@ -14,6 +14,21 @@ const SpecificControl: FC = () => {
     const annotationOnClickHandler = () => {
         store.selectADataPointMode(false);
         store.setInputMode('annotation');
+    };
+
+    const ratingClickHandler = () => {
+        store.selectADataPointMode(false);
+        store.setInputMode('rating');
+    };
+
+    const dataSpaceClickHandler = () => {
+        store.setInputMode('dataSpace');
+        store.selectADataPointMode(false);
+    };
+
+    const manipulationOnClickHandler = () => {
+        store.setInputMode('manipulation');
+        store.selectADataPointMode(false);
     };
 
 
@@ -32,22 +47,23 @@ const SpecificControl: FC = () => {
                     <Button onClick={annotationOnClickHandler}>
                         Annotation
                     </Button>
-                    <Button>
+                    <Button onClick={manipulationOnClickHandler}>
                         Direct Manipulation
                     </Button>
-                    <Button>
+                    <Button onClick={ratingClickHandler}>
                         Rating
                     </Button>
-                    <Button>
+                    <Button onClick={dataSpaceClickHandler}>
                         Data Space
                     </Button>
-                    <Button size="small" onClick={() => {
-                        store.setCurrentSelectedDP(undefined);
-                        store.selectADataPointMode(false);
-                    }}>
-                        <CloseIcon />
-                    </Button>
+
                 </ButtonGroup>
+                <IconButton size="small" onClick={() => {
+                    store.setCurrentSelectedDP(undefined);
+                    store.selectADataPointMode(false);
+                }}>
+                    <CloseIcon />
+                </IconButton>
             </Container>
         </foreignObject>
     );

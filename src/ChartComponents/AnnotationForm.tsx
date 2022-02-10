@@ -1,5 +1,5 @@
-import { Button, ButtonGroup, Container, Slider, TextField, Typography } from "@material-ui/core";
-import { observer } from "mobx-react";
+import { Container, Slider, TextField, Typography } from "@material-ui/core";
+import { observer } from "mobx-react-lite";
 import { useContext, useState } from "react";
 import { FC } from "react";
 import Store from "../Interfaces/Store";

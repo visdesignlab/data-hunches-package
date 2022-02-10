@@ -16,7 +16,7 @@ export declare class RootStore {
     setWidthHeight(newWidth: number, newHeight: number): void;
     setContainCategory(input: boolean): void;
     setShowDH(input: boolean): void;
-    setInputMode(input: "annotation" | 'none'): void;
+    setInputMode(input: "annotation" | 'none' | 'rating' | 'dataSpace' | 'manipulation'): void;
     selectADataPointMode(input: boolean): void;
     setCurrentSelectedDP(input: string | undefined): void;
 }

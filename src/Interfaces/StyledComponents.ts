@@ -1,4 +1,5 @@
 import { createStyles, makeStyles, Theme } from "@material-ui/core";
+import { LightGray } from "./Constants";
 
 export const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -13,5 +14,11 @@ export const useStyles = makeStyles((theme: Theme) =>
         foreignObjectContainer: {
             backgroundColor: 'rgb(238, 238, 238, 0.8)',
             padding: '5px',
+            // borderStyle: 'groove',
+            // borderColor: LightGray
+        },
+        radioStyle: {
+            marginTop: -7,
+            marginBottom: -7
         }
     }));

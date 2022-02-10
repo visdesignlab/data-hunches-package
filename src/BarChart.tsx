@@ -11,15 +11,15 @@ import { Container } from "@material-ui/core";
 import GeneralControl from "./Controls/GeneralControl";
 import FormComponent from "./ChartComponents/FormComponent";
 import SpecificControl from "./Controls/SpecificControl";
+import { DataContext } from ".";
 
-type Props = {
-    dataSet: BarChartDataPoint[];
-};
 
-const BarChart: FC<Props> = ({ dataSet }: Props) => {
+
+const BarChart: FC = () => {
 
     const store = useContext(Store);
 
+    const dataSet = useContext(DataContext);
     // if needed useCallback
 
     const verticalValueScale = makeVerticalScale(dataSet, store.svgHeight);

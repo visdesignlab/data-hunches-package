@@ -6,16 +6,24 @@ import { DefaultForeignObjectHeight, DefaultForeignObjectWidth } from "../Interf
 import Store from "../Interfaces/Store";
 import { useStyles } from "../Interfaces/StyledComponents";
 import AnnotationForm from "./AnnotationForm";
+import DataSpaceForm from "./DataSpaceForm";
+import ManipulationForm from "./ManipulationForm";
+import RatingForm from "./RatingForm";
 
 const FormComponent: FC = () => {
 
     const store = useContext(Store);
-    const styles = useStyles();
 
 
     const formContent = {
         annotation:
             <AnnotationForm />,
+        rating:
+            <RatingForm />,
+        dataSpace:
+            <DataSpaceForm isIncExc={!store.selectedDP} />,
+        manipulation:
+            <ManipulationForm />
 
     };
 

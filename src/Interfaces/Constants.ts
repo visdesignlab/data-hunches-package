@@ -18,11 +18,11 @@ export const ColorPallate = schemeTableau10;
 
 export const DefaultForeignObjectWidth = 200;
 
-export const DefaultForeignObjectHeight = 250;
+export const DefaultForeignObjectHeight = 255;
 
-export const ControlFOWidth = 150;
+export const ControlFOWidth = 152;
 
-export const ControlFOHeight = 210;
+export const ControlFOHeight = 208;
 
 export const TransitionDuration = 500;
 

@@ -1,5 +1,5 @@
 import { AppBar, IconButton, makeStyles, Toolbar, Typography } from "@material-ui/core";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import { useStyles } from "../Interfaces/StyledComponents";

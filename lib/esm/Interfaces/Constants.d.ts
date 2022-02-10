@@ -12,9 +12,9 @@ export declare const BrightOrange = "#eb9800";
 export declare const DarkBlue = "#4ea6a7";
 export declare const ColorPallate: readonly string[];
 export declare const DefaultForeignObjectWidth = 200;
-export declare const DefaultForeignObjectHeight = 282;
-export declare const ControlFOWidth = 150;
-export declare const ControlFOHeight = 210;
+export declare const DefaultForeignObjectHeight = 255;
+export declare const ControlFOWidth = 152;
+export declare const ControlFOHeight = 208;
 export declare const TransitionDuration = 500;
 export declare const FirebaseSetup: {
     apiKey: string;

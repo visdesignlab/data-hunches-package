@@ -51,7 +51,7 @@ export class RootStore {
         this.showDataHunches = input;
     }
 
-    setInputMode(input: "annotation" | 'none') {
+    setInputMode(input: "annotation" | 'none' | 'rating' | 'dataSpace' | 'manipulation') {
         this.inputMode = input;
     }
 

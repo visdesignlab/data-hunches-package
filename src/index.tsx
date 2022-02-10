@@ -1,5 +1,5 @@
-import { FC, useContext, useEffect } from "react";
-import { observer } from "mobx-react";
+import { createContext, FC, useContext, useEffect } from "react";
+import { observer } from "mobx-react-lite";
 import BarChart from "./BarChart";
 import { BarChartDataPoint } from "./Interfaces/Types";
 import Store from "./Interfaces/Store";
@@ -12,6 +12,8 @@ type Props = {
     svgHeight: number;
 };
 
+export const DataContext = createContext<BarChartDataPoint[]>([]);
+
 const BarChartWithDH: FC<Props> = ({ dataSet, svgWidth, svgHeight }: Props) => {
     const store = useContext(Store);
 
@@ -23,20 +25,21 @@ const BarChartWithDH: FC<Props> = ({ dataSet, svgWidth, svgHeight }: Props) => {
 
     store.setWidthHeight(svgWidth, svgHeight);
 
-    return <div>
-        <TopBar />
-        <Grid container spacing={1}>
-            <Grid item xs={12} lg={6} >
-                <BarChart dataSet={dataSet} />
-            </Grid>
-            <Grid item xs={12} lg={6}>
-                table
-            </Grid>
-        </Grid>
-
-
-
-    </div>;
+    return (
+        <DataContext.Provider value={dataSet}>
+            <div>
+                <TopBar />
+                <Grid container spacing={1}>
+                    <Grid item xs={12} lg={6} >
+                        <BarChart />
+                    </Grid>
+                    <Grid item xs={12} lg={6}>
+                        table
+                    </Grid>
+                </Grid>
+            </div>
+        </DataContext.Provider>
+    );
 };
 
 export default observer(BarChartWithDH);

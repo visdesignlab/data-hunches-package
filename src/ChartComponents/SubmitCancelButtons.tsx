@@ -1,5 +1,5 @@
 import { Button, ButtonGroup } from "@material-ui/core";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import { useContext } from "react";
 import { FC } from "react";
 import Store from "../Interfaces/Store";
@@ -14,6 +14,7 @@ const SubmitCancelButtons: FC<Props> = ({ dhToSubmit, disableSubmit }: Props) =>
     const store = useContext(Store);
     const cancelClickHandler = () => {
         store.setInputMode('none');
+        store.setCurrentSelectedDP(undefined);
     };
 
     const submitClickHandler = () => {
