@@ -39,6 +39,7 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
 
     const handleDataInputChange = (event: any) => {
         setDataInput(event.target.value);
+        console.log(labelInput);
     };
 
     const handleLabelInput = (event: any) => {
@@ -78,6 +79,18 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
         }
     };
 
+    const makeDHContent = () => {
+        if (isIncExc) {
+            if (data.map(d => d.label).includes(labelInput)) {
+                return 'ignore';
+            } else {
+                return dataInput;
+            }
+        } else {
+            return dataInput;
+        }
+    };
+
     return <Container className={styles.foreignObjectContainer}>
         <Grid container>
             <Grid item xs={6}>
@@ -107,7 +120,6 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
                     placeholder={`Suggest for ${store.selectedDP}`}
                 />
             </Grid>
-
         </Grid>
 
         <PreviewResetButtons
@@ -119,8 +131,8 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
             dhToSubmit={{
                 type: 'annotation',
                 user: store.userName,
-                label: `${store.selectedDP}`,
-                content: dataInput,
+                label: isIncExc ? labelInput : (store.selectedDP ? store.selectedDP : ''),
+                content: makeDHContent(),
                 reasoning: reasonInput,
                 id: store.nextDHIndex,
                 confidenceLevel: confidenceInput

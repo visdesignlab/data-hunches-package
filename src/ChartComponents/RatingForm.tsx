@@ -47,7 +47,7 @@ const RatingForm: FC = () => {
             dhToSubmit={{
                 type: 'annotation',
                 user: store.userName,
-                label: `${store.selectedDP === 'none' ? 'all chart' : store.selectedDP}`,
+                label: `${store.selectedDP === undefined ? 'all chart' : store.selectedDP}`,
                 content: ratingValue,
                 reasoning: reasonInput,
                 id: store.nextDHIndex,

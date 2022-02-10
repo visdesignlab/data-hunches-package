@@ -34,7 +34,7 @@ const ManipulationForm: FC<ManipulationProps> = ({ manipulationOutput }: Manipul
                 dhToSubmit={{
                     type: 'annotation',
                     user: store.userName,
-                    label: `${store.selectedDP === 'none' ? 'all chart' : store.selectedDP}`,
+                    label: `${store.selectedDP === undefined ? 'all chart' : store.selectedDP}`,
                     // Add Content
                     content: manipulationOutput,
                     reasoning: reasonInput,

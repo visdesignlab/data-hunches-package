@@ -43,7 +43,7 @@ const AnnotationForm: FC = () => {
             dhToSubmit={{
                 type: 'annotation',
                 user: store.userName,
-                label: `${store.selectedDP === 'none' ? 'all chart' : store.selectedDP}`,
+                label: `${store.selectedDP === undefined ? 'all chart' : store.selectedDP}`,
                 content: annotationInput,
                 reasoning: reasonInput,
                 id: store.nextDHIndex,
