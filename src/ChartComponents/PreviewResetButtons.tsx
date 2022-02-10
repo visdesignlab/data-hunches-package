@@ -120,6 +120,7 @@ const PreviewResetButtons: FC<Props> = ({ labelToPreview, valueToPreview, disabl
         const bandScale = makeBandScale(dataSet, store.svgWidth);
         const categoricalScale = makeCategoricalScale(dataSet);
 
+        console.log('hit reset');
         // moveDH.bind(this)(bandScale, verticalScale);
 
         select('#axis-mask')

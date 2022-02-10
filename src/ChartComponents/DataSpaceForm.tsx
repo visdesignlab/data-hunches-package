@@ -1,7 +1,7 @@
 import { Container, Slider, TextField, Typography, Grid } from "@material-ui/core";
 import { select } from "d3-selection";
 import { observer } from "mobx-react-lite";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useLayoutEffect } from "react";
 import { useState } from "react";
 import { FC } from "react";
 import { DataContext } from "..";
@@ -11,6 +11,7 @@ import Store from "../Interfaces/Store";
 import { useStyles } from "../Interfaces/StyledComponents";
 import { BarChartDataPoint, DataHunch } from "../Interfaces/Types";
 import PreviewResetButtons from "./PreviewResetButtons";
+import ReasonConfidenceInput from "./ReasonConfidenceInput";
 import SubmitCancelButtons from "./SubmitCancelButtons";
 
 
@@ -30,12 +31,10 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
     const [reasonInput, setReasonInput] = useState('');
     const [labelInput, setLabelInput] = useState('');
 
-    const handleReasonChange = (event: any) => {
-        setReasonInput(event.target.value);
-    };
 
-    const handleConfidenceChange = (event: any, value: any) => {
-        setConfidenceInput(value);
+    const sendConfidenceReasonToParent = (confidenceValue: number, reason: string) => {
+        setReasonInput(reason);
+        setConfidenceInput(confidenceValue);
     };
 
     const handleDataInputChange = (event: any) => {
@@ -46,23 +45,26 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
         setLabelInput(event.target.value);
     };
 
+    useEffect(() => {
 
+        const verticalScale = makeVerticalScale(data, store.svgHeight);
+        const bandScale = makeBandScale(data, store.svgWidth);
+        const categoricalScale = makeCategoricalScale(data);
 
-    const verticalScale = makeVerticalScale(data, store.svgHeight);
-    const bandScale = makeBandScale(data, store.svgWidth);
-    const categoricalScale = makeCategoricalScale(data);
+        select('#axis-mask')
+            .selectAll('*')
+            .remove();
 
-    select('#rectangles-preview')
-        .selectAll("rect")
-        .data(data)
-        .join("rect")
-        .attr('x', d => bandScale(d.label) || 0)
-        .attr('width', bandScale.bandwidth())
-        .attr("y", d => verticalScale(d.value))
-        .attr("height", d => store.svgHeight - margin.bottom - verticalScale(d.value))
-        .attr("fill", d => getRectFill(d, store.containCategory, store.selectedDP, categoricalScale));
-
-
+        select('#rectangles-preview')
+            .selectAll("rect")
+            .data(data)
+            .join("rect")
+            .attr('x', d => bandScale(d.label) || 0)
+            .attr('width', bandScale.bandwidth())
+            .attr("y", d => verticalScale(d.value))
+            .attr("height", d => store.svgHeight - margin.bottom - verticalScale(d.value))
+            .attr("fill", d => getRectFill(d, store.containCategory, store.selectedDP, categoricalScale));
+    }, []);
 
     const checkIfDisable = () => {
         if (isIncExc && labelInput.length > 0) {
@@ -86,6 +88,7 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
                     variant="outlined"
                     size="small"
                     error={labelInput.length > 20}
+                    value={labelInput}
                     placeholder={`Suggest label to include/exclude`}
                     style={{ display: isIncExc ? undefined : 'none', paddingBottom: '5px' }}
                 />
@@ -96,6 +99,7 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
                     type="number"
                     style={{ paddingBottom: '5px' }}
                     onChange={handleDataInputChange}
+                    value={dataInput}
                     label="Data Input"
                     inputProps={{ step: "0.1" }}
                     variant="outlined"
@@ -110,30 +114,7 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
             disableButtons={checkIfDisable()}
             labelToPreview={store.selectedDP ? store.selectedDP : labelInput}
             valueToPreview={dataInput === '' ? undefined : parseFloat(dataInput)} />
-        <TextField
-            style={{ paddingTop: '5px' }}
-            required
-            label="Reason"
-            multiline
-            rows={3}
-            size="small"
-            onChange={handleReasonChange}
-            placeholder="Enter reason for the data hunch"
-            variant="outlined"
-        />
-        <div style={{ paddingLeft: '10px', paddingRight: '10px' }}>
-            <Typography style={{ textAlign: 'start' }}>Confidence</Typography>
-            <Slider
-                defaultValue={3}
-                aria-labelledby="discrete-slider"
-                valueLabelDisplay="auto"
-                step={1}
-                aria-label="Confidence"
-                onChangeCommitted={handleConfidenceChange}
-                marks
-                min={1}
-                max={5} />
-        </div>
+        <ReasonConfidenceInput updateConfidenceReason={sendConfidenceReasonToParent} />
         <SubmitCancelButtons disableSubmit={checkIfDisable() || reasonInput.length === 0}
             dhToSubmit={{
                 type: 'annotation',

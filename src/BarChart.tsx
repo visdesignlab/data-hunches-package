@@ -51,14 +51,16 @@ const BarChart: FC = () => {
         .attr("transform", `translate(0,${store.svgHeight - margin.bottom})`)
         .call(xAxis);
 
-
     return <div>
         <GeneralControl />
         <svg width={store.svgWidth} height={store.svgHeight} >
             <g className='axis' id="band-axis" />
-            <g className='axis' id="axis-mask" transform={`translate(${margin.left},0)`} />
+            <g id="rectangles-preview" display={store.inputMode === 'dataSpace' ? undefined : 'none'}>
+                <g className='axis' id="axis-mask" transform={`translate(${margin.left},0)`} />
+            </g>
+
             <g className='axis' id="vertical-axis" />
-            <g id="rectangles-preview" display={store.inputMode === 'dataSpace' ? undefined : 'none'}></g>
+
             <g id="rectangles" display={store.inputMode !== 'dataSpace' ? undefined : 'none'}>
                 {
                     dataSet.map((d, i) => {

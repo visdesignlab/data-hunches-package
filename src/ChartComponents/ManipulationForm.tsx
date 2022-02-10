@@ -4,6 +4,7 @@ import { useContext, useState } from "react";
 import { FC } from "react";
 import Store from "../Interfaces/Store";
 import { useStyles } from "../Interfaces/StyledComponents";
+import ReasonConfidenceInput from "./ReasonConfidenceInput";
 import SubmitCancelButtons from "./SubmitCancelButtons";
 
 export type ManipulationProps = {
@@ -14,42 +15,20 @@ const ManipulationForm: FC<ManipulationProps> = ({ manipulationOutput }: Manipul
     const styles = useStyles();
     const store = useContext(Store);
 
-    const [reasonInput, setReasonInput] = useState('');
-    const handleReasonChange = (event: any) => {
-        setReasonInput(event.target.value);
-    };
-
 
     const [confidenceInput, setConfidenceInput] = useState(3);
-    const handleConfidenceChange = (event: any, value: any) => {
-        setConfidenceInput(value);
+    const [reasonInput, setReasonInput] = useState('');
+
+    const sendConfidenceReasonToParent = (confidenceValue: number, reason: string) => {
+        setReasonInput(reason);
+        setConfidenceInput(confidenceValue);
     };
+
+
 
     return (
         <Container className={styles.foreignObjectContainer}>
-            <TextField
-                required
-                label="Reason"
-                multiline
-                rows={3}
-                size="small"
-                onChange={handleReasonChange}
-                placeholder="Enter reason for the data hunch"
-                variant="outlined"
-            />
-            <div style={{ paddingLeft: '10px', paddingRight: '10px' }}>
-                <Typography style={{ textAlign: 'start' }}>Confidence</Typography>
-                <Slider
-                    defaultValue={3}
-                    aria-labelledby="discrete-slider"
-                    valueLabelDisplay="auto"
-                    step={1}
-                    aria-label="Confidence"
-                    onChangeCommitted={handleConfidenceChange}
-                    marks
-                    min={1}
-                    max={5} />
-            </div>
+            <ReasonConfidenceInput updateConfidenceReason={sendConfidenceReasonToParent} />
             <SubmitCancelButtons disableSubmit={
                 reasonInput.length === 0 || manipulationOutput === ''}
                 dhToSubmit={{
