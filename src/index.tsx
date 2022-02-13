@@ -77,7 +77,7 @@ const BarChartWithDH: FC<Props> = ({ datasetName, dataSet, svgWidth, svgHeight }
                 <TopBar />
                 <Grid container spacing={1}>
                     <Grid item xs={12} lg={6} >
-                        <BarChart dataHunchArray={savedDH} />
+                        <BarChart />
                     </Grid>
                     <Grid item xs={12} lg={6}>
                         <Table dataHunchArray={savedDH} />
