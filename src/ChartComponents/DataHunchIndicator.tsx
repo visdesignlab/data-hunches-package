@@ -66,7 +66,6 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray }: Props) => {
     const calculateHeight = (dataHunch: DataHunch) => {
         if (dataHunch.type === 'range') {
             const parsedRange = JSON.parse('[' + dataHunch.content + ']');
-            console.log(parsedRange, dataHunch);
             return Math.abs(verticalValueScale(parsedRange[0]) - verticalValueScale(parsedRange[1]));
         } else {
             return store.svgHeight - margin.bottom - verticalValueScale(parseFloat(dataHunch.content));

@@ -18,7 +18,6 @@ const SubmitCancelButtons: FC<Props> = ({ dhToSubmit, disableSubmit }: Props) =>
     };
 
     const submitClickHandler = () => {
-        console.log(dhToSubmit);
         store.submitDH(dhToSubmit);
         store.setInputMode('none');
         store.setCurrentSelectedDP(undefined);

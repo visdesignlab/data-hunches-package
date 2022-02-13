@@ -39,7 +39,6 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
 
     const handleDataInputChange = (event: any) => {
         setDataInput(event.target.value);
-        console.log(labelInput);
     };
 
     const handleLabelInput = (event: any) => {

@@ -48,7 +48,6 @@ export class RootStore {
 
     submitDH(dataHunchToSubmit: DataHunch) {
         this.inputMode = 'none';
-        console.log(dataHunchToSubmit);
         const databaseRef = collection(this.firebaseSetup, this.datasetName);
 
         setDoc(doc(databaseRef, this.nextDHIndex.toString()), dataHunchToSubmit).then(() => {
