@@ -91,6 +91,17 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
         }
     };
 
+    const determineDHType = () => {
+        if (isIncExc) {
+            if (data.map(d => d.label).includes(labelInput)) {
+                return 'exclusion';
+            } else {
+                return 'inclusion';
+            }
+        }
+        return 'data space';
+    };
+
     return <Container className={styles.foreignObjectContainer}>
         <Grid container>
             <Grid item xs={6}>
@@ -126,10 +137,12 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
             disableButtons={checkIfDisable()}
             labelToPreview={store.selectedDP ? store.selectedDP : labelInput}
             valueToPreview={dataInput === '' ? undefined : parseFloat(dataInput)} />
+
         <ReasonConfidenceInput updateConfidenceReason={sendConfidenceReasonToParent} />
+
         <SubmitCancelButtons disableSubmit={checkIfDisable() || reasonInput.length === 0}
             dhToSubmit={{
-                type: 'annotation',
+                type: determineDHType(),
                 user: store.userName,
                 label: isIncExc ? labelInput : (store.selectedDP ? store.selectedDP : ''),
                 content: makeDHContent(),

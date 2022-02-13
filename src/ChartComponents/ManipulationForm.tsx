@@ -24,6 +24,11 @@ const ManipulationForm: FC<ManipulationProps> = ({ manipulationOutput }: Manipul
         setConfidenceInput(confidenceValue);
     };
 
+    const calculateType = () => {
+        const parsedResult = JSON.parse('[' + manipulationOutput + ']');
+        return parsedResult.length > 1 ? 'range' : 'manipulations';
+    };
+
 
 
     return (
@@ -32,7 +37,7 @@ const ManipulationForm: FC<ManipulationProps> = ({ manipulationOutput }: Manipul
             <SubmitCancelButtons disableSubmit={
                 reasonInput.length === 0 || manipulationOutput === ''}
                 dhToSubmit={{
-                    type: 'annotation',
+                    type: calculateType(),
                     user: store.userName,
                     label: `${store.selectedDP === undefined ? 'all chart' : store.selectedDP}`,
                     // Add Content

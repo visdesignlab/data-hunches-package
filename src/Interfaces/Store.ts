@@ -48,6 +48,7 @@ export class RootStore {
 
     submitDH(dataHunchToSubmit: DataHunch) {
         this.inputMode = 'none';
+        console.log(dataHunchToSubmit);
         const databaseRef = collection(this.firebaseSetup, this.datasetName);
 
         setDoc(doc(databaseRef, this.nextDHIndex.toString()), dataHunchToSubmit).then(() => {
@@ -56,10 +57,14 @@ export class RootStore {
 
     }
 
-    setWidthHeight(newWidth: number, newHeight: number) {
+    setWidth(newWidth: number) {
         this.svgWidth = newWidth;
+    }
+
+    setHeight(newHeight: number) {
         this.svgHeight = newHeight;
     }
+
     setContainCategory(input: boolean) {
         this.containCategory = input;
     }

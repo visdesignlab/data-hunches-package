@@ -18,7 +18,8 @@ export declare class RootStore {
     setDataSetName(input: string): void;
     setNextDHIndex(input: number): void;
     submitDH(dataHunchToSubmit: DataHunch): void;
-    setWidthHeight(newWidth: number, newHeight: number): void;
+    setWidth(newWidth: number): void;
+    setHeight(newHeight: number): void;
     setContainCategory(input: boolean): void;
     setShowDH(input: boolean): void;
     setInputMode(input: "annotation" | 'none' | 'rating' | 'dataSpace' | 'manipulation'): void;

@@ -25,7 +25,6 @@ const TopBar: FC = () => {
 
 
     const responseGoogle = (response: any) => {
-        console.log(response);
         store.setUserName(response.profileObj.name);
     };
 
@@ -72,6 +71,7 @@ const TopBar: FC = () => {
                     clientId="565250402151-jseb9mfqk3tumg1q6vcgklmovro4h9b4.apps.googleusercontent.com"
                     render={renderProps => (
                         <MenuItem
+                            key={'change-account'}
                             onClick={() => {
                                 handleClose();
                                 renderProps.onClick();
@@ -91,6 +91,7 @@ const TopBar: FC = () => {
                     onFailure={() => { console.log('failed'); }}
                     render={renderProps => (
                         <MenuItem
+                            key={'log-out'}
                             onClick={() => { handleClose(); renderProps.onClick(); }}>
                             Log Out
                         </MenuItem>

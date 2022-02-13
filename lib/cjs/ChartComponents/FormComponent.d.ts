@@ -1,3 +1,4 @@
 /// <reference types="react" />
-declare const _default: import("react").FunctionComponent<{}>;
+import { ManipulationProps } from "./ManipulationForm";
+declare const _default: import("react").FunctionComponent<ManipulationProps>;
 export default _default;

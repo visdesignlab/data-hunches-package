@@ -1,7 +1,4 @@
 /// <reference types="react" />
-import { BarChartDataPoint } from "./Interfaces/Types";
-declare type Props = {
-    dataSet: BarChartDataPoint[];
-};
-declare const _default: import("react").FunctionComponent<Props>;
+import { DHProps } from "./TableComponents/Table";
+declare const _default: import("react").FunctionComponent<DHProps>;
 export default _default;

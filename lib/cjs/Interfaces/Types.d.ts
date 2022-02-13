@@ -3,6 +3,7 @@ export interface BarChartDataPoint {
     label: string;
     value: number;
     categorical?: string;
+    dataHunchArray?: DataHunch[];
 }
 export interface DataHunch {
     type: AnnotationType;
