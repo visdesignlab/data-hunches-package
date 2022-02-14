@@ -13,8 +13,10 @@ export declare class RootStore {
     nextDHIndex: number;
     firebaseSetup: Firestore;
     datasetName: string;
+    highlightedDH: number;
     constructor();
     setUserName(input: string): void;
+    setHighlightedDH(input: number): void;
     setDataSetName(input: string): void;
     setNextDHIndex(input: number): void;
     submitDH(dataHunchToSubmit: DataHunch): void;

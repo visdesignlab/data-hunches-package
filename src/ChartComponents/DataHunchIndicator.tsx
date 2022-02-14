@@ -14,6 +14,7 @@ import 'roughjs';
 import * as rough from 'roughjs/bin/rough';
 import { DataHunch } from "../Interfaces/Types";
 import { select } from "d3-selection";
+import SketchyBar from "./SketchyBar";
 
 type Props = {
     dataHunchArray: DataHunch[];
@@ -72,69 +73,33 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray }: Props) => {
         }
     };
 
-    useLayoutEffect(() => {
-
-        if (inVisDH.length <= 3) {
-            if (dhRef.current !== null) {
-                select(dhRef.current).selectAll('*').remove();
-                const drawingG = dhRef.current as any;
-
-                const rc = rough.default.svg(drawingG);
-                inVisDH.forEach((d, i) => {
-
-                    const xPos = (honrizontalBandScale(d.label) || 0) + (honrizontalBandScale.bandwidth() / inVisDH.length * i);
-                    const sketchyDH = rc.rectangle(xPos, calculateY(d, false), honrizontalBandScale.bandwidth() / inVisDH.length, calculateHeight(d), {
-                        fill: BrightOrange,
-                        stroke: BrightOrange,
-                        fillStyle: 'zigzag',
-                        roughness: 2.8,
-                        hachureAngle: 60,
-                        hachureGap: 10,
-                        fillWeight: 2,
-                        strokeWidth: 2,
-                    });
-                    drawingG.appendChild(sketchyDH);
-
-                    // const sketchyDH = rc.rectangle(100, 100, 100, 100, {
-                    //     fill: BrightOrange,
-                    //     stroke: BrightOrange,
-                    //     fillStyle: 'zigzag',
-                    //     roughness: 2.8,
-                    //     hachureAngle: 60,
-                    //     hachureGap: 10,
-                    //     fillWeight: 2,
-                    //     strokeWidth: 2,
-                });
-
-            };
-        }
-    }, [inVisDH]);
-
     return (
         <g>
-            {inVisDH.length > 3 ?
-                inVisDH.map((d) => {
+            {inVisDH.map((d, i) => {
+                if (inVisDH.length > 3) {
                     return (
                         <rect
                             key={d.id}
+                            cursor={'pointer'}
+                            onMouseOver={() => { store.setHighlightedDH(d.id); }}
                             x={honrizontalBandScale(d.label)}
                             width={honrizontalBandScale.bandwidth()}
                             y={calculateY(d, true)}
-                            height={2}
+                            height={4}
                             fill={DarkGray}
                             opacity={0.7}
                         />
                     );
-                }) : <g ref={dhRef}></g>}
-            {/* // : inVisDH.map((d, i) => {
-                //     return (
-                //         <SketchyBar
-                //             xPos={honrizontalBandScale(d.label) || 0 + honrizontalBandScale.bandwidth() / inVisDH.length * i}
-                //             yPos={calculateY(d, false)}
-                //             width={honrizontalBandScale.bandwidth() / inVisDH.length}
-                //             height={calculateHeight(d)} />
-                //     );
-                // })} */}
+                } else {
+                    return <SketchyBar
+                        xPos={(honrizontalBandScale(d.label) || 0) + (honrizontalBandScale.bandwidth() / inVisDH.length * i)}
+                        yPos={calculateY(d, false)}
+                        width={honrizontalBandScale.bandwidth() / inVisDH.length}
+                        height={calculateHeight(d)} />;
+                }
+            })}
+
+
             {/* {offVisDH.map((d) => {
                 return <></>;
             })} */}

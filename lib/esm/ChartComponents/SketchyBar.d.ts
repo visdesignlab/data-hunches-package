@@ -1,4 +1,5 @@
 /// <reference types="react" />
+import 'roughjs';
 declare type Props = {
     xPos: number;
     yPos: number;

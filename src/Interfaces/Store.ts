@@ -18,6 +18,7 @@ export class RootStore {
     nextDHIndex: number;
     firebaseSetup: Firestore;
     datasetName: string;
+    highlightedDH: number;
 
     constructor() {
         this.showDataHunches = true;
@@ -28,6 +29,7 @@ export class RootStore {
         this.selectedDP = undefined;
         this.inputMode = 'none';
         this.userName = '';
+        this.highlightedDH = -1;
         this.datasetName = '';
         this.nextDHIndex = 0;
         this.firebaseSetup = getFirestore(initializeApp(FirebaseSetup));
@@ -36,6 +38,10 @@ export class RootStore {
 
     setUserName(input: string) {
         this.userName = input;
+    }
+
+    setHighlightedDH(input: number) {
+        this.highlightedDH = input;
     }
 
     setDataSetName(input: string) {

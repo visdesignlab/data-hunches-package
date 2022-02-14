@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
 import { FC } from "react";
 import { useTable, useSortBy } from 'react-table';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -9,11 +9,14 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { DataHunch } from "../Interfaces/Types";
+import Store from "../Interfaces/Store";
 
 export type DHProps = {
     dataHunchArray: DataHunch[];
 };
 const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
+
+    const store = useContext(Store);
 
     const columns = useMemo(
         () => [{ Header: "Type", accessor: 'type' },
@@ -60,7 +63,14 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                     {rows.map((row, i) => {
                         prepareRow(row);
                         return (
-                            <TableRow {...row.getRowProps()}>
+                            <TableRow
+                                {...row.getRowProps()}
+                                onMouseOver={() => { store.setHighlightedDH(row.values.id); }}
+                                onMouseOut={() => {
+                                    store.setHighlightedDH(-1);
+                                }}
+                                style={{ cursor: 'pointer' }}
+                            >
                                 {row.cells.map(cell => {
                                     return <TableCell {...cell.getCellProps()}>
                                         {cell.render('Cell')}
