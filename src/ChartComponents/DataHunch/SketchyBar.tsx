@@ -45,7 +45,7 @@ const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch }: Props) 
     }, [xPos, yPos, width, height]);
 
     return (<Tooltip title={dataHunch.reasoning}>
-        <g
+        <g display={store.needToShowPreview ? 'none' : undefined}
             ref={dhRef}
             onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
             onMouseOut={() => {

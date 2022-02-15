@@ -10,8 +10,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { DataHunch } from "../Interfaces/Types";
 import Store from "../Interfaces/Store";
-import { handlePreviewOnClick, handleResetOnClick } from "../ChartComponents/Forms/PreviewResetButtons";
 import { DataContext } from "..";
+import { handlePreviewOnClick, handleResetOnClick } from "../HelperFunctions/PreviewReset";
 
 export type DHProps = {
     dataHunchArray: DataHunch[];
@@ -41,7 +41,7 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
         if (dataHunch.type === 'exclusion') {
             setNeedReset(true);
             store.setNeedToShowPreview(true);
-            handlePreviewOnClick(dataSet, dataHunch.label, undefined, store.svgHeight, store.svgWidth, store.containCategory, store.selectedDP,);
+            handlePreviewOnClick(dataSet, dataHunch.label, undefined, store.svgHeight, store.svgWidth, store.containCategory);
         }
     };
 

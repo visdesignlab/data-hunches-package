@@ -1,12 +1,12 @@
 import { observer } from "mobx-react-lite";
 import { FC, useContext, useEffect, useState } from "react";
 import { DataContext } from "../..";
-import { makeBandScale, makeVerticalScale } from "../../HelperFunctions/ScaleGenerator";
+import { handlePreviewOnClick, handleResetOnClick } from "../../HelperFunctions/PreviewReset";
+import { makeBandScale } from "../../HelperFunctions/ScaleGenerator";
 import { margin, DarkGray } from "../../Interfaces/Constants";
 import Store from "../../Interfaces/Store";
 import { DHIndicatorRect } from "../../Interfaces/StyledComponents";
 import { DataHunch } from "../../Interfaces/Types";
-import { handlePreviewOnClick, handleResetOnClick } from "../Forms/PreviewResetButtons";
 type Props = {
     dataHunch: DataHunch;
 };
@@ -23,7 +23,7 @@ const OverAxisIndicator: FC<Props> = ({ dataHunch }: Props) => {
         if (store.selectedDH === dataHunch.id) {
             store.setNeedToShowPreview(true);
             setNeedReset(true);
-            handlePreviewOnClick(dataSet, dataHunch.label, parseFloat(dataHunch.content), store.svgHeight, store.svgWidth, store.containCategory, store.selectedDP,);
+            handlePreviewOnClick(dataSet, dataHunch.label, parseFloat(dataHunch.content), store.svgHeight, store.svgWidth, store.containCategory);
         } else if (store.selectedDH !== dataHunch.id && needReset) {
             store.setNeedToShowPreview(false);
             setNeedReset(false);

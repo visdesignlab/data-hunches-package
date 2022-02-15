@@ -99,7 +99,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
             <g className='axis' id="band-axis" />
 
-            <g id="rectangles-preview" display={(store.inputMode === 'dataSpace' || store.needToShowPreview) ? undefined : 'none'}>
+            <g id="rectangles-preview" display={store.needToShowPreview ? undefined : 'none'}>
                 <g className='axis' id="axis-mask" transform={`translate(${margin.left},0)`} />
             </g>
 
@@ -107,7 +107,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
 
 
-            <g id="rectangles" display={(store.inputMode !== 'dataSpace' && !store.needToShowPreview) ? undefined : 'none'}>
+            <g id="rectangles" display={(!store.needToShowPreview) ? undefined : 'none'}>
                 {
                     dataSet.map((d, i) => {
                         return <BarElement

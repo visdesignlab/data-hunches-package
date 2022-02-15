@@ -75,7 +75,7 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray }: Props) => {
     };
 
     return (
-        <g>
+        <g >
             {inVisDH.map((d, i) => {
                 if (parseFloat(d.content) > verticalValueScale.domain()[0]) {
                     return <OverAxisIndicator dataHunch={d} key={d.id} />;
@@ -83,6 +83,7 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray }: Props) => {
                 if (inVisDH.length > 3) {
                     return (
                         <DHIndicatorRect
+                            display={store.needToShowPreview ? 'none' : undefined}
                             key={d.id}
                             onMouseOver={() => { store.setSelectedDH(d.id); store.setHighlightedDH(d.id); }}
                             x={honrizontalBandScale(d.label) || 0}
@@ -94,6 +95,7 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray }: Props) => {
                 } else {
                     return (
                         <SketchyBar
+
                             dataHunch={d}
                             xPos={(honrizontalBandScale(d.label) || 0) + (honrizontalBandScale.bandwidth() / inVisDH.length * i)}
                             key={d.id}
