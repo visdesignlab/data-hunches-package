@@ -116,6 +116,7 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray }: Props) => {
                             y={store.svgHeight - margin.bottom + 25 + 2 * (IndicatorSize + IndicatorSpace) * Math.floor(i / 2)}
                             fontSize={d.type === 'exclusion' ? 'small' : 'large'}
                             key={d.id}
+                            isHighlighted={d.id === store.highlightedDH}
                             onMouseOver={() => { store.setHighlightedDH(d.id); }}
                             onMouseOut={() => { store.setHighlightedDH(-1); }}>
                             {d.type === 'exclusion' ? 'x' : '*'}

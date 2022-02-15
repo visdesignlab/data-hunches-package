@@ -1,6 +1,6 @@
 import { createStyles, makeStyles, Theme } from "@material-ui/core";
 import styled from "styled-components";
-import { DarkGray } from "./Constants";
+import { BrightOrange, DarkGray } from "./Constants";
 
 export const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -26,6 +26,7 @@ export const useStyles = makeStyles((theme: Theme) =>
 
 interface FontProps {
     fontSize: 'large' | 'small';
+    isHighlighted: boolean;
 }
 
 export const DHIndicatorText = styled(`text`) <FontProps>`
@@ -33,7 +34,7 @@ export const DHIndicatorText = styled(`text`) <FontProps>`
     font-size:${props => props.fontSize};
     alignment-baseline:middle;
     text-anchor: middle;
-    stroke: ${DarkGray};
+    stroke: ${props => props.isHighlighted ? BrightOrange : DarkGray};
 `;
 
 interface RectProps {

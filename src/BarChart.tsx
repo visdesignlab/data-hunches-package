@@ -83,8 +83,8 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                 {allChartDHArray.map((d, i) => {
                     return (
                         <Tooltip title={d.content} key={d.id}>
-
                             <DHIndicatorText
+                                isHighlighted={d.id === store.highlightedDH}
                                 x={findStart() + IndicatorSize * (i) * 2 + IndicatorSpace * i}
                                 key={d.id}
                                 y={34}
@@ -134,7 +134,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                         } else {
                             return <DataHunchIndicator
                                 key={d.label}
-                                dataHunchArray={d.dataHunchArray.filter(d => d.id === store.selectedDH)}
+                                dataHunchArray={d.dataHunchArray.filter(d => ["annotation", 'exclusion'].includes(d.type) || d.id === store.selectedDH)}
                             />;
                         }
 
