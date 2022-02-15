@@ -36,6 +36,7 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
     );
 
     const rowHoverHandler = (dataHunch: DataHunch) => {
+        store.setSelectedDH(dataHunch.id);
         store.setHighlightedDH(dataHunch.id);
         if (dataHunch.type === 'exclusion') {
             setNeedReset(true);
@@ -45,6 +46,7 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
     };
 
     const rowOutHandler = () => {
+        store.setSelectedDH(-1);
         store.setHighlightedDH(-1);
         if (needReset) {
             store.setNeedToShowPreview(false);
@@ -62,7 +64,7 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
     } = useTable({ columns: columns, data: dataHunchArray }, useSortBy);
 
     return (
-        <div>
+        <div style={{ height: '80vh', overflow: 'auto' }}>
             <CssBaseline />
             <MaUTable {...getTableProps()}>
                 <TableHead>

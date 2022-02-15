@@ -126,7 +126,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
             <g id='data-hunches-container'>
                 {dataSet.map((d) => {
                     if (d.dataHunchArray) {
-                        if (store.highlightedDH === -1) {
+                        if (store.selectedDH === -1) {
                             return <DataHunchIndicator
                                 key={d.label}
                                 dataHunchArray={d.dataHunchArray}
@@ -134,7 +134,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                         } else {
                             return <DataHunchIndicator
                                 key={d.label}
-                                dataHunchArray={d.dataHunchArray.filter(d => d.id === store.highlightedDH)}
+                                dataHunchArray={d.dataHunchArray.filter(d => d.id === store.selectedDH)}
                             />;
                         }
 

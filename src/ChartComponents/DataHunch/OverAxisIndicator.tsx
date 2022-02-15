@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { FC, useContext } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import { DataContext } from "../..";
 import { makeBandScale, makeVerticalScale } from "../../HelperFunctions/ScaleGenerator";
 import { margin, DarkGray } from "../../Interfaces/Constants";
@@ -15,19 +15,32 @@ const OverAxisIndicator: FC<Props> = ({ dataHunch }: Props) => {
 
     const dataSet = useContext(DataContext);
 
+    const [needReset, setNeedReset] = useState(false);
+
     const honrizontalBandScale = makeBandScale(dataSet, store.svgWidth);
 
+    useEffect(() => {
+        if (store.selectedDH === dataHunch.id) {
+            store.setNeedToShowPreview(true);
+            setNeedReset(true);
+            handlePreviewOnClick(dataSet, dataHunch.label, parseFloat(dataHunch.content), store.svgHeight, store.svgWidth, store.containCategory, store.selectedDP,);
+        } else if (store.selectedDH !== dataHunch.id && needReset) {
+            store.setNeedToShowPreview(false);
+            setNeedReset(false);
+            handleResetOnClick(dataSet, store.svgHeight, store.svgWidth, store.containCategory, store.selectedDP);
+        }
+    }, [store.selectedDH]);
 
     return (
         <g
             cursor='pointer'
             onMouseOver={() => {
-                store.setNeedToShowPreview(true);
-                handlePreviewOnClick(dataSet, dataHunch.label, parseFloat(dataHunch.content), store.svgHeight, store.svgWidth, store.containCategory, store.selectedDP,);
+                store.setSelectedDH(dataHunch.id);
+                store.setHighlightedDH(dataHunch.id);
             }}
             onMouseOut={() => {
-                store.setNeedToShowPreview(false);
-                handleResetOnClick(dataSet, store.svgHeight, store.svgWidth, store.containCategory, store.selectedDP);
+                store.setSelectedDH(-1);
+                store.setHighlightedDH(-1);
             }}
         >
             <line
@@ -45,7 +58,6 @@ const OverAxisIndicator: FC<Props> = ({ dataHunch }: Props) => {
             />
             <DHIndicatorRect
 
-                // onMouseOver={() => { store.setHighlightedDH(d.id); }}
                 x={honrizontalBandScale(dataHunch.label) || 0}
                 width={honrizontalBandScale.bandwidth()}
                 y={margin.top - 5}

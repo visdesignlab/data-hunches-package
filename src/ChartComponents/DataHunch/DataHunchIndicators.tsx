@@ -84,7 +84,7 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray }: Props) => {
                     return (
                         <DHIndicatorRect
                             key={d.id}
-                            onMouseOver={() => { store.setHighlightedDH(d.id); }}
+                            onMouseOver={() => { store.setSelectedDH(d.id); store.setHighlightedDH(d.id); }}
                             x={honrizontalBandScale(d.label) || 0}
                             width={honrizontalBandScale.bandwidth()}
                             y={calculateY(d, true)}
@@ -92,12 +92,15 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray }: Props) => {
                         />
                     );
                 } else {
-                    return <SketchyBar
-                        xPos={(honrizontalBandScale(d.label) || 0) + (honrizontalBandScale.bandwidth() / inVisDH.length * i)}
-                        key={d.id}
-                        yPos={calculateY(d, false)}
-                        width={honrizontalBandScale.bandwidth() / inVisDH.length}
-                        height={calculateHeight(d)} />;
+                    return (
+                        <SketchyBar
+                            dataHunch={d}
+                            xPos={(honrizontalBandScale(d.label) || 0) + (honrizontalBandScale.bandwidth() / inVisDH.length * i)}
+                            key={d.id}
+                            yPos={calculateY(d, false)}
+                            width={honrizontalBandScale.bandwidth() / inVisDH.length}
+                            height={calculateHeight(d)} />
+                    );
                 }
             })}
 
@@ -110,7 +113,9 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray }: Props) => {
                             x={(honrizontalBandScale(d.label) || 0) + 0.5 * honrizontalBandScale.bandwidth() + (2 * IndicatorSize + IndicatorSpace) * (i % 2 === 0 ? -1 : 1)}
                             y={store.svgHeight - margin.bottom + 25 + 2 * (IndicatorSize + IndicatorSpace) * Math.floor(i / 2)}
                             fontSize={d.type === 'exclusion' ? 'small' : 'large'}
-                            key={d.id}>
+                            key={d.id}
+                            onMouseOver={() => { store.setHighlightedDH(d.id); }}
+                            onMouseOut={() => { store.setHighlightedDH(-1); }}>
                             {d.type === 'exclusion' ? 'x' : '*'}
                         </DHIndicatorText>
                     </Tooltip>);
