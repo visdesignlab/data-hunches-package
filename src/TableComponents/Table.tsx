@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { useContext, useMemo } from "react";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useTable, useSortBy } from 'react-table';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import MaUTable from '@material-ui/core/Table';
@@ -10,6 +10,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { DataHunch } from "../Interfaces/Types";
 import Store from "../Interfaces/Store";
+import { handlePreviewOnClick, handleResetOnClick } from "../ChartComponents/Forms/PreviewResetButtons";
+import { DataContext } from "..";
 
 export type DHProps = {
     dataHunchArray: DataHunch[];
@@ -17,6 +19,10 @@ export type DHProps = {
 const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
     const store = useContext(Store);
+
+    const [needReset, setNeedReset] = useState(false);
+
+    const dataSet = useContext(DataContext);
 
     const columns = useMemo(
         () => [{ Header: "Type", accessor: 'type' },
@@ -28,6 +34,23 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
         { Header: "Confidence Level", accessor: 'confidenceLevel' }]
         , []
     );
+
+    const rowHoverHandler = (dataHunch: DataHunch) => {
+        store.setHighlightedDH(dataHunch.id);
+        if (dataHunch.type === 'exclusion') {
+            setNeedReset(true);
+            store.setNeedToShowPreview(true);
+            handlePreviewOnClick(dataSet, dataHunch.label, undefined, store.svgHeight, store.svgWidth, store.containCategory, store.selectedDP,);
+        }
+    };
+
+    const rowOutHandler = () => {
+        store.setHighlightedDH(-1);
+        if (needReset) {
+            store.setNeedToShowPreview(false);
+            handleResetOnClick(dataSet, store.svgHeight, store.svgWidth, store.containCategory, store.selectedDP);
+        }
+    };
 
 
     const {
@@ -65,11 +88,13 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                         return (
                             <TableRow
                                 {...row.getRowProps()}
-                                onMouseOver={() => { store.setHighlightedDH(row.values.id); }}
-                                onMouseOut={() => {
-                                    store.setHighlightedDH(-1);
+                                onMouseOver={() => { rowHoverHandler(row.values as DataHunch); }}
+                                style={{
+                                    cursor: 'pointer',
+                                    background: store.highlightedDH === row.values.id ? 'aliceblue' : undefined
                                 }}
-                                style={{ cursor: 'pointer' }}
+                                onMouseOut={rowOutHandler}
+
                             >
                                 {row.cells.map(cell => {
                                     return <TableCell {...cell.getCellProps()}>

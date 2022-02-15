@@ -5,10 +5,10 @@ import { FC } from "react";
 import { DefaultForeignObjectHeight, DefaultForeignObjectWidth } from "../Interfaces/Constants";
 import Store from "../Interfaces/Store";
 import { useStyles } from "../Interfaces/StyledComponents";
-import AnnotationForm from "./AnnotationForm";
-import DataSpaceForm from "./DataSpaceForm";
-import ManipulationForm, { ManipulationProps } from "./ManipulationForm";
-import RatingForm from "./RatingForm";
+import AnnotationForm from "./Forms/AnnotationForm";
+import DataSpaceForm from "./Forms/DataSpaceForm";
+import ManipulationForm, { ManipulationProps } from "./Forms/ManipulationForm";
+import RatingForm from "./Forms/RatingForm";
 
 const FormComponent: FC<ManipulationProps> = ({ manipulationOutput }: ManipulationProps) => {
 

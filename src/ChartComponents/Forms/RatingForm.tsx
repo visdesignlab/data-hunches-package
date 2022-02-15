@@ -2,8 +2,8 @@ import { Container, FormControlLabel, Radio, RadioGroup, TextField } from "@mate
 import { observer } from "mobx-react-lite";
 import { useContext, useState } from "react";
 import { FC } from "react";
-import Store from "../Interfaces/Store";
-import { useStyles } from "../Interfaces/StyledComponents";
+import Store from "../../Interfaces/Store";
+import { useStyles } from "../../Interfaces/StyledComponents";
 import SubmitCancelButtons from "./SubmitCancelButtons";
 
 const RatingForm: FC = () => {

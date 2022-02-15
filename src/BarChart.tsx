@@ -12,11 +12,12 @@ import SpecificControl from "./Controls/SpecificControl";
 import { DataContext } from ".";
 import ManipulationLayer from "./ChartComponents/ManipulationLayer";
 import { useEffect } from "react";
-import DataHunchIndicator from "./ChartComponents/DataHunchIndicator";
+import DataHunchIndicator from "./ChartComponents/DataHunch/DataHunchIndicators";
 import { DHProps } from "./TableComponents/Table";
 import { DataHunch } from "./Interfaces/Types";
 import { stateUpdateWrapperUseJSON } from "./Interfaces/StateChecker";
 import { Tooltip } from "@material-ui/core";
+import { DHIndicatorText } from "./Interfaces/StyledComponents";
 
 
 const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
@@ -36,6 +37,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
             setManipulationResult('');
         }
     }, [store.inputMode]);
+
 
     const [allChartDHArray, setAllChartDHArray] = useState<DataHunch[]>([]);
 
@@ -80,19 +82,16 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                 >{store.datasetName}</text>
                 {allChartDHArray.map((d, i) => {
                     return (
-                        <Tooltip title={d.content}>
+                        <Tooltip title={d.content} key={d.id}>
 
-                            <text
+                            <DHIndicatorText
                                 x={findStart() + IndicatorSize * (i) * 2 + IndicatorSpace * i}
                                 key={d.id}
                                 y={34}
-                                cursor='pointer'
                                 fontSize='large'
-                                alignmentBaseline='middle'
-                                textAnchor="middle"
-                                stroke={DarkGray}>
+                            >
                                 *
-                            </text>
+                            </DHIndicatorText>
                         </Tooltip>
                     );
                 })}
@@ -100,7 +99,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
             <g className='axis' id="band-axis" />
 
-            <g id="rectangles-preview" display={store.inputMode === 'dataSpace' ? undefined : 'none'}>
+            <g id="rectangles-preview" display={(store.inputMode === 'dataSpace' || store.needToShowPreview) ? undefined : 'none'}>
                 <g className='axis' id="axis-mask" transform={`translate(${margin.left},0)`} />
             </g>
 
@@ -108,7 +107,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
 
 
-            <g id="rectangles" display={store.inputMode !== 'dataSpace' ? undefined : 'none'}>
+            <g id="rectangles" display={(store.inputMode !== 'dataSpace' && !store.needToShowPreview) ? undefined : 'none'}>
                 {
                     dataSet.map((d, i) => {
                         return <BarElement
@@ -125,7 +124,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
 
             <g id='data-hunches-container'>
-                {dataSet.map((d, i) => {
+                {dataSet.map((d) => {
                     if (d.dataHunchArray) {
                         if (store.highlightedDH === -1) {
                             return <DataHunchIndicator

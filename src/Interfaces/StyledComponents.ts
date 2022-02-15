@@ -1,5 +1,6 @@
 import { createStyles, makeStyles, Theme } from "@material-ui/core";
-import { LightGray } from "./Constants";
+import styled from "styled-components";
+import { DarkGray } from "./Constants";
 
 export const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -22,3 +23,32 @@ export const useStyles = makeStyles((theme: Theme) =>
             marginBottom: -7
         }
     }));
+
+interface FontProps {
+    fontSize: 'large' | 'small';
+}
+
+export const DHIndicatorText = styled(`text`) <FontProps>`
+    cursor:pointer;
+    font-size:${props => props.fontSize};
+    alignment-baseline:middle;
+    text-anchor: middle;
+    stroke: ${DarkGray};
+`;
+
+interface RectProps {
+    x: number;
+    y: number;
+    width: number;
+}
+
+export const DHIndicatorRect = styled(`rect`) <RectProps>`
+    cursor:pointer;
+    x:${props => props.x}px;
+    y:${props => props.y}px;
+    width:${props => props.width}px;
+    height:4px;
+    fill:${DarkGray};
+    opacity:0.7;
+
+`;

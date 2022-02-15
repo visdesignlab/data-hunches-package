@@ -19,6 +19,7 @@ export class RootStore {
     firebaseSetup: Firestore;
     datasetName: string;
     highlightedDH: number;
+    needToShowPreview: boolean;
 
     constructor() {
         this.showDataHunches = true;
@@ -26,6 +27,7 @@ export class RootStore {
         this.svgHeight = 500;
         this.svgWidth = 500;
         this.selectingADataPoint = false;
+        this.needToShowPreview = false;
         this.selectedDP = undefined;
         this.inputMode = 'none';
         this.userName = '';
@@ -42,6 +44,10 @@ export class RootStore {
 
     setHighlightedDH(input: number) {
         this.highlightedDH = input;
+    }
+
+    setNeedToShowPreview(input: boolean) {
+        this.needToShowPreview = input;
     }
 
     setDataSetName(input: string) {

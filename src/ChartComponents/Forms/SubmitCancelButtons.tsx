@@ -2,8 +2,8 @@ import { Button, ButtonGroup } from "@material-ui/core";
 import { observer } from "mobx-react-lite";
 import { useContext } from "react";
 import { FC } from "react";
-import Store from "../Interfaces/Store";
-import { DataHunch } from "../Interfaces/Types";
+import Store from "../../Interfaces/Store";
+import { DataHunch } from "../../Interfaces/Types";
 
 type Props = {
     dhToSubmit: DataHunch;
