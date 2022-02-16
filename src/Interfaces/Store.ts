@@ -4,16 +4,16 @@ import { createContext } from "react";
 import { getFirestore, collection, Firestore, setDoc, doc } from 'firebase/firestore/lite';
 import { initializeApp } from "firebase/app";
 import { FirebaseSetup } from "./Constants";
-import { DataHunch } from "./Types";
+import { DataHunch, InputMode } from "./Types";
 
 export class RootStore {
     showDataHunches: boolean;
-    containCategory: boolean;
+    containCategory: string[];
     svgHeight: number;
     svgWidth: number;
     selectingADataPoint: boolean;
     selectedDP: string | undefined;
-    inputMode: "annotation" | 'none' | 'rating' | 'dataSpace' | 'manipulation';
+    inputMode: InputMode;
     userName: string;
     nextDHIndex: number;
     firebaseSetup: Firestore;
@@ -24,7 +24,7 @@ export class RootStore {
 
     constructor() {
         this.showDataHunches = true;
-        this.containCategory = false;
+        this.containCategory = [];
         this.svgHeight = 500;
         this.svgWidth = 500;
         this.selectingADataPoint = false;
@@ -82,7 +82,7 @@ export class RootStore {
         this.svgHeight = newHeight;
     }
 
-    setContainCategory(input: boolean) {
+    setContainCategory(input: string[]) {
         this.containCategory = input;
     }
 
@@ -90,7 +90,7 @@ export class RootStore {
         this.showDataHunches = input;
     }
 
-    setInputMode(input: "annotation" | 'none' | 'rating' | 'dataSpace' | 'manipulation') {
+    setInputMode(input: InputMode) {
         this.inputMode = input;
     }
 

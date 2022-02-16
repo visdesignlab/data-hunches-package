@@ -63,7 +63,7 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
             .attr('width', bandScale.bandwidth())
             .attr("y", d => verticalScale(d.value))
             .attr("height", d => store.svgHeight - margin.bottom - verticalScale(d.value))
-            .attr("fill", d => getRectFill(d, store.containCategory, store.selectedDP, categoricalScale));
+            .attr("fill", d => getRectFill(d, store.containCategory.length > 0, store.selectedDP, categoricalScale));
     }, []);
 
     const checkIfDisable = () => {

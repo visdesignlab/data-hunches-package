@@ -33,13 +33,12 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray }: Props) => {
     const [inVisDH, setInVisDH] = useState<DataHunch[]>([]);
     const [offVisDH, setOffVisDH] = useState<DataHunch[]>([]);
 
-    const dhRef = useRef(null);
 
     useEffect(() => {
         let tempInVis: DataHunch[] = [];
         let tempOffVis: DataHunch[] = [];
         dataHunchArray.forEach((d) => {
-            if (['annotation', 'exclusion'].includes(d.type)) {
+            if (['annotation', 'exclusion', 'categorical'].includes(d.type)) {
                 tempOffVis.push(d);
             } else {
                 tempInVis.push(d);

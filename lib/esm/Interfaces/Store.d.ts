@@ -1,14 +1,14 @@
 /// <reference types="react" />
 import { Firestore } from 'firebase/firestore/lite';
-import { DataHunch } from "./Types";
+import { DataHunch, InputMode } from "./Types";
 export declare class RootStore {
     showDataHunches: boolean;
-    containCategory: boolean;
+    containCategory: string[];
     svgHeight: number;
     svgWidth: number;
     selectingADataPoint: boolean;
     selectedDP: string | undefined;
-    inputMode: "annotation" | 'none' | 'rating' | 'dataSpace' | 'manipulation';
+    inputMode: InputMode;
     userName: string;
     nextDHIndex: number;
     firebaseSetup: Firestore;
@@ -26,9 +26,9 @@ export declare class RootStore {
     submitDH(dataHunchToSubmit: DataHunch): void;
     setWidth(newWidth: number): void;
     setHeight(newHeight: number): void;
-    setContainCategory(input: boolean): void;
+    setContainCategory(input: string[]): void;
     setShowDH(input: boolean): void;
-    setInputMode(input: "annotation" | 'none' | 'rating' | 'dataSpace' | 'manipulation'): void;
+    setInputMode(input: InputMode): void;
     selectADataPointMode(input: boolean): void;
     setCurrentSelectedDP(input: string | undefined): void;
 }

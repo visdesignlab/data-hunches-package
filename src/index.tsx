@@ -26,18 +26,13 @@ const BarChartWithDH: FC<Props> = ({ datasetName, dataSet, svgWidth, svgHeight }
 
     useEffect(() => {
         if (dataSet[0].categorical) {
-            store.setContainCategory(true);
+            store.setContainCategory(Array.from(new Set(dataSet.map(d => d.categorical || 'a'))));
         }
     }, [dataSet]);
 
     store.setWidth(svgWidth);
     store.setHeight(svgHeight);
     store.setDataSetName(datasetName);
-
-
-
-
-
 
     const [savedDH, setSavedDH] = useState<DataHunch[]>([]);
 

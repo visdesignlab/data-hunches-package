@@ -5,7 +5,7 @@ import { margin, BrightOrange, TransitionDuration } from "../Interfaces/Constant
 import { BarChartDataPoint } from "../Interfaces/Types";
 import { makeVerticalScale, makeBandScale, makeCategoricalScale, getRectFill } from "./ScaleGenerator";
 
-export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPreview: string, valueToPreview: number | undefined, svgHeight: number, svgWidth: number, containCategory: boolean) => {
+export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPreview: string, valueToPreview: number | undefined, svgHeight: number, svgWidth: number, doesContainCategory: boolean) => {
 
 
     const verticalScale = makeVerticalScale(ogDataSet, svgHeight);
@@ -21,7 +21,7 @@ export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPrev
         .attr('width', bandScale.bandwidth())
         .attr("y", d => verticalScale(d.value))
         .attr("height", d => svgHeight - margin.bottom - verticalScale(d.value))
-        .attr("fill", d => getRectFill(d, containCategory, labelToPreview, categoricalScale));
+        .attr("fill", d => getRectFill(d, doesContainCategory, labelToPreview, categoricalScale));
 
 
     // make new data
@@ -106,7 +106,7 @@ export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPrev
     select('#band-axis').transition().duration(TransitionDuration).call(axisBottom(newBandScale) as any);
 };
 
-export const handleResetOnClick = (ogDataSet: BarChartDataPoint[], svgHeight: number, svgWidth: number, containCategory: boolean, selectedDP: string | undefined) => {
+export const handleResetOnClick = (ogDataSet: BarChartDataPoint[], svgHeight: number, svgWidth: number, doesContainCategory: boolean, selectedDP: string | undefined) => {
     const verticalScale = makeVerticalScale(ogDataSet, svgHeight);
     const bandScale = makeBandScale(ogDataSet, svgWidth);
     const categoricalScale = makeCategoricalScale(ogDataSet);
@@ -138,7 +138,7 @@ export const handleResetOnClick = (ogDataSet: BarChartDataPoint[], svgHeight: nu
         .interrupt()
         .data(ogDataSet)
         .join('rect')
-        .attr('fill', d => getRectFill(d, containCategory, selectedDP, categoricalScale))
+        .attr('fill', d => getRectFill(d, doesContainCategory, selectedDP, categoricalScale))
         .attr('x', (d: any) => bandScale(d.label) || 0)
         .attr('width', bandScale.bandwidth())
         .attr('y', (d: any) => verticalScale(d.value))

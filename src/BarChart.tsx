@@ -117,7 +117,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                             width={honrizontalBandScale.bandwidth()}
                             xPos={honrizontalBandScale(d.label) || 0}
                             yPos={verticalValueScale(d.value)}
-                            fill={store.containCategory ? (categoricalColorScale(d.categorical || 'a') as string) : DarkBlue}
+                            fill={store.containCategory.length > 0 ? (categoricalColorScale(d.categorical || 'a') as string) : DarkBlue}
                         />;
                     })}
             </g>

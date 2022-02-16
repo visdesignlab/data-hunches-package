@@ -20,9 +20,9 @@ export const makeCategoricalScale = (newInputData: BarChartDataPoint[]) => {
         .range(CategoricalColor);
 };
 
-export const getRectFill = (d: BarChartDataPoint, containCategory: boolean, selectedDP: string | undefined, categoricalScale: ScaleOrdinal<string, unknown, never>) => {
+export const getRectFill = (d: BarChartDataPoint, doesContainCategory: boolean, selectedDP: string | undefined, categoricalScale: ScaleOrdinal<string, unknown, never>) => {
     if (d.label === selectedDP) {
         return BrightOrange;
     }
-    return containCategory ? ((categoricalScale(d.categorical!) as any) || DarkBlue) : DarkBlue;
+    return doesContainCategory ? ((categoricalScale(d.categorical!) as any) || DarkBlue) : DarkBlue;
 };

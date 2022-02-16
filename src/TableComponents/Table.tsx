@@ -41,7 +41,7 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
         if (dataHunch.type === 'exclusion') {
             setNeedReset(true);
             store.setNeedToShowPreview(true);
-            handlePreviewOnClick(dataSet, dataHunch.label, undefined, store.svgHeight, store.svgWidth, store.containCategory);
+            handlePreviewOnClick(dataSet, dataHunch.label, undefined, store.svgHeight, store.svgWidth, store.containCategory.length > 0);
         }
     };
 
@@ -50,7 +50,7 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
         store.setHighlightedDH(-1);
         if (needReset) {
             store.setNeedToShowPreview(false);
-            handleResetOnClick(dataSet, store.svgHeight, store.svgWidth, store.containCategory, store.selectedDP);
+            handleResetOnClick(dataSet, store.svgHeight, store.svgWidth, store.containCategory.length > 0, store.selectedDP);
         }
     };
 

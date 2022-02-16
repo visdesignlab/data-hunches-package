@@ -1,11 +1,10 @@
-import { Container, TextField } from "@material-ui/core";
 import { observer } from "mobx-react-lite";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { FC } from "react";
 import { DefaultForeignObjectHeight, DefaultForeignObjectWidth } from "../Interfaces/Constants";
 import Store from "../Interfaces/Store";
-import { useStyles } from "../Interfaces/StyledComponents";
 import AnnotationForm from "./Forms/AnnotationForm";
+import CategoricalForm from "./Forms/CategoricalForm";
 import DataSpaceForm from "./Forms/DataSpaceForm";
 import ManipulationForm, { ManipulationProps } from "./Forms/ManipulationForm";
 import RatingForm from "./Forms/RatingForm";
@@ -13,7 +12,6 @@ import RatingForm from "./Forms/RatingForm";
 const FormComponent: FC<ManipulationProps> = ({ manipulationOutput }: ManipulationProps) => {
 
     const store = useContext(Store);
-
 
     const formContent = {
         annotation:
@@ -23,8 +21,9 @@ const FormComponent: FC<ManipulationProps> = ({ manipulationOutput }: Manipulati
         dataSpace:
             <DataSpaceForm isIncExc={!store.selectedDP} />,
         manipulation:
-            <ManipulationForm manipulationOutput={manipulationOutput} />
-
+            <ManipulationForm manipulationOutput={manipulationOutput} />,
+        categorical:
+            <CategoricalForm />
     };
 
     return (

@@ -15,12 +15,21 @@ export const useStyles = makeStyles((theme: Theme) =>
         foreignObjectContainer: {
             backgroundColor: 'rgb(238, 238, 238, 0.8)',
             padding: '5px',
-            // borderStyle: 'groove',
-            // borderColor: LightGray
         },
         radioStyle: {
             marginTop: -7,
             marginBottom: -7
+        },
+        catText: {
+            color: '#787878',
+        },
+        colorBox: {
+            float: 'left',
+            height: '20px',
+            width: '20px',
+            border: '1px solid black',
+            clear: 'both',
+            margin: '2px'
         }
     }));
 

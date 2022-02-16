@@ -19,12 +19,14 @@ export interface DataHunch {
 
 export type AnnotationType =
     "annotation"
+    | 'categorical'
     | "data space"
     | "manipulations"
     | "range"
     | 'inclusion'
     | 'exclusion';
 
+export type InputMode = 'categorical' | 'annotation' | 'none' | 'rating' | 'dataSpace' | 'manipulation';
 
 export type SelectionType = Selection<any, undefined, HTMLElement, undefined>;
 
