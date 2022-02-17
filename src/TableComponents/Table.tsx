@@ -1,16 +1,10 @@
 import { observer } from "mobx-react-lite";
 import { useContext, useMemo } from "react";
 import { FC, useState } from "react";
-import { useTable, useSortBy } from 'react-table';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import MaUTable from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import { DataHunch } from "../Interfaces/Types";
 import Store from "../Interfaces/Store";
 import { DataContext } from "..";
+import { DataGrid, GridColDef } from '@material-ui/data-grid';
 import { handlePreviewOnClick, handleResetOnClick } from "../HelperFunctions/PreviewReset";
 
 export type DHProps = {
@@ -24,16 +18,16 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
     const dataSet = useContext(DataContext);
 
-    const columns = useMemo(
-        () => [{ Header: "Type", accessor: 'type' },
-        { Header: "ID", accessor: 'id' },
-        { Header: "User Name", accessor: 'user' },
-        { Header: "Data Label", accessor: 'label' },
-        { Header: "Data Hunch Content", accessor: 'content' },
-        { Header: "Data Hunch Reasoning", accessor: 'reasoning' },
-        { Header: "Confidence Level", accessor: 'confidenceLevel' }]
-        , []
-    );
+    const columns: GridColDef[] = [
+        { headerName: "Type", field: 'type' },
+        { headerName: "ID", field: 'id' },
+        { headerName: "User Name", field: 'user' },
+        { headerName: "Data Label", field: 'label' },
+        { headerName: "Data Hunch Content", field: 'content' },
+        { headerName: "Data Hunch Reasoning", field: 'reasoning' },
+        { headerName: "Confidence Level", field: 'confidenceLevel' }
+    ];
+
 
     const rowHoverHandler = (dataHunch: DataHunch) => {
         store.setSelectedDH(dataHunch.id);
@@ -55,59 +49,14 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
     };
 
 
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        rows,
-        prepareRow,
-    } = useTable({ columns: columns, data: dataHunchArray }, useSortBy);
 
     return (
         <div style={{ height: '80vh', overflow: 'auto' }}>
-            <CssBaseline />
-            <MaUTable {...getTableProps()}>
-                <TableHead>
-                    {headerGroups.map(headerGroup => (
-                        <TableRow {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map((column: any) => (
-                                <TableCell {...column.getHeaderProps(column.getSortByToggleProps())}>{column.render('Header')}
-                                    <span>
-                                        {column.isSorted
-                                            ? column.isSortedDesc
-                                                ? ' 🔽'
-                                                : ' 🔼'
-                                            : ''}
-                                    </span>
-                                </TableCell>
-                            ))}
-                        </TableRow>
-                    ))}
-                </TableHead>
-                <TableBody {...getTableBodyProps()}>
-                    {rows.map((row, i) => {
-                        prepareRow(row);
-                        return (
-                            <TableRow
-                                {...row.getRowProps()}
-                                onMouseOver={() => { rowHoverHandler(row.values as DataHunch); }}
-                                style={{
-                                    cursor: 'pointer',
-                                    background: store.highlightedDH === row.values.id ? 'aliceblue' : undefined
-                                }}
-                                onMouseOut={rowOutHandler}
-
-                            >
-                                {row.cells.map(cell => {
-                                    return <TableCell {...cell.getCellProps()}>
-                                        {cell.render('Cell')}
-                                    </TableCell>;
-                                })}
-                            </TableRow>
-                        );
-                    })}
-                </TableBody>
-            </MaUTable>
+            <DataGrid
+                onRowEnter={(d) => { rowHoverHandler(d.row as DataHunch); }}
+                onRowOut={rowOutHandler}
+                columns={columns}
+                rows={dataHunchArray} />
         </div>
     );
 };
