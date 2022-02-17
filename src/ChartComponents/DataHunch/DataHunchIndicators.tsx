@@ -16,12 +16,10 @@ import SketchyBar from "./SketchyBar";
 import { DHIndicatorRect, DHIndicatorText } from "../../Interfaces/StyledComponents";
 import { Tooltip } from "@material-ui/core";
 import OverAxisIndicator from "./OverAxisIndicator";
+import { DHProps } from "../../TableComponents/Table";
 
-type Props = {
-    dataHunchArray: DataHunch[];
 
-};
-const DataHunchIndicator: FC<Props> = ({ dataHunchArray }: Props) => {
+const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
     const store = useContext(Store);
 
     const dataSet = useContext(DataContext);
@@ -94,7 +92,6 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray }: Props) => {
                 } else {
                     return (
                         <SketchyBar
-
                             dataHunch={d}
                             xPos={(honrizontalBandScale(d.label) || 0) + (honrizontalBandScale.bandwidth() / inVisDH.length * i)}
                             key={d.id}

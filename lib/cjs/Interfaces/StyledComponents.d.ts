@@ -1,4 +1,4 @@
-export declare const useStyles: (props?: any) => import("@material-ui/styles").ClassNameMap<"rightToolbar" | "menuButton" | "foreignObjectContainer" | "radioStyle">;
+export declare const useStyles: (props?: any) => import("@material-ui/styles").ClassNameMap<"rightToolbar" | "menuButton" | "foreignObjectContainer" | "radioStyle" | "catText" | "colorBox">;
 interface FontProps {
     fontSize: 'large' | 'small';
     isHighlighted: boolean;

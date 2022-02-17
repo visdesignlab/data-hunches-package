@@ -21,7 +21,7 @@ const CategoricalForm: FC = () => {
     useEffect(() => {
         const DPinData = dataSet.filter(d => d.label === store.selectedDP)[0];
         const tempcatNum = store.containCategory.indexOf(DPinData.categorical || 'a');
-        setRatingValue(`Cat${tempcatNum}`);
+        setRatingValue(DPinData.categorical || 'a');
         setCatNum(tempcatNum);
     }, [store.selectedDP]);
 
@@ -41,31 +41,19 @@ const CategoricalForm: FC = () => {
     return (
         <Container className={styles.foreignObjectContainer}>
             <RadioGroup name="Rating" onChange={handleRadioChange} value={ratingValue}>
-                <FormControlLabel
-                    value="Cat0"
-                    control={<Radio size="small" className={styles.radioStyle} />}
-                    label={
-                        <div className={styles.catText}>
-                            <div className={styles.colorBox} style={{ backgroundColor: CategoricalColor[0] }} />
-                            {catNum === 0 ? 'Original category' : ''}
-                        </div>} />
-                <FormControlLabel
-                    value="Cat1"
-                    control={<Radio size="small" className={styles.radioStyle} />}
-                    label={
-                        <div className={styles.catText}>
-                            <div className={styles.colorBox} style={{ backgroundColor: CategoricalColor[1] }} />
-                            {catNum === 1 ? 'Original category' : ''}
-                        </div>} />
+                {store.containCategory.map((d, i) => {
+                    return <FormControlLabel
+                        value={d}
+                        key={d}
+                        control={<Radio size="small" className={styles.radioStyle} />}
+                        label={
+                            <div className={styles.catText}>
+                                <div className={styles.colorBox} style={{ backgroundColor: CategoricalColor[i] }} />
+                                {d}
+                                {catNum === i ? '(Original category)' : ''}
+                            </div>} />;
+                })}
 
-                <FormControlLabel
-                    value="Cat2"
-                    control={<Radio size="small" className={styles.radioStyle} />}
-                    label={
-                        <div className={styles.catText}>
-                            <div className={styles.colorBox} style={{ backgroundColor: CategoricalColor[2] }} />
-                            {catNum === 2 ? 'Original category' : ''}
-                        </div>} />
 
             </RadioGroup>
 

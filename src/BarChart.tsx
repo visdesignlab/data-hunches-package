@@ -18,6 +18,7 @@ import { DataHunch } from "./Interfaces/Types";
 import { stateUpdateWrapperUseJSON } from "./Interfaces/StateChecker";
 import { Tooltip } from "@material-ui/core";
 import { DHIndicatorText } from "./Interfaces/StyledComponents";
+import CategoricalIndicator from "./ChartComponents/DataHunch/CategoricalIndicator";
 
 
 const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
@@ -124,19 +125,30 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
 
             <g id='data-hunches-container'>
-                {dataSet.map((d) => {
-                    if (d.dataHunchArray) {
+                {dataSet.map((barDP) => {
+                    if (barDP.dataHunchArray) {
+                        const catDH = barDP.dataHunchArray.filter(d => d.type === 'categorical');
                         if (store.selectedDH === -1) {
-                            return <DataHunchIndicator
-                                key={d.label}
-                                dataHunchArray={d.dataHunchArray}
-                            />;
+
+                            return (<>
+                                <DataHunchIndicator
+                                    key={barDP.label}
+                                    dataHunchArray={barDP.dataHunchArray}
+                                />
+                                <CategoricalIndicator dataHunchArrayString={JSON.stringify(catDH)} />
+                            </>);
+
                         } else {
-                            return <DataHunchIndicator
-                                key={d.label}
-                                dataHunchArray={d.dataHunchArray.filter(d => ["annotation", 'exclusion'].includes(d.type) || d.id === store.selectedDH)}
-                            />;
+                            return (
+                                <>
+                                    <DataHunchIndicator
+                                        key={barDP.label}
+                                        dataHunchArray={barDP.dataHunchArray.filter(d => ["annotation", 'exclusion', 'categorical'].includes(d.type) || d.id === store.selectedDH)}
+                                    />
+                                    <CategoricalIndicator dataHunchArrayString={JSON.stringify(catDH.filter(d => d.id === store.selectedDH))} />
+                                </>);
                         }
+
 
                     } else {
                         return <></>;
