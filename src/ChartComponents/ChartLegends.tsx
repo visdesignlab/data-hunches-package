@@ -17,12 +17,14 @@ const ChartLegends: FC = () => {
                 <>
                     <circle
                         fill={categoricalColorScale(cat) as string}
+                        key={`${cat}-legendcircle`}
                         cx={store.svgWidth - IndicatorSize * 2}
                         cy={IndicatorSize + 2 + (IndicatorSize + 2) * i * 2}
                         r={IndicatorSize}
                     />
                     <text
                         x={store.svgWidth - IndicatorSize * 4}
+                        key={`${cat}-legendtext`}
                         y={IndicatorSize + 2 + (IndicatorSize + 2) * i * 2}
                         alignmentBaseline='central'
                         textAnchor='end'

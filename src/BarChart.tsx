@@ -89,7 +89,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                             <DHIndicatorText
                                 isHighlighted={d.id === store.highlightedDH}
                                 x={findStart() + IndicatorSize * (i) * 2 + IndicatorSpace * i}
-                                key={d.id}
+                                key={`${d.id}-text`}
                                 y={34}
                                 fontSize='large'
                             >
@@ -114,7 +114,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                 {
                     dataSet.map((d, i) => {
                         return <BarElement
-                            key={i}
+                            key={`${i}-barelement`}
                             dataElement={d}
                             height={store.svgHeight - margin.bottom - verticalValueScale(d.value)}
                             width={honrizontalBandScale.bandwidth()}
@@ -134,22 +134,22 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
                             return (<>
                                 <DataHunchIndicator
-                                    key={barDP.label}
+                                    key={`${barDP.label}-dhindicator`}
                                     dataHunchArray={barDP.dataHunchArray}
                                 />
-                                <CategoricalIndicator dataHunchArrayString={JSON.stringify(catDH)} key={barDP.label} />
+                                <CategoricalIndicator dataHunchArrayString={JSON.stringify(catDH)} key={`${barDP.label}-catindicator`} />
                             </>);
 
                         } else {
                             return (
                                 <>
                                     <DataHunchIndicator
-                                        key={barDP.label}
+                                        key={`${barDP.label}-dhindicator`}
                                         dataHunchArray={barDP.dataHunchArray.filter(d => ["annotation", 'exclusion', 'categorical'].includes(d.type) || d.id === store.selectedDH)}
                                     />
                                     <CategoricalIndicator
                                         dataHunchArrayString={JSON.stringify(catDH.filter(d => d.id === store.selectedDH))}
-                                        key={barDP.label} />
+                                        key={`${barDP.label}-catindicator`} />
                                 </>);
                         }
 

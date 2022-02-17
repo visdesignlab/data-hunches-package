@@ -4,6 +4,25 @@ import { BrightOrange, DarkGray } from "./Constants";
 
 export const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+        table: {
+            '& .MuiDataGrid-columnHeaderTitle': {
+                fontSize: 'small',
+                fontWeight: 'bold !important',
+            },
+            '& .MuiDataGrid-columnHeaderTitleContainer': {
+                paddingLeft: '0px !important',
+                paddingRight: '0px !important'
+            },
+            '& .MuiDataGrid-columnHeader': {
+                paddingLeft: '5px !important',
+                paddingRight: '5px !important'
+            },
+            '& .MuiDataGrid-cell': {
+                paddingLeft: '5px !important',
+                paddingRight: '5px !important'
+            }
+        }
+        ,
         rightToolbar: {
             marginLeft: "auto",
             marginRight: -12

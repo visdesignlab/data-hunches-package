@@ -75,13 +75,13 @@ const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
         <g >
             {inVisDH.map((d, i) => {
                 if (parseFloat(d.content) > verticalValueScale.domain()[0]) {
-                    return <OverAxisIndicator dataHunch={d} key={d.id} />;
+                    return <OverAxisIndicator dataHunch={d} key={`${d.id}-overaxis`} />;
                 }
                 if (inVisDH.length > 3) {
                     return (
                         <DHIndicatorRect
                             display={store.needToShowPreview ? 'none' : undefined}
-                            key={d.id}
+                            key={`${d.id}-dhindicatorRect`}
                             onMouseOver={() => { store.setSelectedDH(d.id); store.setHighlightedDH(d.id); }}
                             x={honrizontalBandScale(d.label) || 0}
                             width={honrizontalBandScale.bandwidth()}
@@ -94,7 +94,7 @@ const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                         <SketchyBar
                             dataHunch={d}
                             xPos={(honrizontalBandScale(d.label) || 0) + (honrizontalBandScale.bandwidth() / inVisDH.length * i)}
-                            key={d.id}
+                            key={`${d.id}-dhindicatorSketchy`}
                             yPos={calculateY(d, false)}
                             width={honrizontalBandScale.bandwidth() / inVisDH.length}
                             height={calculateHeight(d)} />
@@ -106,12 +106,12 @@ const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
             {offVisDH.map((d, i) => {
 
                 return (
-                    <Tooltip key={d.id} title={d.reasoning}>
+                    <Tooltip title={d.reasoning}>
                         <DHIndicatorText
                             x={(honrizontalBandScale(d.label) || 0) + 0.5 * honrizontalBandScale.bandwidth() + (2 * IndicatorSize + IndicatorSpace) * (i % 2 === 0 ? -1 : 1)}
                             y={store.svgHeight - margin.bottom + 25 + 2 * (IndicatorSize + IndicatorSpace) * Math.floor(i / 2)}
                             fontSize={d.type === 'exclusion' ? 'small' : 'large'}
-                            key={d.id}
+                            key={`${d.id}-text`}
                             isHighlighted={d.id === store.highlightedDH}
                             onMouseOver={() => { store.setHighlightedDH(d.id); }}
                             onMouseOut={() => { store.setHighlightedDH(-1); }}>

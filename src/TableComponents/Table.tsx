@@ -6,6 +6,7 @@ import Store from "../Interfaces/Store";
 import { DataContext } from "..";
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
 import { handlePreviewOnClick, handleResetOnClick } from "../HelperFunctions/PreviewReset";
+import { useStyles } from "../Interfaces/StyledComponents";
 
 export type DHProps = {
     dataHunchArray: DataHunch[];
@@ -13,19 +14,21 @@ export type DHProps = {
 const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
     const store = useContext(Store);
+    const styles = useStyles();
 
     const [needReset, setNeedReset] = useState(false);
 
     const dataSet = useContext(DataContext);
 
     const columns: GridColDef[] = [
-        { headerName: "Type", field: 'type' },
-        { headerName: "ID", field: 'id' },
-        { headerName: "User Name", field: 'user' },
-        { headerName: "Data Label", field: 'label' },
-        { headerName: "Data Hunch Content", field: 'content' },
-        { headerName: "Data Hunch Reasoning", field: 'reasoning' },
-        { headerName: "Confidence Level", field: 'confidenceLevel' }
+
+        { headerName: "ID", field: 'id', width: 70, filterable: false },
+        { headerName: "Type", field: 'type', width: 90 },
+        { headerName: "Username", field: 'user', width: 115 },
+        { headerName: "Label", field: 'label', width: 90 },
+        { headerName: "Content", field: 'content', width: 150, resizable: true },
+        { headerName: "Reasoning", field: 'reasoning', width: 150, resizable: true },
+        { headerName: "Confidence Level", field: 'confidenceLevel', }
     ];
 
 
@@ -53,9 +56,11 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
     return (
         <div style={{ height: '80vh', overflow: 'auto' }}>
             <DataGrid
+                className={styles.table}
                 onRowEnter={(d) => { rowHoverHandler(d.row as DataHunch); }}
                 onRowOut={rowOutHandler}
                 columns={columns}
+                checkboxSelection={true}
                 rows={dataHunchArray} />
         </div>
     );

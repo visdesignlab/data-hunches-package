@@ -44,7 +44,7 @@ const CategoricalForm: FC = () => {
                 {store.containCategory.map((d, i) => {
                     return <FormControlLabel
                         value={d}
-                        key={d}
+                        key={`${d}-radio`}
                         control={<Radio size="small" className={styles.radioStyle} />}
                         label={
                             <div className={styles.catText}>
