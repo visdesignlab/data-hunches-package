@@ -34,21 +34,26 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
             const barChartPoint = dataSet.filter(dp => dp.label === dataHunchArray[0].label)[0];
             const height = store.svgHeight - margin.bottom - verticalValueScale(barChartPoint.value);
 
-
-            const generateX = () => {
-                return getRandomArbitrary((honrizontalBandScale(barChartPoint.label) || 0) + honrizontalBandScale.bandwidth() * 0.05, (honrizontalBandScale(barChartPoint.label) || 0) + honrizontalBandScale.bandwidth() * 0.95);
-            };
-
-            const generateY = () => {
-                return getRandomArbitrary(verticalValueScale(barChartPoint.value) + height * 0.05, verticalValueScale(barChartPoint.value) + height * 0.95);
-            };
             //generate random points:
             const randomPoints = [[honrizontalBandScale(barChartPoint.label) || 0, verticalValueScale(barChartPoint.value)],
             [honrizontalBandScale(barChartPoint.label) || 0, verticalValueScale(barChartPoint.value) + height],
             [(honrizontalBandScale(barChartPoint.label) || 0) + honrizontalBandScale.bandwidth(), verticalValueScale(barChartPoint.value)],
             [(honrizontalBandScale(barChartPoint.label) || 0) + honrizontalBandScale.bandwidth(), verticalValueScale(barChartPoint.value) + height]];
-            for (let time = 0; time < 50; time++) {
-                randomPoints.push([generateX(), generateY()]);
+
+
+            const xDirBoxes = Math.floor(honrizontalBandScale.bandwidth() / 10);
+            const yDirBoxes = Math.floor(height / 10);
+
+            for (let xDir = 1; xDir <= xDirBoxes; xDir++) {
+                for (let yDir = 1; yDir <= yDirBoxes; yDir++) {
+                    const randomX = getRandomArbitrary((honrizontalBandScale(barChartPoint.label) || 0) + 10 * (xDir - 1), (honrizontalBandScale(barChartPoint.label) || 0) + 10 * xDir);
+
+                    const randomY = getRandomArbitrary(verticalValueScale(barChartPoint.value) + 10 * (yDir - 1), verticalValueScale(barChartPoint.value) + 10 * yDir);
+
+                    randomPoints.push([randomX, randomY]);
+                }
+
+
             }
 
             const delaunay = Delaunay.from(randomPoints);
