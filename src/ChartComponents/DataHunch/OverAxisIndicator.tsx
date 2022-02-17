@@ -50,19 +50,19 @@ const OverAxisIndicator: FC<Props> = ({ dataHunch }: Props) => {
                     x2={(honrizontalBandScale(dataHunch.label) || 0) + 0.5 * honrizontalBandScale.bandwidth()}
                     stroke={DarkGray}
                     strokeWidth={4}
-                    y1={margin.top - 5}
-                    y2={margin.top - 20} />
+                    y1={margin.top - 10}
+                    y2={margin.top - 25} />
                 <polygon
                     points="0,0 7,5 -7,5"
                     fill={DarkGray}
                     stroke='none'
-                    transform={`translate(${(honrizontalBandScale(dataHunch.label) || 0) + 0.5 * honrizontalBandScale.bandwidth()},${margin.top - 20})`}
+                    transform={`translate(${(honrizontalBandScale(dataHunch.label) || 0) + 0.5 * honrizontalBandScale.bandwidth()},${margin.top - 25})`}
                 />
                 <DHIndicatorRect
 
                     x={honrizontalBandScale(dataHunch.label) || 0}
                     width={honrizontalBandScale.bandwidth()}
-                    y={margin.top - 5}
+                    y={margin.top - 10}
 
                 />
             </g>

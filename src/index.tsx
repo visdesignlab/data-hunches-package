@@ -61,6 +61,9 @@ const BarChartWithDH: FC<Props> = ({ datasetName, dataSet, svgWidth, svgHeight }
                     }
                     tempDHArray.push(doc.data() as DataHunch);
                 });
+                tempDHArray.sort((a, b) => {
+                    return (a.id - b.id);
+                });
                 setSavedDH(tempDHArray);
                 stateUpdateWrapperUseJSON(improvedDataSet, copyOfImpDataSet, setImprovedDataSet);
             });
