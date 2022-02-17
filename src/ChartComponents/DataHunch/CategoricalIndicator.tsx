@@ -63,6 +63,7 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
 
     const chooseFill = () => {
         const randomNumber = Math.round(Math.random() * 100);
+        // TODO should we dynamically adjust this umber
         if (randomNumber >= 60) {
             return ['none', 0];
         }

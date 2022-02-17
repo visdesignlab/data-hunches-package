@@ -19,6 +19,7 @@ import { stateUpdateWrapperUseJSON } from "./Interfaces/StateChecker";
 import { Tooltip } from "@material-ui/core";
 import { DHIndicatorText } from "./Interfaces/StyledComponents";
 import CategoricalIndicator from "./ChartComponents/DataHunch/CategoricalIndicator";
+import ChartLegends from "./ChartComponents/ChartLegends";
 
 
 const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
@@ -73,6 +74,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
         <GeneralControl />
         <svg width={store.svgWidth} height={store.svgHeight} >
+            <ChartLegends />
             <g id='chart-title'>
                 <text
                     x={store.svgWidth * 0.5}
@@ -135,7 +137,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                                     key={barDP.label}
                                     dataHunchArray={barDP.dataHunchArray}
                                 />
-                                <CategoricalIndicator dataHunchArrayString={JSON.stringify(catDH)} />
+                                <CategoricalIndicator dataHunchArrayString={JSON.stringify(catDH)} key={barDP.label} />
                             </>);
 
                         } else {
@@ -145,7 +147,9 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                                         key={barDP.label}
                                         dataHunchArray={barDP.dataHunchArray.filter(d => ["annotation", 'exclusion', 'categorical'].includes(d.type) || d.id === store.selectedDH)}
                                     />
-                                    <CategoricalIndicator dataHunchArrayString={JSON.stringify(catDH.filter(d => d.id === store.selectedDH))} />
+                                    <CategoricalIndicator
+                                        dataHunchArrayString={JSON.stringify(catDH.filter(d => d.id === store.selectedDH))}
+                                        key={barDP.label} />
                                 </>);
                         }
 
