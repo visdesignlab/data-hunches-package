@@ -39,6 +39,10 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
             setNeedReset(true);
             store.setNeedToShowPreview(true);
             handlePreviewOnClick(dataSet, dataHunch.label, undefined, store.svgHeight, store.svgWidth, store.containCategory.length > 0, undefined);
+        } else if (dataHunch.type === 'model') {
+            setNeedReset(true);
+            store.setNeedToShowPreview(true);
+            handlePreviewOnClick(dataSet, undefined, undefined, store.svgHeight, store.svgWidth, store.containCategory.length > 0, dataHunch.content);
         }
     };
 
