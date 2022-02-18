@@ -134,6 +134,7 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
 
         <PreviewResetButtons
             disableButtons={checkIfDisable()}
+            modelInput={undefined}
             labelToPreview={store.selectedDP ? store.selectedDP : labelInput}
             valueToPreview={dataInput === '' ? undefined : parseFloat(dataInput)} />
 

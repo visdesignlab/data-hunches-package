@@ -21,11 +21,11 @@ const OverAxisIndicator: FC<Props> = ({ dataHunch }: Props) => {
     const honrizontalBandScale = makeBandScale(dataSet, store.svgWidth);
 
     useEffect(() => {
-        if (store.selectedDH === dataHunch.id) {
+        if (store.selectedDH.includes(dataHunch.id)) {
             store.setNeedToShowPreview(true);
             setNeedReset(true);
-            handlePreviewOnClick(dataSet, dataHunch.label, parseFloat(dataHunch.content), store.svgHeight, store.svgWidth, store.containCategory.length > 0);
-        } else if (store.selectedDH !== dataHunch.id && needReset) {
+            handlePreviewOnClick(dataSet, dataHunch.label, parseFloat(dataHunch.content), store.svgHeight, store.svgWidth, store.containCategory.length > 0, undefined);
+        } else if (!store.selectedDH.includes(dataHunch.id) && needReset) {
             store.setNeedToShowPreview(false);
             setNeedReset(false);
             handleResetOnClick(dataSet, store.svgHeight, store.svgWidth, store.containCategory.length > 0, store.selectedDP);
@@ -37,11 +37,11 @@ const OverAxisIndicator: FC<Props> = ({ dataHunch }: Props) => {
             <g
                 cursor='pointer'
                 onMouseOver={() => {
-                    store.setSelectedDH(dataHunch.id);
+                    store.setSelectedDH([dataHunch.id]);
                     store.setHighlightedDH(dataHunch.id);
                 }}
                 onMouseOut={() => {
-                    store.setSelectedDH(-1);
+                    store.setSelectedDH([]);
                     store.setHighlightedDH(-1);
                 }}
             >

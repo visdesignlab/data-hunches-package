@@ -33,17 +33,17 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
 
     const rowHoverHandler = (dataHunch: DataHunch) => {
-        store.setSelectedDH(dataHunch.id);
+        store.setSelectedDH([dataHunch.id]);
         store.setHighlightedDH(dataHunch.id);
         if (dataHunch.type === 'exclusion') {
             setNeedReset(true);
             store.setNeedToShowPreview(true);
-            handlePreviewOnClick(dataSet, dataHunch.label, undefined, store.svgHeight, store.svgWidth, store.containCategory.length > 0);
+            handlePreviewOnClick(dataSet, dataHunch.label, undefined, store.svgHeight, store.svgWidth, store.containCategory.length > 0, undefined);
         }
     };
 
     const rowOutHandler = () => {
-        store.setSelectedDH(-1);
+        store.setSelectedDH([]);
         store.setHighlightedDH(-1);
         if (needReset) {
             store.setNeedToShowPreview(false);
@@ -61,6 +61,7 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                 onRowOut={rowOutHandler}
                 columns={columns}
                 checkboxSelection={true}
+                onSelectionModelChange={(d) => { store.setSelectedDH(d as number[]); }}
                 rows={dataHunchArray} />
         </div>
     );

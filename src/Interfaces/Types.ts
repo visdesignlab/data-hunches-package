@@ -23,10 +23,18 @@ export type AnnotationType =
     | "data space"
     | "manipulations"
     | "range"
+    | 'model'
     | 'inclusion'
     | 'exclusion';
 
-export type InputMode = 'categorical' | 'annotation' | 'none' | 'rating' | 'dataSpace' | 'manipulation';
+export type InputMode =
+    'categorical' |
+    'annotation' |
+    'none' |
+    'rating' |
+    'dataSpace' |
+    'model' |
+    'manipulation';
 
 export type SelectionType = Selection<any, undefined, HTMLElement, undefined>;
 

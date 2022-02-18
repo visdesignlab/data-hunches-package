@@ -1,11 +1,12 @@
 import { axisLeft, axisBottom } from "d3-axis";
 import { scaleLinear } from "d3-scale";
 import { select } from "d3-selection";
+import { parse } from "mathjs";
 import { margin, BrightOrange, TransitionDuration } from "../Interfaces/Constants";
 import { BarChartDataPoint } from "../Interfaces/Types";
 import { makeVerticalScale, makeBandScale, makeCategoricalScale, getRectFill } from "./ScaleGenerator";
 
-export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPreview: string, valueToPreview: number | undefined, svgHeight: number, svgWidth: number, doesContainCategory: boolean) => {
+export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPreview: string | undefined, valueToPreview: number | undefined, svgHeight: number, svgWidth: number, doesContainCategory: boolean, modelInput: string | undefined) => {
 
 
     const verticalScale = makeVerticalScale(ogDataSet, svgHeight);
@@ -25,7 +26,7 @@ export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPrev
 
 
     // make new data
-    const newData = ogDataSet.map(d => {
+    let newData = ogDataSet.map(d => {
         if (d.label === labelToPreview && valueToPreview === undefined) {
             return null;
         }
@@ -34,8 +35,20 @@ export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPrev
         } return d;
     }).filter(d => d) as BarChartDataPoint[];
 
-    if (!bandScale.domain().includes(labelToPreview) && valueToPreview !== undefined) {
-        newData.push({ label: labelToPreview, value: valueToPreview });
+    if (labelToPreview !== undefined) {
+        if (!bandScale.domain().includes(labelToPreview) && valueToPreview !== undefined) {
+            newData.push({ label: labelToPreview, value: valueToPreview });
+        }
+    } else if (modelInput !== undefined) {
+        try {
+            const compileModel = parse(modelInput).compile();
+
+            newData = ogDataSet.map(d => {
+                return { ...d, value: compileModel.evaluate({ x: d.value }) };
+            });
+        } catch (error) {
+
+        }
     }
 
     const newBandScale = makeBandScale(newData, svgWidth);

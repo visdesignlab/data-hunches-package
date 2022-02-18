@@ -130,7 +130,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                 {dataSet.map((barDP) => {
                     if (barDP.dataHunchArray) {
                         const catDH = barDP.dataHunchArray.filter(d => d.type === 'categorical');
-                        if (store.selectedDH === -1) {
+                        if (store.selectedDH.length === 0) {
 
                             return (<>
                                 <DataHunchIndicator
@@ -145,10 +145,10 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                                 <>
                                     <DataHunchIndicator
                                         key={`${barDP.label}-dhindicator`}
-                                        dataHunchArray={barDP.dataHunchArray.filter(d => ["annotation", 'exclusion', 'categorical'].includes(d.type) || d.id === store.selectedDH)}
+                                        dataHunchArray={barDP.dataHunchArray.filter(d => ["annotation", 'exclusion', 'categorical'].includes(d.type) || store.selectedDH.includes(d.id))}
                                     />
                                     <CategoricalIndicator
-                                        dataHunchArrayString={JSON.stringify(catDH.filter(d => d.id === store.selectedDH))}
+                                        dataHunchArrayString={JSON.stringify(catDH.filter(d => store.selectedDH.includes(d.id)))}
                                         key={`${barDP.label}-catindicator`} />
                                 </>);
                         }

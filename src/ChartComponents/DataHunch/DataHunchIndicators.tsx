@@ -82,7 +82,7 @@ const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                         <DHIndicatorRect
                             display={store.needToShowPreview ? 'none' : undefined}
                             key={`${d.id}-dhindicatorRect`}
-                            onMouseOver={() => { store.setSelectedDH(d.id); store.setHighlightedDH(d.id); }}
+                            onMouseOver={() => { store.setSelectedDH([d.id]); store.setHighlightedDH(d.id); }}
                             x={honrizontalBandScale(d.label) || 0}
                             width={honrizontalBandScale.bandwidth()}
                             y={calculateY(d, true)}

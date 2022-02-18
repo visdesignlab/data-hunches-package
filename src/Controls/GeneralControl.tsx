@@ -11,23 +11,32 @@ const GeneralControl: FC = () => {
     const store = useContext(Store);
 
 
+    const placeFormLowerRightConor = () => {
+        select('#form-component')
+            .attr('x', store.svgWidth - DefaultForeignObjectWidth)
+            .attr('y', store.svgHeight - DefaultForeignObjectHeight);
+        store.setCurrentSelectedDP(undefined);
+    };
     const onClickSelectADataPoint = () => {
         store.selectADataPointMode(true);
+        store.setInputMode('none');
     };
 
     const onClickAnnotation = () => {
         store.setInputMode('annotation');
-        select('#form-component')
-            .attr('x', store.svgWidth - DefaultForeignObjectWidth)
-            .attr('y', store.svgHeight - DefaultForeignObjectHeight);
+        placeFormLowerRightConor();
     };
 
     const onClickIncExc = () => {
         store.setInputMode('dataSpace');
-        store.setCurrentSelectedDP(undefined);
-        select('#form-component')
-            .attr('x', store.svgWidth - DefaultForeignObjectWidth)
-            .attr('y', store.svgHeight - DefaultForeignObjectHeight);
+
+        placeFormLowerRightConor();
+    };
+
+
+    const onClickModelInput = () => {
+        store.setInputMode('model');
+        placeFormLowerRightConor();
     };
 
 
@@ -35,7 +44,8 @@ const GeneralControl: FC = () => {
         <Container style={{ paddingTop: '5px' }}>
             <ButtonGroup color="primary" aria-label="outlined primary button group" disabled={!store.userName}>
                 <Button onClick={onClickAnnotation}>Add Annotations</Button>
-                <Button onClick={onClickIncExc}>Inclusion/Exclusion</Button>
+                <Button onClick={onClickIncExc}>Inclusion / Exclusion</Button>
+                <Button onClick={onClickModelInput}>Model Input</Button>
                 <Button onClick={onClickSelectADataPoint}>Select a Data Point</Button>
             </ButtonGroup>
         </Container>

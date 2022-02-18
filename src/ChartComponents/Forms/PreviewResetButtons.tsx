@@ -7,19 +7,22 @@ import Store from "../../Interfaces/Store";
 import { handlePreviewOnClick, handleResetOnClick } from "../../HelperFunctions/PreviewReset";
 
 type Props = {
-    labelToPreview: string;
+    labelToPreview: string | undefined;
     valueToPreview: number | undefined;
     disableButtons: boolean;
+    modelInput: string | undefined;
 };
 
-const PreviewResetButtons: FC<Props> = ({ labelToPreview, valueToPreview, disableButtons }: Props) => {
+const PreviewResetButtons: FC<Props> = ({ labelToPreview, valueToPreview, disableButtons, modelInput }: Props) => {
     const store = useContext(Store);
 
     const dataSet = useContext(DataContext);
 
     const previewHandler = () => {
         store.setNeedToShowPreview(true);
-        handlePreviewOnClick(dataSet, labelToPreview, valueToPreview, store.svgHeight, store.svgWidth, store.containCategory.length > 0);
+
+        handlePreviewOnClick(dataSet, labelToPreview, valueToPreview, store.svgHeight, store.svgWidth, store.containCategory.length > 0, modelInput);
+
     };
 
     const resetHandler = () => {
