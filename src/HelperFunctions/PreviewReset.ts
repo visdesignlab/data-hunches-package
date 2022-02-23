@@ -156,4 +156,6 @@ export const handleResetOnClick = (ogDataSet: BarChartDataPoint[], svgHeight: nu
         .attr('width', bandScale.bandwidth())
         .attr('y', (d: any) => verticalScale(d.value))
         .attr('height', (d: any) => svgHeight - margin.bottom - verticalScale(d.value));
+
+    select('#rectangles-preview').selectAll('path').remove();
 };

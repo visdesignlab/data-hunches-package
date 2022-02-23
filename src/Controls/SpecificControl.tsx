@@ -22,12 +22,12 @@ const SpecificControl: FC = () => {
     };
 
     const dataSpaceClickHandler = () => {
-        store.setInputMode('dataSpace');
+        store.setInputMode('data space');
         store.selectADataPointMode(false);
     };
 
     const manipulationOnClickHandler = () => {
-        store.setInputMode('manipulation');
+        store.setInputMode('manipulations');
         store.selectADataPointMode(false);
     };
 

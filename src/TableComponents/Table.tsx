@@ -7,6 +7,7 @@ import { DataContext } from "..";
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
 import { handlePreviewOnClick, handleResetOnClick } from "../HelperFunctions/PreviewReset";
 import { useStyles } from "../Interfaces/StyledComponents";
+import { previewSketch } from "../HelperFunctions/PreviewSketch";
 
 export type DHProps = {
     dataHunchArray: DataHunch[];
@@ -43,6 +44,10 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
             setNeedReset(true);
             store.setNeedToShowPreview(true);
             handlePreviewOnClick(dataSet, undefined, undefined, store.svgHeight, store.svgWidth, store.containCategory.length > 0, dataHunch.content);
+        } else if (dataHunch.type === 'sketch') {
+            setNeedReset(true);
+            store.setNeedToShowPreview(true);
+            previewSketch(dataHunch.content);
         }
     };
 

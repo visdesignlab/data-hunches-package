@@ -57,7 +57,7 @@ const ManipulationLayer: FC<Props> = ({ sendManipulation }: Props) => {
 
     return (
         <g
-            display={store.inputMode === 'manipulation' ? undefined : 'none'}>
+            display={store.inputMode === 'manipulations' ? undefined : 'none'}>
             <rect id='result-rect'
                 fill='red'
                 width={honrizontalBandScale.bandwidth()}
@@ -73,7 +73,6 @@ const ManipulationLayer: FC<Props> = ({ sendManipulation }: Props) => {
                 onMouseUpCapture={mouseUpHandler}
                 onMouseDown={mouseDownHandler}
                 onMouseMove={dragHandler} />
-
         </g>);
 };
 

@@ -89,8 +89,9 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
 
     return (dataHunchArray.length > 0 ?
         <g>
-            {polygonPoints.map((d: Delaunay.Triangle) => {
+            {polygonPoints.map((d: Delaunay.Triangle, i) => {
                 return <polygon
+                    key={`polygon-${i}`}
                     points={makePointArray(d)}
                     fill={chooseFill()[0].toString()}
                     strokeOpacity={0.2}

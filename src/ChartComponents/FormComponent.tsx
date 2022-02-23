@@ -6,11 +6,15 @@ import Store from "../Interfaces/Store";
 import AnnotationForm from "./Forms/AnnotationForm";
 import CategoricalForm from "./Forms/CategoricalForm";
 import DataSpaceForm from "./Forms/DataSpaceForm";
-import ManipulationForm, { ManipulationProps } from "./Forms/ManipulationForm";
+import ManipulationForm from "./Forms/ManipulationForm";
 import ModelInputForm from "./Forms/ModelInputForm";
 import RatingForm from "./Forms/RatingForm";
 
-const FormComponent: FC<ManipulationProps> = ({ manipulationOutput }: ManipulationProps) => {
+type Props = {
+    manipulationOutput: string;
+};
+
+const FormComponent: FC<Props> = ({ manipulationOutput }: Props) => {
 
     const store = useContext(Store);
 
@@ -19,10 +23,10 @@ const FormComponent: FC<ManipulationProps> = ({ manipulationOutput }: Manipulati
             <AnnotationForm />,
         rating:
             <RatingForm />,
-        dataSpace:
+        'data space':
             <DataSpaceForm isIncExc={!store.selectedDP} />,
-        manipulation:
-            <ManipulationForm manipulationOutput={manipulationOutput} />,
+        manipulations:
+            <ManipulationForm manipulationOutput={manipulationOutput} type='manipulations' />,
         categorical:
             <CategoricalForm />,
         model:

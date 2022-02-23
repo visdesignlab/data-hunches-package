@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { FC, useContext, useState } from "react";
 import BarElement from './ChartComponents/BarElement';
 import { makeBandScale, makeCategoricalScale, makeVerticalScale } from "./HelperFunctions/ScaleGenerator";
-import { DarkBlue, DarkGray, IndicatorSize, IndicatorSpace, margin } from "./Interfaces/Constants";
+import { DarkBlue, DarkGray, DefaultForeignObjectHeight, DefaultForeignObjectWidth, IndicatorSize, IndicatorSpace, margin } from "./Interfaces/Constants";
 import Store from "./Interfaces/Store";
 import { axisBottom, axisLeft } from "d3-axis";
 import { select } from "d3-selection";
@@ -20,6 +20,8 @@ import { Tooltip } from "@material-ui/core";
 import { DHIndicatorText } from "./Interfaces/StyledComponents";
 import CategoricalIndicator from "./ChartComponents/DataHunch/CategoricalIndicator";
 import ChartLegends from "./ChartComponents/ChartLegends";
+import SketchLayer from "./ChartComponents/SketchLayer";
+import ManipulationForm from "./ChartComponents/Forms/ManipulationForm";
 
 
 const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
@@ -35,7 +37,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
     };
 
     useEffect(() => {
-        if (store.inputMode !== 'manipulation') {
+        if (store.inputMode !== 'manipulations') {
             setManipulationResult('');
         }
     }, [store.inputMode]);
@@ -85,7 +87,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                 >{store.datasetName}</text>
                 {allChartDHArray.map((d, i) => {
                     return (
-                        <Tooltip title={d.content} key={d.id}>
+                        <Tooltip title={d.content}>
                             <DHIndicatorText
                                 isHighlighted={d.id === store.highlightedDH}
                                 x={findStart() + IndicatorSize * (i) * 2 + IndicatorSpace * i}
@@ -107,8 +109,6 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
             </g>
 
             <g className='axis' id="vertical-axis" />
-
-
 
             <g id="rectangles" display={(!store.needToShowPreview) ? undefined : 'none'}>
                 {
@@ -160,12 +160,24 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                 })}
             </g>
 
-            {store.inputMode === 'manipulation' ? <ManipulationLayer sendManipulation={sendManipulationToParent} /> : <></>}
+            {store.inputMode === 'manipulations' ? <ManipulationLayer sendManipulation={sendManipulationToParent} /> : <></>}
+
+
+            {store.inputMode === 'sketch' ?
+                <SketchLayer sendManipulation={sendManipulationToParent} /> : <></>
+            }
 
             <FormComponent manipulationOutput={manipulationResult} />
 
             <SpecificControl />
+
+
         </svg>
+        <div style={{ width: DefaultForeignObjectWidth, height: DefaultForeignObjectHeight }}>
+            {store.inputMode === 'sketch' ?
+                <ManipulationForm manipulationOutput={manipulationResult} type='sketch' /> : <></>
+            }
+        </div>
     </div>;
 };
 

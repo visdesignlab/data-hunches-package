@@ -24,6 +24,7 @@ export type AnnotationType =
     | "manipulations"
     | "range"
     | 'model'
+    | 'sketch'
     | 'inclusion'
     | 'exclusion';
 
@@ -31,10 +32,11 @@ export type InputMode =
     'categorical' |
     'annotation' |
     'none' |
+    'sketch' |
     'rating' |
-    'dataSpace' |
+    'data space' |
     'model' |
-    'manipulation';
+    'manipulations';
 
 export type SelectionType = Selection<any, undefined, HTMLElement, undefined>;
 

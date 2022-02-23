@@ -7,11 +7,12 @@ import { useStyles } from "../../Interfaces/StyledComponents";
 import ReasonConfidenceInput from "./ReasonConfidenceInput";
 import SubmitCancelButtons from "./SubmitCancelButtons";
 
-export type ManipulationProps = {
+type Props = {
     manipulationOutput: string;
+    type: 'manipulations' | 'sketch';
 };
 
-const ManipulationForm: FC<ManipulationProps> = ({ manipulationOutput }: ManipulationProps) => {
+const ManipulationForm: FC<Props> = ({ manipulationOutput, type }: Props) => {
     const styles = useStyles();
     const store = useContext(Store);
 
@@ -29,15 +30,13 @@ const ManipulationForm: FC<ManipulationProps> = ({ manipulationOutput }: Manipul
         return parsedResult.length > 1 ? 'range' : 'manipulations';
     };
 
-
-
     return (
         <Container className={styles.foreignObjectContainer}>
             <ReasonConfidenceInput updateConfidenceReason={sendConfidenceReasonToParent} />
             <SubmitCancelButtons disableSubmit={
                 reasonInput.length === 0 || manipulationOutput === ''}
                 dhToSubmit={{
-                    type: calculateType(),
+                    type: type === 'manipulations' ? calculateType() : type,
                     user: store.userName,
                     label: `${store.selectedDP === undefined ? 'all chart' : store.selectedDP}`,
                     // Add Content
