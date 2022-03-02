@@ -6,7 +6,7 @@ import { handlePreviewOnClick, handleResetOnClick } from "../../HelperFunctions/
 import { makeBandScale } from "../../HelperFunctions/ScaleGenerator";
 import { margin, DarkGray } from "../../Interfaces/Constants";
 import Store from "../../Interfaces/Store";
-import { DHIndicatorRect } from "../../Interfaces/StyledComponents";
+import { NonRoughDHIndicatorRect } from "../../Interfaces/StyledComponents";
 import { DataHunch } from "../../Interfaces/Types";
 type Props = {
     dataHunch: DataHunch;
@@ -58,7 +58,7 @@ const OverAxisIndicator: FC<Props> = ({ dataHunch }: Props) => {
                     stroke='none'
                     transform={`translate(${(honrizontalBandScale(dataHunch.label) || 0) + 0.5 * honrizontalBandScale.bandwidth()},${margin.top - 25})`}
                 />
-                <DHIndicatorRect
+                <NonRoughDHIndicatorRect
 
                     x={honrizontalBandScale(dataHunch.label) || 0}
                     width={honrizontalBandScale.bandwidth()}

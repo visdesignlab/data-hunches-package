@@ -50,7 +50,6 @@ const CategoricalForm: FC = () => {
                             <div className={styles.catText}>
                                 <div className={styles.colorBox} style={{ backgroundColor: CategoricalColor[i] }} />
                                 {d}
-                                {catNum === i ? '(Original category)' : ''}
                             </div>} />;
                 })}
 

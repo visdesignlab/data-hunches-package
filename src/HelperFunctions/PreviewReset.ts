@@ -2,6 +2,7 @@ import { axisLeft, axisBottom } from "d3-axis";
 import { scaleLinear } from "d3-scale";
 import { select } from "d3-selection";
 import { parse } from "mathjs";
+import { storeAnnotation } from "mobx/dist/internal";
 import { margin, BrightOrange, TransitionDuration } from "../Interfaces/Constants";
 import { BarChartDataPoint } from "../Interfaces/Types";
 import { makeVerticalScale, makeBandScale, makeCategoricalScale, getRectFill } from "./ScaleGenerator";
@@ -13,11 +14,14 @@ export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPrev
     const bandScale = makeBandScale(ogDataSet, svgWidth);
     const categoricalScale = makeCategoricalScale(ogDataSet);
 
+
     // bind the data with all the rectangles first
     select('#rectangles-preview')
         .selectAll("rect")
         .data(ogDataSet)
         .join("rect")
+        .attr('stroke-width', 4)
+        .attr('stroke', d => d.label === labelToPreview ? BrightOrange : 'none')
         .attr('x', d => bandScale(d.label) || 0)
         .attr('width', bandScale.bandwidth())
         .attr("y", d => verticalScale(d.value))
@@ -152,6 +156,7 @@ export const handleResetOnClick = (ogDataSet: BarChartDataPoint[], svgHeight: nu
         .data(ogDataSet)
         .join('rect')
         .attr('fill', d => getRectFill(d, doesContainCategory, selectedDP, categoricalScale))
+        .attr('stroke', d => d.label === selectedDP ? BrightOrange : 'none')
         .attr('x', (d: any) => bandScale(d.label) || 0)
         .attr('width', bandScale.bandwidth())
         .attr('y', (d: any) => verticalScale(d.value))

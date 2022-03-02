@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { FC, useContext, useLayoutEffect, useRef } from "react";
 import 'roughjs';
 import * as rough from 'roughjs/bin/rough';
-import { BrightOrange } from "../../Interfaces/Constants";
+import { BrightOrange, DarkGray } from "../../Interfaces/Constants";
 import Store from "../../Interfaces/Store";
 import { DataHunch } from "../../Interfaces/Types";
 
@@ -12,11 +12,10 @@ type Props = {
     xPos: number;
     yPos: number;
     width: number;
-    height: number;
     dataHunch: DataHunch;
 };
 
-const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch }: Props) => {
+const DHIndicatorRect: FC<Props> = ({ xPos, yPos, width, dataHunch }: Props) => {
 
     const store = useContext(Store);
     const dhRef = useRef(null);
@@ -28,26 +27,25 @@ const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch }: Props) 
 
             const rc = rough.default.svg(drawingG);
 
-            const sketchyDH = rc.rectangle(xPos, yPos, width, height, {
-                fill: BrightOrange,
-                stroke: BrightOrange,
-                fillStyle: 'zigzag',
-                roughness: 2,
+            const sketchyDH = rc.rectangle(xPos, yPos, width, 4, {
+
+                stroke: DarkGray,
+                roughness: 2.8,
                 hachureAngle: 60,
                 hachureGap: 10,
-                fillWeight: 1,
+                fillWeight: 2,
                 strokeWidth: 2,
             });
             drawingG.appendChild(sketchyDH);
 
 
         };
-    }, [xPos, yPos, width, height]);
+    }, [xPos, yPos, width]);
 
     return (<Tooltip title={dataHunch.reasoning}>
         <g display={store.needToShowPreview ? 'none' : undefined}
             ref={dhRef}
-            onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
+            onMouseOver={() => { store.setSelectedDH([dataHunch.id]); store.setHighlightedDH(dataHunch.id); }}
             onMouseOut={() => {
                 store.setHighlightedDH(-1);
             }}
@@ -55,4 +53,4 @@ const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch }: Props) 
     </Tooltip>);
 };
 
-export default observer(SketchyBar);
+export default observer(DHIndicatorRect);

@@ -49,7 +49,9 @@ const BarElement: FC<Props> = ({ width, height, xPos, yPos, fill, dataElement }:
         cursor={store.selectingADataPoint ? 'pointer' : undefined}
         onClick={barElementOnClick}
         onMouseLeave={() => { store.setHighlightedDH(-1); store.setSelectedDH([]); }}
-        fill={store.selectedDP === dataElement.label ? BrightOrange : fill}>
+        fill={fill}
+        strokeWidth={4}
+        stroke={store.selectedDP === dataElement.label ? BrightOrange : 'none'}>
     </rect>;
 };
 

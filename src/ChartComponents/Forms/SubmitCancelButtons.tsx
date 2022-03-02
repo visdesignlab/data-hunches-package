@@ -12,22 +12,24 @@ type Props = {
 const SubmitCancelButtons: FC<Props> = ({ dhToSubmit, disableSubmit }: Props) => {
 
     const store = useContext(Store);
+
     const cancelClickHandler = () => {
         store.setInputMode('none');
         store.setCurrentSelectedDP(undefined);
+        store.setNeedToShowPreview(false);
     };
 
     const submitClickHandler = () => {
         store.submitDH(dhToSubmit);
         store.setInputMode('none');
         store.setCurrentSelectedDP(undefined);
+        store.setNeedToShowPreview(false);
     };
 
     return <ButtonGroup>
         <Button size='small'
             onClick={submitClickHandler}
-            disabled={disableSubmit}
-        >
+            disabled={disableSubmit} >
             Submit
         </Button>
         <Button size='small' onClick={cancelClickHandler} variant='outlined'>

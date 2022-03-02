@@ -71,7 +71,7 @@ interface RectProps {
     width: number;
 }
 
-export const DHIndicatorRect = styled(`rect`) <RectProps>`
+export const NonRoughDHIndicatorRect = styled(`rect`) <RectProps>`
     cursor:pointer;
     x:${props => props.x}px;
     y:${props => props.y}px;

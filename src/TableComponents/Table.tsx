@@ -23,12 +23,11 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
     const columns: GridColDef[] = [
 
-        { headerName: "ID", field: 'id', width: 70, filterable: false },
         { headerName: "Type", field: 'type', width: 90 },
         { headerName: "Username", field: 'user', width: 115 },
         { headerName: "Label", field: 'label', width: 90 },
-        { headerName: "Content", field: 'content', width: 150, resizable: true },
         { headerName: "Reasoning", field: 'reasoning', width: 150, resizable: true },
+        { headerName: "Content", field: 'content', width: 150, resizable: true },
         { headerName: "Confidence Level", field: 'confidenceLevel', }
     ];
 

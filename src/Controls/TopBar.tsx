@@ -42,23 +42,32 @@ const TopBar: FC = () => {
                         {`Signed in as ${store.userName}`}
                         <AccountCircle />
                     </Button> :
-                    <GoogleLogin
-                        clientId="565250402151-jseb9mfqk3tumg1q6vcgklmovro4h9b4.apps.googleusercontent.com"
-                        render={renderProps => (
-                            <Button onClick={renderProps.onClick}
-                                variant="outlined"
-                                color="primary"
-                                disabled={renderProps.disabled}>
-                                Sign in with Google to continue
-                                <AccountCircle />
-                            </Button>
-                        )}
-                        buttonText="Login"
-                        onSuccess={responseGoogle}
-                        onFailure={() => { console.log('failed'); }}
-                        cookiePolicy={'single_host_origin'}
-                        isSignedIn={true}
-                    />}
+                    <>
+                        <Button
+                            variant='outlined'
+                            onClick={() => { store.setUserName('Guest'); }}
+                            color='primary'>
+                            Continue as Guest
+                        </Button>
+
+                        <GoogleLogin
+                            clientId="565250402151-jseb9mfqk3tumg1q6vcgklmovro4h9b4.apps.googleusercontent.com"
+                            render={renderProps => (
+                                <Button onClick={renderProps.onClick}
+                                    variant="outlined"
+                                    color="primary"
+                                    disabled={renderProps.disabled}>
+                                    Sign in with Google
+                                    <AccountCircle />
+                                </Button>
+                            )}
+                            buttonText="Login"
+                            onSuccess={responseGoogle}
+                            onFailure={() => { console.log('failed'); }}
+                            cookiePolicy={'single_host_origin'}
+                            isSignedIn={true}
+                        />
+                    </>}
             </div>
             <Menu
                 id="menu-appbar"
@@ -97,7 +106,6 @@ const TopBar: FC = () => {
                         </MenuItem>
                     )}
                 />
-
             </Menu>
         </Toolbar>
     </AppBar>;

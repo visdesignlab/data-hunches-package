@@ -9,5 +9,5 @@ interface RectProps {
     y: number;
     width: number;
 }
-export declare const DHIndicatorRect: import("styled-components").StyledComponent<"rect", any, RectProps, never>;
+export declare const NonRoughDHIndicatorRect: import("styled-components").StyledComponent<"rect", any, RectProps, never>;
 export {};

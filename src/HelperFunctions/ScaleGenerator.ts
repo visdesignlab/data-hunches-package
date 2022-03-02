@@ -21,8 +21,5 @@ export const makeCategoricalScale = (newInputData: BarChartDataPoint[]) => {
 };
 
 export const getRectFill = (d: BarChartDataPoint, doesContainCategory: boolean, selectedDP: string | undefined, categoricalScale: ScaleOrdinal<string, unknown, never>) => {
-    if (d.label === selectedDP) {
-        return BrightOrange;
-    }
     return doesContainCategory ? ((categoricalScale(d.categorical!) as any) || DarkBlue) : DarkBlue;
 };

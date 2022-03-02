@@ -1,22 +1,22 @@
 import { max } from "d3-array";
 import { observer } from "mobx-react-lite";
-import { useLayoutEffect, useRef } from "react";
 import { useState } from "react";
 import { useContext } from "react";
 import { useEffect } from "react";
 import { FC } from "react";
 import { DataContext } from "../..";
-import { makeVerticalScale, makeBandScale, makeCategoricalScale } from "../../HelperFunctions/ScaleGenerator";
-import { BrightOrange, DarkGray, IndicatorSize, IndicatorSpace, margin } from "../../Interfaces/Constants";
+import { makeVerticalScale, makeBandScale } from "../../HelperFunctions/ScaleGenerator";
+import { IndicatorSize, IndicatorSpace, margin } from "../../Interfaces/Constants";
 import { stateUpdateWrapperUseJSON } from "../../Interfaces/StateChecker";
 import Store from "../../Interfaces/Store";
 import 'roughjs';
 import { DataHunch } from "../../Interfaces/Types";
 import SketchyBar from "./SketchyBar";
-import { DHIndicatorRect, DHIndicatorText } from "../../Interfaces/StyledComponents";
+import { DHIndicatorText } from "../../Interfaces/StyledComponents";
 import { Tooltip } from "@material-ui/core";
 import OverAxisIndicator from "./OverAxisIndicator";
 import { DHProps } from "../../TableComponents/Table";
+import DHIndicatorRect from "./DHIndicatorRect";
 
 
 const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
@@ -80,12 +80,11 @@ const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                 if (inVisDH.length > 3) {
                     return (
                         <DHIndicatorRect
-                            display={store.needToShowPreview ? 'none' : undefined}
                             key={`${d.id}-dhindicatorRect`}
-                            onMouseOver={() => { store.setSelectedDH([d.id]); store.setHighlightedDH(d.id); }}
-                            x={honrizontalBandScale(d.label) || 0}
+                            dataHunch={d}
+                            xPos={honrizontalBandScale(d.label) || 0}
                             width={honrizontalBandScale.bandwidth()}
-                            y={calculateY(d, true)}
+                            yPos={calculateY(d, true)}
 
                         />
                     );

@@ -7,7 +7,7 @@ export const LargeNumber = 999;
 export const IndicatorSize = 6;
 export const IndicatorSpace = 3;
 
-export const DarkGray = '#a9a9a9';
+export const DarkGray = '#9f9f9f';
 
 export const LightGray = '#eeeeee';
 
