@@ -18,13 +18,6 @@ export declare const ControlFOWidth = 152;
 export declare const ControlFOHeight = 245;
 export declare const WithoutCatControlFOHeight = 208;
 export declare const TransitionDuration = 500;
-export declare const FirebaseSetup: {
-    apiKey: string;
-    authDomain: string;
-    projectId: string;
-    storageBucket: string;
-    messagingSenderId: string;
-    appId: string;
-};
 export declare const ConfidenceInput: string[];
 export declare const CategoricalColor: string[];
+export declare const firebaseSetup: import("firebase/firestore/lite").Firestore;

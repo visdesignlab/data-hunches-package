@@ -1,4 +1,4 @@
-import { AppBar, Button, IconButton, Menu, MenuItem, Toolbar, Typography } from "@material-ui/core";
+import { AppBar, Button, ButtonGroup, Menu, MenuItem, Toolbar, Typography } from "@material-ui/core";
 import { observer } from "mobx-react-lite";
 import { FC, useState } from "react";
 import AccountCircle from '@material-ui/icons/AccountCircle';
@@ -6,6 +6,8 @@ import { useStyles } from "../Interfaces/StyledComponents";
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import { useContext } from "react";
 import Store from "../Interfaces/Store";
+import GeneralControl from "./GeneralControl";
+import VolSelector from "./VolSelector";
 
 
 const TopBar: FC = () => {
@@ -31,19 +33,24 @@ const TopBar: FC = () => {
     return <AppBar position="static" color="transparent" elevation={2} style={{ zIndex: 3 }}>
         <Toolbar>
 
-            <Typography variant="h6" >
+            <Typography variant="h6" style={{ paddingRight: '5px' }}>
                 Data Hunch Demo
             </Typography>
+            <GeneralControl />
             <div className={styles.rightToolbar}>
+                <VolSelector />
                 {store.userName ?
                     <Button onClick={handleMenu}
+                        size='small'
                         variant="outlined"
                         color="primary">
                         {`Signed in as ${store.userName}`}
                         <AccountCircle />
                     </Button> :
-                    <>
+                    <ButtonGroup
+                    >
                         <Button
+                            size='small'
                             variant='outlined'
                             onClick={() => { store.setUserName('Guest'); }}
                             color='primary'>
@@ -54,6 +61,7 @@ const TopBar: FC = () => {
                             clientId="565250402151-jseb9mfqk3tumg1q6vcgklmovro4h9b4.apps.googleusercontent.com"
                             render={renderProps => (
                                 <Button onClick={renderProps.onClick}
+                                    size='small'
                                     variant="outlined"
                                     color="primary"
                                     disabled={renderProps.disabled}>
@@ -67,7 +75,7 @@ const TopBar: FC = () => {
                             cookiePolicy={'single_host_origin'}
                             isSignedIn={true}
                         />
-                    </>}
+                    </ButtonGroup>}
             </div>
             <Menu
                 id="menu-appbar"

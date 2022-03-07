@@ -74,7 +74,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
     return <div>
 
-        <GeneralControl />
+
         <svg width={store.svgWidth} height={store.svgHeight} >
             <ChartLegends />
             <g id='chart-title'>

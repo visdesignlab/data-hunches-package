@@ -1,4 +1,6 @@
 import { schemeTableau10 } from 'd3-scale-chromatic';
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore/lite';
 
 export const margin = ({ top: 70, right: 0, bottom: 70, left: 30 });
 
@@ -29,7 +31,7 @@ export const WithoutCatControlFOHeight = 208;
 
 export const TransitionDuration = 500;
 
-export const FirebaseSetup = {
+const FirebaseSetupConstants = {
     apiKey: "AIzaSyAM2CAoS7L7Ix0UTgET6dB-iI-q3wb2VDQ",
     authDomain: "data-hunch.firebaseapp.com",
     projectId: "data-hunch",
@@ -41,3 +43,5 @@ export const FirebaseSetup = {
 export const ConfidenceInput = ['Not at all confident', 'Not very confident', 'Somewhat confident', 'Very confident', 'Extremely confident'];
 
 export const CategoricalColor = [DarkBlue, '#a77c4e', '#a74e7a'];
+
+export const firebaseSetup = getFirestore(initializeApp(FirebaseSetupConstants));

@@ -8,6 +8,7 @@ import { Grid } from "@material-ui/core";
 import Table from "./TableComponents/Table";
 import { getDocs, collection } from "firebase/firestore/lite";
 import { stateUpdateWrapperUseJSON } from "./Interfaces/StateChecker";
+import { firebaseSetup } from "./Interfaces/Constants";
 
 
 type Props = {
@@ -38,7 +39,7 @@ const BarChartWithDH: FC<Props> = ({ datasetName, dataSet, svgWidth, svgHeight }
 
     useEffect(() => {
         // Retrieve saved DH from DB
-        getDocs(collection(store.firebaseSetup, store.datasetName))
+        getDocs(collection(firebaseSetup, store.datasetName, `sub${store.currentVol}`, 'dhs'))
             .then(result => {
                 const tempDHArray: DataHunch[] = [];
                 store.setNextDHIndex(result.size);
@@ -67,7 +68,7 @@ const BarChartWithDH: FC<Props> = ({ datasetName, dataSet, svgWidth, svgHeight }
                 setSavedDH(tempDHArray);
                 stateUpdateWrapperUseJSON(improvedDataSet, copyOfImpDataSet, setImprovedDataSet);
             });
-    }, [store.nextDHIndex]);
+    }, [store.nextDHIndex, store.currentVol]);
 
     return (
         <DataContext.Provider value={improvedDataSet}>

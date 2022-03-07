@@ -1,10 +1,10 @@
 import { select } from "d3-selection";
 import { makeAutoObservable } from "mobx";
 import { createContext } from "react";
-import { getFirestore, collection, Firestore, setDoc, doc } from 'firebase/firestore/lite';
-import { initializeApp } from "firebase/app";
-import { FirebaseSetup } from "./Constants";
+import { collection, setDoc, doc } from 'firebase/firestore/lite';
+
 import { DataHunch, InputMode } from "./Types";
+import { firebaseSetup } from "./Constants";
 
 export class RootStore {
     showDataHunches: boolean;
@@ -16,11 +16,11 @@ export class RootStore {
     inputMode: InputMode;
     userName: string;
     nextDHIndex: number;
-    firebaseSetup: Firestore;
     datasetName: string;
     selectedDH: number[];
     highlightedDH: number;
     needToShowPreview: boolean;
+    currentVol: number;
 
     constructor() {
         this.showDataHunches = true;
@@ -36,7 +36,7 @@ export class RootStore {
         this.highlightedDH = -1;
         this.datasetName = '';
         this.nextDHIndex = 0;
-        this.firebaseSetup = getFirestore(initializeApp(FirebaseSetup));
+        this.currentVol = 1;
         makeAutoObservable(this);
     }
 
@@ -64,9 +64,13 @@ export class RootStore {
         this.nextDHIndex = input;
     }
 
+    setCurrentVol(input: number) {
+        this.currentVol = input;
+    }
+
     submitDH(dataHunchToSubmit: DataHunch) {
         this.inputMode = 'none';
-        const databaseRef = collection(this.firebaseSetup, this.datasetName);
+        const databaseRef = collection(firebaseSetup, this.datasetName, `sub${this.currentVol}`, 'dhs');
 
         setDoc(doc(databaseRef, this.nextDHIndex.toString()), dataHunchToSubmit).then(() => {
             this.setNextDHIndex(this.nextDHIndex + 1);
