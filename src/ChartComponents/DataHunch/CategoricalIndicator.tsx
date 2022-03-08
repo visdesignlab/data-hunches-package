@@ -29,7 +29,11 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
     useEffect(() => {
         const tempDataHunchArray = JSON.parse(dataHunchArrayString);
         stateUpdateWrapperUseJSON(dataHunchArray, tempDataHunchArray, setDataHunchArray);
-        if (dataHunchArray.length > 0) {
+    }, [dataHunchArrayString]);
+
+    //seperate this part out so random points stay the same
+    useEffect(() => {
+        if (dataHunchArray.length > 0 && polygonPoints.length === 0) {
             const barChartPoint = dataSet.filter(dp => dp.label === dataHunchArray[0].label)[0];
             const height = store.svgHeight - margin.bottom - verticalValueScale(barChartPoint.value);
 
@@ -50,7 +54,6 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
 
                     randomPoints.push([randomX, randomY]);
                 }
-
             }
 
             randomPoints.push([(honrizontalBandScale(barChartPoint.label) || 0) + honrizontalBandScale.bandwidth(), verticalValueScale(barChartPoint.value)],
@@ -61,9 +64,7 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
             const iterator = delaunay.trianglePolygons();
 
             setPolygonPoints(Array.from(iterator));
-
         }
-
     }, [dataHunchArrayString]);
 
     // Random
@@ -83,7 +84,7 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
 
             return [categoricalColorScale(dataHunchArray[index].content) as string, 0.5 + 0.1 * dataHunchArray[index].confidenceLevel];
         }
-        return ['none', 0];
+        return ['none', 0.5];
     };
 
 

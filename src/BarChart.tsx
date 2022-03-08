@@ -126,32 +126,35 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
             </g>
 
 
+
+
             <g id='data-hunches-container'>
+
+                {/* TODO this part needs some redo depending on how alex wants the indicator/full bar look like */}
+
                 {dataSet.map((barDP) => {
                     if (barDP.dataHunchArray) {
                         const catDH = barDP.dataHunchArray.filter(d => d.type === 'categorical');
-                        if (store.selectedDH.length === 0) {
+                        return (<>
+                            <DataHunchIndicator
+                                key={`${barDP.label}-dhindicator`}
+                                dataHunchArray={barDP.dataHunchArray}
+                            />
+                            <CategoricalIndicator dataHunchArrayString={JSON.stringify(catDH)} key={`${barDP.label}-catindicator`} />
+                        </>);
 
-                            return (<>
-                                <DataHunchIndicator
-                                    key={`${barDP.label}-dhindicator`}
-                                    dataHunchArray={barDP.dataHunchArray}
-                                />
-                                <CategoricalIndicator dataHunchArrayString={JSON.stringify(catDH)} key={`${barDP.label}-catindicator`} />
-                            </>);
 
-                        } else {
-                            return (
-                                <>
-                                    <DataHunchIndicator
-                                        key={`${barDP.label}-dhindicator`}
-                                        dataHunchArray={barDP.dataHunchArray.filter(d => ["annotation", 'exclusion', 'categorical'].includes(d.type) || store.selectedDH.includes(d.id))}
-                                    />
-                                    <CategoricalIndicator
-                                        dataHunchArrayString={JSON.stringify(catDH.filter(d => store.selectedDH.includes(d.id)))}
-                                        key={`${barDP.label}-catindicator`} />
-                                </>);
-                        }
+                        // return (
+                        //     <>
+                        //         <DataHunchIndicator
+                        //             key={`${barDP.label}-dhindicator`}
+                        //             dataHunchArray={barDP.dataHunchArray.filter(d => ["annotation", 'exclusion', 'categorical'].includes(d.type) || store.selectedDH.includes(d.id))}
+                        //         />
+                        //         <CategoricalIndicator
+                        //             dataHunchArrayString={JSON.stringify(catDH.filter(d => store.selectedDH.includes(d.id)))}
+                        //             key={`${barDP.label}-catindicator`} />
+                        //     </>);
+
 
 
                     } else {

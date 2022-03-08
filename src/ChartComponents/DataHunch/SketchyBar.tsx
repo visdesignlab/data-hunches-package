@@ -39,7 +39,7 @@ const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch }: Props) 
                 strokeWidth: 2,
             });
             drawingG.appendChild(sketchyDH);
-
+            console.log('called');
 
         };
     }, [xPos, yPos, width, height]);

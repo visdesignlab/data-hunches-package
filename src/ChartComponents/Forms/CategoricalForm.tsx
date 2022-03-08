@@ -45,7 +45,7 @@ const CategoricalForm: FC = () => {
                     return <FormControlLabel
                         value={d}
                         key={`${d}-radio`}
-                        control={<Radio size="small" className={styles.radioStyle} />}
+                        control={<Radio style={{ paddingTop: '0px', paddingBottom: '0px' }} size="small" className={styles.radioStyle} />}
                         label={
                             <div className={styles.catText}>
                                 <div className={styles.colorBox} style={{ backgroundColor: CategoricalColor[i] }} />
