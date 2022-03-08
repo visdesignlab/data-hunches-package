@@ -68,7 +68,6 @@ export class RootStore {
 
     setTotalDH(input: number) {
         this.numOfDH = input;
-        console.log(input);
     }
 
     setCurrentVol(input: number) {

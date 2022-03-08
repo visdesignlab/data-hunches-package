@@ -37,27 +37,34 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
             const barChartPoint = dataSet.filter(dp => dp.label === dataHunchArray[0].label)[0];
             const height = store.svgHeight - margin.bottom - verticalValueScale(barChartPoint.value);
 
+            const borderWidth = 4;
+
             //generate random points:
-            const randomPoints = [[honrizontalBandScale(barChartPoint.label) || 0, verticalValueScale(barChartPoint.value)],
-            [honrizontalBandScale(barChartPoint.label) || 0, verticalValueScale(barChartPoint.value) + height],
+            const randomPoints = [[(honrizontalBandScale(barChartPoint.label) || 0) + borderWidth, verticalValueScale(barChartPoint.value) + borderWidth],
+            [(honrizontalBandScale(barChartPoint.label) || 0) + borderWidth, verticalValueScale(barChartPoint.value) + height - borderWidth],
             ];
 
-
-            const xDirBoxes = Math.floor(honrizontalBandScale.bandwidth() / 2);
+            const xDirBoxes = Math.floor(honrizontalBandScale.bandwidth() / 3);
             const yDirBoxes = Math.floor(height / 5);
 
             for (let xDir = 1; xDir <= 2; xDir++) {
-                for (let yDir = 1; yDir <= 5; yDir++) {
-                    const randomX = getRandomArbitrary((honrizontalBandScale(barChartPoint.label) || 0) + xDirBoxes * (xDir - 1), (honrizontalBandScale(barChartPoint.label) || 0) + xDirBoxes * xDir);
+                for (let yDir = 1; yDir <= 4; yDir++) {
 
-                    const randomY = getRandomArbitrary(verticalValueScale(barChartPoint.value) + yDirBoxes * (yDir - 1), verticalValueScale(barChartPoint.value) + yDirBoxes * yDir);
+
+                    const randomX = getRandomArbitrary(
+                        (honrizontalBandScale(barChartPoint.label) || 0) + xDirBoxes * xDir - borderWidth, (honrizontalBandScale(barChartPoint.label) || 0) + xDirBoxes * xDir + borderWidth
+                    );
+
+                    const randomY = getRandomArbitrary(verticalValueScale(barChartPoint.value) + yDirBoxes * yDir - borderWidth, verticalValueScale(barChartPoint.value) + yDirBoxes * yDir + borderWidth);
+
+
 
                     randomPoints.push([randomX, randomY]);
                 }
             }
 
-            randomPoints.push([(honrizontalBandScale(barChartPoint.label) || 0) + honrizontalBandScale.bandwidth(), verticalValueScale(barChartPoint.value)],
-                [(honrizontalBandScale(barChartPoint.label) || 0) + honrizontalBandScale.bandwidth(), verticalValueScale(barChartPoint.value) + height]);
+            randomPoints.push([(honrizontalBandScale(barChartPoint.label) || 0) + honrizontalBandScale.bandwidth() - borderWidth, verticalValueScale(barChartPoint.value) + borderWidth],
+                [(honrizontalBandScale(barChartPoint.label) || 0) + honrizontalBandScale.bandwidth() - borderWidth, verticalValueScale(barChartPoint.value) + height - borderWidth]);
 
             const delaunay = Delaunay.from(randomPoints);
 
@@ -84,10 +91,8 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
 
             return [categoricalColorScale(dataHunchArray[index].content) as string, 0.5 + 0.1 * dataHunchArray[index].confidenceLevel];
         }
-        return ['none', 0.5];
+        return ['none', 1];
     };
-
-
 
     const makePointArray = (input: Delaunay.Triangle) => {
         let output = '';
@@ -107,7 +112,7 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
                     fill={chooseFill(i)[0].toString()}
                     strokeOpacity={0.2}
                     opacity={chooseFill(i)[1]}
-                    strokeWidth={4}
+                    strokeWidth={2}
                     stroke={'white'} />;
             })}
         </g> : <></>);
