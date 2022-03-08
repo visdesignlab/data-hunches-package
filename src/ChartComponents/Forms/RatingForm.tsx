@@ -50,7 +50,7 @@ const RatingForm: FC = () => {
                 label: `${store.selectedDP === undefined ? 'all chart' : store.selectedDP}`,
                 content: ratingValue,
                 reasoning: reasonInput,
-                id: store.nextDHIndex,
+                id: store.nextIndex,
                 // rating shouldn't have a confidence level?
                 confidenceLevel: 5
             }

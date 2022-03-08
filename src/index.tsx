@@ -6,7 +6,7 @@ import Store from "./Interfaces/Store";
 import TopBar from "./Controls/TopBar";
 import { Grid } from "@material-ui/core";
 import Table from "./TableComponents/Table";
-import { getDocs, collection } from "firebase/firestore/lite";
+import { getDocs, collection, getDoc, doc } from "firebase/firestore/lite";
 import { stateUpdateWrapperUseJSON } from "./Interfaces/StateChecker";
 import { firebaseSetup } from "./Interfaces/Constants";
 
@@ -38,11 +38,28 @@ const BarChartWithDH: FC<Props> = ({ datasetName, dataSet, svgWidth, svgHeight }
     const [savedDH, setSavedDH] = useState<DataHunch[]>([]);
 
     useEffect(() => {
+        //first time retrieve DH from DB
+        getDoc(doc(firebaseSetup, store.datasetName, `sub${store.currentVol}`)).then((dhNextIndex) => {
+            if (dhNextIndex.exists()) {
+                store.setNextIndex(dhNextIndex.data().nextIndex);
+            } else {
+                store.setNextIndex(0);
+            }
+        });
+
+        getDocs(collection(firebaseSetup, store.datasetName, `sub${store.currentVol}`, 'dhs')).then((dhResult) => {
+            store.setTotalDH(dhResult.size);
+        });
+
+
+    }, [store.currentVol]);
+
+    useEffect(() => {
         // Retrieve saved DH from DB
         getDocs(collection(firebaseSetup, store.datasetName, `sub${store.currentVol}`, 'dhs'))
-            .then(result => {
+            .then(async result => {
                 const tempDHArray: DataHunch[] = [];
-                store.setNextDHIndex(result.size);
+
                 let copyOfImpDataSet = JSON.parse(JSON.stringify(dataSet));
                 result.forEach((doc) => {
                     if (!(doc.data().label === 'all chart')) {
@@ -68,7 +85,7 @@ const BarChartWithDH: FC<Props> = ({ datasetName, dataSet, svgWidth, svgHeight }
                 setSavedDH(tempDHArray);
                 stateUpdateWrapperUseJSON(improvedDataSet, copyOfImpDataSet, setImprovedDataSet);
             });
-    }, [store.nextDHIndex, store.currentVol]);
+    }, [store.numOfDH, store.currentVol]);
 
     return (
         <DataContext.Provider value={improvedDataSet}>

@@ -42,7 +42,7 @@ const ManipulationForm: FC<Props> = ({ manipulationOutput, type }: Props) => {
                     // Add Content
                     content: manipulationOutput,
                     reasoning: reasonInput,
-                    id: store.nextDHIndex,
+                    id: store.nextIndex,
                     confidenceLevel: confidenceInput
                 }} />
         </Container>

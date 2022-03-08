@@ -62,7 +62,7 @@ const ModelInputForm: FC = () => {
                     // Add Content
                     content: modelInput,
                     reasoning: reasonInput,
-                    id: store.nextDHIndex,
+                    id: store.nextIndex,
                     confidenceLevel: confidenceInput
                 }} />
         </Container>

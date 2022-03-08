@@ -46,7 +46,7 @@ const AnnotationForm: FC = () => {
                 label: `${store.selectedDP === undefined ? 'all chart' : store.selectedDP}`,
                 content: annotationInput,
                 reasoning: reasonInput,
-                id: store.nextDHIndex,
+                id: store.nextIndex,
                 confidenceLevel: confidenceInput
             }} />
 

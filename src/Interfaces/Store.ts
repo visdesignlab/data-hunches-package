@@ -15,12 +15,13 @@ export class RootStore {
     selectedDP: string | undefined;
     inputMode: InputMode;
     userName: string;
-    nextDHIndex: number;
+    nextIndex: number;
     datasetName: string;
     selectedDH: number[];
     highlightedDH: number;
     needToShowPreview: boolean;
     currentVol: number;
+    numOfDH: number;
 
     constructor() {
         this.showDataHunches = true;
@@ -35,7 +36,8 @@ export class RootStore {
         this.selectedDH = [];
         this.highlightedDH = -1;
         this.datasetName = '';
-        this.nextDHIndex = 0;
+        this.nextIndex = 0;
+        this.numOfDH = 0;
         this.currentVol = 1;
         makeAutoObservable(this);
     }
@@ -60,21 +62,29 @@ export class RootStore {
         this.datasetName = input;
     }
 
-    setNextDHIndex(input: number) {
-        this.nextDHIndex = input;
+    setNextIndex(input: number) {
+        this.nextIndex = input;
+    }
+
+    setTotalDH(input: number) {
+        this.numOfDH = input;
+        console.log(input);
     }
 
     setCurrentVol(input: number) {
         this.currentVol = input;
     }
 
-    submitDH(dataHunchToSubmit: DataHunch) {
+    async submitDH(dataHunchToSubmit: DataHunch) {
         this.inputMode = 'none';
         const databaseRef = collection(firebaseSetup, this.datasetName, `sub${this.currentVol}`, 'dhs');
 
-        setDoc(doc(databaseRef, this.nextDHIndex.toString()), dataHunchToSubmit).then(() => {
-            this.setNextDHIndex(this.nextDHIndex + 1);
-        });
+        await setDoc(doc(collection(firebaseSetup, this.datasetName), `sub${this.currentVol}`), { nextIndex: this.nextIndex + 1 });
+
+        await setDoc(doc(databaseRef, this.nextIndex.toString()), dataHunchToSubmit);
+
+        this.setNextIndex(this.nextIndex + 1);
+        this.setTotalDH(this.numOfDH + 1);
 
     }
 

@@ -147,7 +147,7 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
                 label: isIncExc ? labelInput : (store.selectedDP ? store.selectedDP : ''),
                 content: makeDHContent(),
                 reasoning: reasonInput,
-                id: store.nextDHIndex,
+                id: store.nextIndex,
                 confidenceLevel: confidenceInput
             }} />
     </Container>;

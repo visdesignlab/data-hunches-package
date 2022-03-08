@@ -66,7 +66,7 @@ const CategoricalForm: FC = () => {
                     label: `${store.selectedDP === undefined ? 'all chart' : store.selectedDP}`,
                     content: ratingValue,
                     reasoning: reasonInput,
-                    id: store.nextDHIndex,
+                    id: store.nextIndex,
                     confidenceLevel: confidenceInput
                 }
                 }

@@ -50,7 +50,7 @@ const VolSelector: FC = () => {
                 // attr doesn't exist, this is a new DB, add it.
                 setDoc(doc(collection(firebaseSetup, store.datasetName), 'attr'), { subs: 1 });
 
-                setDoc(doc(collection(firebaseSetup, store.datasetName), 'sub1'), { name: 'default1' });
+                setDoc(doc(collection(firebaseSetup, store.datasetName), 'sub1'), { name: 'default1', nextIndex: 0 });
 
                 tempSubArray.push('default1');
             }
