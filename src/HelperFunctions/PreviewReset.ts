@@ -1,17 +1,16 @@
-import { axisLeft, axisBottom } from "d3-axis";
+import { axisLeft, axisTop } from "d3-axis";
 import { scaleLinear } from "d3-scale";
 import { select } from "d3-selection";
 import { parse } from "mathjs";
-import { storeAnnotation } from "mobx/dist/internal";
 import { margin, BrightOrange, TransitionDuration } from "../Interfaces/Constants";
 import { BarChartDataPoint } from "../Interfaces/Types";
-import { makeVerticalScale, makeBandScale, makeCategoricalScale, getRectFill } from "./ScaleGenerator";
+import { makeValueScale, makeBandScale, makeCategoricalScale, getRectFill } from "./ScaleGenerator";
 
 export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPreview: string | undefined, valueToPreview: number | undefined, svgHeight: number, svgWidth: number, doesContainCategory: boolean, modelInput: string | undefined) => {
 
 
-    const verticalScale = makeVerticalScale(ogDataSet, svgHeight);
-    const bandScale = makeBandScale(ogDataSet, svgWidth);
+    const valueScale = makeValueScale(ogDataSet, svgWidth);
+    const bandScale = makeBandScale(ogDataSet, svgHeight);
     const categoricalScale = makeCategoricalScale(ogDataSet);
 
 
@@ -22,10 +21,10 @@ export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPrev
         .join("rect")
         .attr('stroke-width', 4)
         .attr('stroke', d => d.label === labelToPreview ? BrightOrange : 'none')
-        .attr('x', d => bandScale(d.label) || 0)
-        .attr('width', bandScale.bandwidth())
-        .attr("y", d => verticalScale(d.value))
-        .attr("height", d => svgHeight - margin.bottom - verticalScale(d.value))
+        .attr('x', margin.left)
+        .attr('width', d => valueScale(d.value) - margin.left)
+        .attr("y", d => bandScale(d.label) || 0)
+        .attr("height", bandScale.bandwidth())
         .attr("fill", d => getRectFill(d, doesContainCategory, labelToPreview, categoricalScale));
 
 
@@ -55,10 +54,10 @@ export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPrev
         }
     }
 
-    const newBandScale = makeBandScale(newData, svgWidth);
-    const newVertScale = makeVerticalScale(newData, svgHeight);
+    const newBandScale = makeBandScale(newData, svgHeight);
+    const newValueScale = makeValueScale(newData, svgWidth);
 
-    const oldVerScale = scaleLinear().domain(verticalScale.domain()).range([newVertScale(verticalScale.domain()[0]), newVertScale(verticalScale.domain()[1])]);
+    const oldValueScale = scaleLinear().domain(valueScale.domain()).range([newValueScale(valueScale.domain()[0]), newValueScale(valueScale.domain()[1])]);
 
 
 
@@ -79,27 +78,27 @@ export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPrev
         .join(
             enter => enter.append('rect')
                 .attr('fill', BrightOrange)
-                .attr('x', d => newBandScale(d.label) || 0)
-                .attr('width', newBandScale.bandwidth())
-                .attr('height', svgHeight - margin.bottom - newVertScale(0))
-                .attr('y', newVertScale(0)).selection()
+                .attr('x', margin.left)
+                .attr('width', newValueScale(0))
+                .attr('height', bandScale.bandwidth())
+                .attr('y', d => bandScale(d.label) || 0).selection()
         );
 
     rectangles.transition()
-        .attr('x', d => newBandScale(d.label) || 0)
-        .attr('width', newBandScale.bandwidth())
+        .attr('x', margin.left)
+        .attr('width', d => newValueScale(d.value) - margin.left)
         .duration(TransitionDuration)
-        .attr('y', d => newVertScale(d.value))
-        .attr('height', d => svgHeight - margin.bottom - newVertScale(d.value));
+        .attr('y', d => newBandScale(d.label) || 0)
+        .attr('height', newBandScale.bandwidth());
 
     // moveDH.bind(this)(newBandScale, newVertScale, true);
 
     // Matching Ticks Begin
     // domain [0] because it was oposite?
-    const filteredTickArray = newVertScale.ticks().filter(d => d <= oldVerScale.domain()[0]);
+    const filteredTickArray = newValueScale.ticks().filter(d => d <= oldValueScale.domain()[0]);
 
     //if the domain end is not in the tick array, we add it so it shows up
-    if (filteredTickArray.indexOf(oldVerScale.domain()[0]) < 0) filteredTickArray.push(oldVerScale.domain()[0]);
+    if (filteredTickArray.indexOf(oldValueScale.domain()[0]) < 0) filteredTickArray.push(oldValueScale.domain()[0]);
 
     //Matching Ticks End
 
@@ -107,28 +106,28 @@ export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPrev
         .transition()
         .duration(TransitionDuration)
         //Remove tickValues to remove matching ticks
-        .call((axisLeft(oldVerScale).tickValues(filteredTickArray) as any));
+        .call((axisTop(oldValueScale).tickValues(filteredTickArray) as any));
 
     const newScale = select('#axis-mask')
-        .call(axisLeft(verticalScale) as any)
+        .attr('transform', `translate(0,${margin.top})`)
+        .call(axisTop(valueScale) as any)
         .transition()
         .duration(TransitionDuration)
-        .call((axisLeft(newVertScale) as any));
+        .call((axisTop(newValueScale) as any));
 
     newScale.selectAll('path')
         .attr('stroke', BrightOrange);
     newScale.selectAll('g').selectAll('line').attr('stroke', BrightOrange);
     newScale.selectAll('g').selectAll('text').attr('fill', BrightOrange);
 
-    select('#band-axis').transition().duration(TransitionDuration).call(axisBottom(newBandScale) as any);
+    select('#band-axis').transition().duration(TransitionDuration).call(axisLeft(newBandScale) as any);
 };
 
 export const handleResetOnClick = (ogDataSet: BarChartDataPoint[], svgHeight: number, svgWidth: number, doesContainCategory: boolean, selectedDP: string | undefined) => {
-    const verticalScale = makeVerticalScale(ogDataSet, svgHeight);
-    const bandScale = makeBandScale(ogDataSet, svgWidth);
+    const valueScale = makeValueScale(ogDataSet, svgWidth);
+    const bandScale = makeBandScale(ogDataSet, svgHeight);
     const categoricalScale = makeCategoricalScale(ogDataSet);
 
-    // moveDH.bind(this)(bandScale, verticalScale);
 
     select('#axis-mask')
         .selectAll('*')
@@ -144,11 +143,11 @@ export const handleResetOnClick = (ogDataSet: BarChartDataPoint[], svgHeight: nu
         .interrupt();
 
     select('#vertical-axis')
-        .call((axisLeft(verticalScale) as any));
+        .call((axisTop(valueScale) as any));
 
     select('#band-axis')
         .interrupt()
-        .call(axisBottom(bandScale) as any);
+        .call(axisLeft(bandScale) as any);
 
     select('#rectangles-preview')
         .selectAll('rect')
@@ -157,10 +156,10 @@ export const handleResetOnClick = (ogDataSet: BarChartDataPoint[], svgHeight: nu
         .join('rect')
         .attr('fill', d => getRectFill(d, doesContainCategory, selectedDP, categoricalScale))
         .attr('stroke', d => d.label === selectedDP ? BrightOrange : 'none')
-        .attr('x', (d: any) => bandScale(d.label) || 0)
-        .attr('width', bandScale.bandwidth())
-        .attr('y', (d: any) => verticalScale(d.value))
-        .attr('height', (d: any) => svgHeight - margin.bottom - verticalScale(d.value));
+        .attr('x', margin.left)
+        .attr('width', d => valueScale(d.value) - margin.left)
+        .attr('y', d => bandScale(d.label) || 0)
+        .attr('height', bandScale.bandwidth());
 
     select('#rectangles-preview').selectAll('path').remove();
 };

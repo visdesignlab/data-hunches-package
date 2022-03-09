@@ -1,10 +1,10 @@
 import { observer } from "mobx-react-lite";
 import { FC, useContext, useState } from "react";
 import BarElement from './ChartComponents/BarElement';
-import { makeBandScale, makeCategoricalScale, makeVerticalScale } from "./HelperFunctions/ScaleGenerator";
+import { makeBandScale, makeCategoricalScale, makeValueScale } from "./HelperFunctions/ScaleGenerator";
 import { DarkBlue, DarkGray, DefaultForeignObjectHeight, DefaultForeignObjectWidth, IndicatorSize, IndicatorSpace, margin } from "./Interfaces/Constants";
 import Store from "./Interfaces/Store";
-import { axisBottom, axisLeft } from "d3-axis";
+import { axisBottom, axisLeft, axisTop } from "d3-axis";
 import { select } from "d3-selection";
 import GeneralControl from "./Controls/GeneralControl";
 import FormComponent from "./ChartComponents/FormComponent";
@@ -52,19 +52,19 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
     }, [dataHunchArray]);
     // if needed useCallback
 
-    const verticalValueScale = makeVerticalScale(dataSet, store.svgHeight);
-    const honrizontalBandScale = makeBandScale(dataSet, store.svgWidth);
+    const valueScale = makeValueScale(dataSet, store.svgWidth);
+    const bandScale = makeBandScale(dataSet, store.svgHeight);
     const categoricalColorScale = makeCategoricalScale(dataSet);
 
-    const yAxis: any = axisLeft(verticalValueScale);
-    const xAxis: any = axisBottom(honrizontalBandScale);
+    const yAxis: any = axisTop(valueScale);
+    const xAxis: any = axisLeft(bandScale);
 
     select('#vertical-axis')
-        .attr('transform', `translate(${margin.left},0)`)
+        .attr('transform', `translate(0,${margin.top})`)
         .call(yAxis);
 
     select('#band-axis')
-        .attr("transform", `translate(0,${store.svgHeight - margin.bottom})`)
+        .attr("transform", `translate(${margin.left},0)`)
         .call(xAxis);
 
     const findStart = () => {
@@ -116,10 +116,10 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                         return <BarElement
                             key={`${i}-barelement`}
                             dataElement={d}
-                            height={store.svgHeight - margin.bottom - verticalValueScale(d.value)}
-                            width={honrizontalBandScale.bandwidth()}
-                            xPos={honrizontalBandScale(d.label) || 0}
-                            yPos={verticalValueScale(d.value)}
+                            width={valueScale(d.value) - margin.left}
+                            height={bandScale.bandwidth()}
+                            xPos={margin.left}
+                            yPos={bandScale(d.label) || 0}
                             fill={store.containCategory.length > 0 ? (categoricalColorScale(d.categorical || 'a') as string) : DarkBlue}
                         />;
                     })}

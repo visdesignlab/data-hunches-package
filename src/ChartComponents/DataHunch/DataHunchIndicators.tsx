@@ -5,7 +5,7 @@ import { useContext } from "react";
 import { useEffect } from "react";
 import { FC } from "react";
 import { DataContext } from "../..";
-import { makeVerticalScale, makeBandScale } from "../../HelperFunctions/ScaleGenerator";
+import { makeValueScale, makeBandScale } from "../../HelperFunctions/ScaleGenerator";
 import { IndicatorSize, IndicatorSpace, margin } from "../../Interfaces/Constants";
 import { stateUpdateWrapperUseJSON } from "../../Interfaces/StateChecker";
 import Store from "../../Interfaces/Store";
@@ -24,7 +24,7 @@ const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
     const dataSet = useContext(DataContext);
 
-    const verticalValueScale = makeVerticalScale(dataSet, store.svgHeight);
+    const verticalValueScale = makeValueScale(dataSet, store.svgHeight);
     const honrizontalBandScale = makeBandScale(dataSet, store.svgWidth);
     // const categoricalColorScale = makeCategoricalScale(dataSet);
 

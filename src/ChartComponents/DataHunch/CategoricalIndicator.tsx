@@ -2,7 +2,7 @@ import { Delaunay } from "d3-delaunay";
 import { observer } from "mobx-react-lite";
 import { FC, useContext, useEffect, useRef, useState } from "react";
 import { DataContext } from "../..";
-import { makeVerticalScale, makeBandScale, makeCategoricalScale, getRectFill } from "../../HelperFunctions/ScaleGenerator";
+import { makeValueScale, makeBandScale, makeCategoricalScale, getRectFill } from "../../HelperFunctions/ScaleGenerator";
 import { DarkGray, LightGray, margin } from "../../Interfaces/Constants";
 import { stateUpdateWrapperUseJSON } from "../../Interfaces/StateChecker";
 import Store from "../../Interfaces/Store";
@@ -18,8 +18,8 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
     const store = useContext(Store);
 
 
-    const verticalValueScale = makeVerticalScale(dataSet, store.svgHeight);
-    const honrizontalBandScale = makeBandScale(dataSet, store.svgWidth);
+    const valueScale = makeValueScale(dataSet, store.svgWidth);
+    const bandScale = makeBandScale(dataSet, store.svgHeight);
     const categoricalColorScale = makeCategoricalScale(dataSet);
 
     const [polygonPoints, setPolygonPoints] = useState<Delaunay.Triangle[]>([]);
@@ -35,36 +35,39 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
     useEffect(() => {
         if (dataHunchArray.length > 0 && polygonPoints.length === 0) {
             const barChartPoint = dataSet.filter(dp => dp.label === dataHunchArray[0].label)[0];
-            const height = store.svgHeight - margin.bottom - verticalValueScale(barChartPoint.value);
+            const height = bandScale.bandwidth();
+            const width = valueScale(barChartPoint.value) - margin.left;
 
             const borderWidth = 4;
 
             //generate random points:
-            const randomPoints = [[(honrizontalBandScale(barChartPoint.label) || 0) + borderWidth, verticalValueScale(barChartPoint.value) + borderWidth],
-            [(honrizontalBandScale(barChartPoint.label) || 0) + borderWidth, verticalValueScale(barChartPoint.value) + height - borderWidth],
+            const randomPoints = [
+                [margin.left + borderWidth, (bandScale(barChartPoint.label) || 0) + borderWidth],
+                [margin.left + width - borderWidth, (bandScale(barChartPoint.label) || 0) + borderWidth]
             ];
 
-            const xDirBoxes = Math.floor(honrizontalBandScale.bandwidth() / 3);
-            const yDirBoxes = Math.floor(height / 5);
+            const xDirBoxes = Math.floor(width / 5);
+            const yDirBoxes = Math.floor(height / 3);
 
-            for (let xDir = 1; xDir <= 2; xDir++) {
-                for (let yDir = 1; yDir <= 4; yDir++) {
-
+            for (let xDir = 1; xDir <= 4; xDir++) {
+                for (let yDir = 1; yDir <= 2; yDir++) {
 
                     const randomX = getRandomArbitrary(
-                        (honrizontalBandScale(barChartPoint.label) || 0) + xDirBoxes * xDir - borderWidth, (honrizontalBandScale(barChartPoint.label) || 0) + xDirBoxes * xDir + borderWidth
+                        margin.left + xDirBoxes * xDir - borderWidth, margin.left + xDirBoxes * xDir + borderWidth
                     );
 
-                    const randomY = getRandomArbitrary(verticalValueScale(barChartPoint.value) + yDirBoxes * yDir - borderWidth, verticalValueScale(barChartPoint.value) + yDirBoxes * yDir + borderWidth);
-
-
+                    const randomY = getRandomArbitrary(
+                        (bandScale(barChartPoint.label) || 0) + yDirBoxes * yDir - borderWidth, (bandScale(barChartPoint.label) || 0) + yDirBoxes * yDir + borderWidth
+                    );
 
                     randomPoints.push([randomX, randomY]);
                 }
             }
 
-            randomPoints.push([(honrizontalBandScale(barChartPoint.label) || 0) + honrizontalBandScale.bandwidth() - borderWidth, verticalValueScale(barChartPoint.value) + borderWidth],
-                [(honrizontalBandScale(barChartPoint.label) || 0) + honrizontalBandScale.bandwidth() - borderWidth, verticalValueScale(barChartPoint.value) + height - borderWidth]);
+            randomPoints.push(
+                [margin.left + borderWidth, (bandScale(barChartPoint.label) || 0) + height - borderWidth],
+                [margin.left + width - borderWidth, (bandScale(barChartPoint.label) || 0) + height - borderWidth]
+            );
 
             const delaunay = Delaunay.from(randomPoints);
 

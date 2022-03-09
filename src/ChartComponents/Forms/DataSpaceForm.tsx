@@ -5,7 +5,7 @@ import { useContext, useEffect, useLayoutEffect } from "react";
 import { useState } from "react";
 import { FC } from "react";
 import { DataContext } from "../..";
-import { makeVerticalScale, makeBandScale, makeCategoricalScale, getRectFill } from "../../HelperFunctions/ScaleGenerator";
+import { makeValueScale, makeBandScale, makeCategoricalScale, getRectFill } from "../../HelperFunctions/ScaleGenerator";
 import { margin, DarkBlue } from "../../Interfaces/Constants";
 import Store from "../../Interfaces/Store";
 import { useStyles } from "../../Interfaces/StyledComponents";
@@ -47,7 +47,7 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
 
     useEffect(() => {
 
-        const verticalScale = makeVerticalScale(data, store.svgHeight);
+        const verticalScale = makeValueScale(data, store.svgHeight);
         const bandScale = makeBandScale(data, store.svgWidth);
         const categoricalScale = makeCategoricalScale(data);
 

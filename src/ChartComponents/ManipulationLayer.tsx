@@ -2,7 +2,7 @@ import { pointer, select } from "d3-selection";
 import { observer } from "mobx-react-lite";
 import { FC, useContext, useState } from "react";
 import { DataContext } from "..";
-import { makeVerticalScale, makeBandScale } from "../HelperFunctions/ScaleGenerator";
+import { makeValueScale, makeBandScale } from "../HelperFunctions/ScaleGenerator";
 import { LightGray, margin } from "../Interfaces/Constants";
 import Store from "../Interfaces/Store";
 
@@ -17,7 +17,7 @@ const ManipulationLayer: FC<Props> = ({ sendManipulation }: Props) => {
     const [pointerStartY, setPointerStartY] = useState(0);
 
     const dataSet = useContext(DataContext);
-    const verticalValueScale = makeVerticalScale(dataSet, store.svgHeight);
+    const verticalValueScale = makeValueScale(dataSet, store.svgHeight);
     const honrizontalBandScale = makeBandScale(dataSet, store.svgWidth);
 
     const dragHandler = (e: any) => {
