@@ -69,6 +69,7 @@ export const DHIndicatorText = styled(`text`) <FontProps>`
     alignment-baseline:middle;
     text-anchor: start;
     stroke: ${props => props.isHighlighted ? BrightOrange : DarkGray};
+    fill:${props => props.isHighlighted ? BrightOrange : DarkGray};
     font-family: 'Nanum Brush Script', cursive;
 `;
 

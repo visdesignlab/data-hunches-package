@@ -38,12 +38,14 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
             const height = bandScale.bandwidth();
             const width = valueScale(barChartPoint.value) - margin.left;
 
-            const borderWidth = 4;
+            const borderWidth = 2;
 
             //generate random points:
             const randomPoints = [
                 [margin.left + borderWidth, (bandScale(barChartPoint.label) || 0) + borderWidth],
-                [margin.left + width - borderWidth, (bandScale(barChartPoint.label) || 0) + borderWidth]
+                [margin.left + width - borderWidth, (bandScale(barChartPoint.label) || 0) + borderWidth],
+                [margin.left + borderWidth, (bandScale(barChartPoint.label) || 0) + height - borderWidth],
+                [margin.left + width - borderWidth, (bandScale(barChartPoint.label) || 0) + height - borderWidth]
             ];
 
             const xDirBoxes = Math.floor(width / 5);
@@ -64,10 +66,29 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
                 }
             }
 
-            randomPoints.push(
-                [margin.left + borderWidth, (bandScale(barChartPoint.label) || 0) + height - borderWidth],
-                [margin.left + width - borderWidth, (bandScale(barChartPoint.label) || 0) + height - borderWidth]
-            );
+            // add points along the edge
+
+            for (let xDir = 1; xDir <= 5; xDir++) {
+                randomPoints.push([
+                    getRandomArbitrary(
+                        margin.left + xDirBoxes * (xDir - 0.5) - borderWidth, margin.left + xDirBoxes * (xDir - 0.5) + borderWidth
+                    ), (bandScale(barChartPoint.label) || 0) + borderWidth
+                ], [getRandomArbitrary(
+                    margin.left + xDirBoxes * (xDir - 0.5) - borderWidth, margin.left + xDirBoxes * (xDir - 0.5) + borderWidth
+                ), (bandScale(barChartPoint.label) || 0) + height - borderWidth]);
+            }
+
+            for (let yDir = 1; yDir <= 2; yDir++) {
+                randomPoints.push([
+                    margin.left + borderWidth, getRandomArbitrary(
+                        (bandScale(barChartPoint.label) || 0) + yDirBoxes * (yDir - 0.5) - borderWidth, (bandScale(barChartPoint.label) || 0) + yDirBoxes * (yDir - 0.5) + borderWidth
+                    )
+                ], [margin.left + width - borderWidth,
+                getRandomArbitrary(
+                    (bandScale(barChartPoint.label) || 0) + yDirBoxes * yDir - borderWidth, (bandScale(barChartPoint.label) || 0) + yDirBoxes * yDir + borderWidth
+                )
+                ]);
+            }
 
             const delaunay = Delaunay.from(randomPoints);
 
@@ -114,7 +135,8 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
                     points={makePointArray(d)}
                     fill={chooseFill(i)[0].toString()}
                     strokeOpacity={0.2}
-                    opacity={chooseFill(i)[1]}
+                    // opacity={chooseFill(i)[1]}
+                    opacity={1}
                     strokeWidth={2}
                     stroke={'white'} />;
             })}
