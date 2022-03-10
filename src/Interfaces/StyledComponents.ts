@@ -2,6 +2,12 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core";
 import styled from "styled-components";
 import { BrightOrange, DarkGray } from "./Constants";
 
+let WebFont = require('webfontloader');
+WebFont.load({
+    google: {
+        families: ['Nanum Brush Script']
+    }
+});
 export const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         table: {
@@ -53,7 +59,7 @@ export const useStyles = makeStyles((theme: Theme) =>
     }));
 
 interface FontProps {
-    fontSize: 'large' | 'small';
+    fontSize: 'larger' | 'small';
     isHighlighted: boolean;
 }
 
@@ -61,8 +67,9 @@ export const DHIndicatorText = styled(`text`) <FontProps>`
     cursor:pointer;
     font-size:${props => props.fontSize};
     alignment-baseline:middle;
-    text-anchor: middle;
+    text-anchor: start;
     stroke: ${props => props.isHighlighted ? BrightOrange : DarkGray};
+    font-family: 'Nanum Brush Script', cursive;
 `;
 
 interface RectProps {

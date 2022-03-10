@@ -2,12 +2,12 @@ import { schemeTableau10 } from 'd3-scale-chromatic';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore/lite';
 
-export const margin = ({ top: 70, right: 0, bottom: 70, left: 30 });
+export const margin = ({ top: 30, right: 0, bottom: 100, left: 30 });
 
 export const LargeNumber = 999;
 
 export const IndicatorSize = 6;
-export const IndicatorSpace = 3;
+export const IndicatorSpace = 10;
 
 export const DarkGray = '#9f9f9f';
 

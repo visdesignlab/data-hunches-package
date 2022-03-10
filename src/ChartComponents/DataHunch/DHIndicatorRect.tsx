@@ -11,11 +11,11 @@ import { DataHunch } from "../../Interfaces/Types";
 type Props = {
     xPos: number;
     yPos: number;
-    width: number;
+    height: number;
     dataHunch: DataHunch;
 };
 
-const DHIndicatorRect: FC<Props> = ({ xPos, yPos, width, dataHunch }: Props) => {
+const DHIndicatorRect: FC<Props> = ({ xPos, yPos, height, dataHunch }: Props) => {
 
     const store = useContext(Store);
     const dhRef = useRef(null);
@@ -27,7 +27,7 @@ const DHIndicatorRect: FC<Props> = ({ xPos, yPos, width, dataHunch }: Props) => 
 
             const rc = rough.default.svg(drawingG);
 
-            const sketchyDH = rc.rectangle(xPos, yPos, width, 4, {
+            const sketchyDH = rc.rectangle(xPos, yPos, 4, height, {
 
                 stroke: DarkGray,
                 roughness: 2.8,
@@ -40,7 +40,7 @@ const DHIndicatorRect: FC<Props> = ({ xPos, yPos, width, dataHunch }: Props) => 
 
 
         };
-    }, [xPos, yPos, width]);
+    }, [xPos, yPos, height]);
 
     return (<Tooltip title={dataHunch.reasoning}>
         <g display={store.needToShowPreview ? 'none' : undefined}

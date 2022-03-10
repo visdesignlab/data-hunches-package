@@ -80,22 +80,22 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
             <g id='chart-title'>
                 <text
                     x={store.svgWidth * 0.5}
-                    y={5}
+                    y={store.svgHeight - margin.bottom}
                     alignmentBaseline='hanging'
                     textAnchor="middle"
                     fontSize='large'
                 >{store.datasetName}</text>
                 {allChartDHArray.map((d, i) => {
                     return (
-                        <Tooltip title={d.content}>
+                        <Tooltip title={d.reasoning}>
                             <DHIndicatorText
                                 isHighlighted={d.id === store.highlightedDH}
-                                x={findStart() + IndicatorSize * (i) * 2 + IndicatorSpace * i}
+                                x={(store.svgWidth - margin.left - margin.right) / 2 * (i % 2)}
                                 key={`${d.id}-text`}
-                                y={34}
-                                fontSize='large'
+                                y={store.svgHeight - margin.bottom + 30 + Math.floor(i / 2) * (IndicatorSpace + IndicatorSize)}
+                                fontSize='larger'
                             >
-                                *
+                                {`* ${d.content.length > 30 ? `${d.content.slice(0, 30)}...` : d.content}`}
                             </DHIndicatorText>
                         </Tooltip>
                     );

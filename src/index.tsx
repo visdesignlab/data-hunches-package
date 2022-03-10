@@ -10,7 +10,6 @@ import { getDocs, collection, getDoc, doc } from "firebase/firestore/lite";
 import { stateUpdateWrapperUseJSON } from "./Interfaces/StateChecker";
 import { firebaseSetup } from "./Interfaces/Constants";
 
-
 type Props = {
     dataSet: BarChartDataPoint[];
     datasetName: string;
