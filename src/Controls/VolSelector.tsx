@@ -83,7 +83,7 @@ const VolSelector: FC = () => {
                                 store.setCurrentVol(i + 1);
                                 handleClose();
                             }}>
-                            {d}
+                            {store.currentVol === (i + 1) ? '> ' : ''}{d}
                         </MenuItem>
                     );
                 })}

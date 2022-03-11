@@ -9,7 +9,7 @@ import { select } from "d3-selection";
 import FormComponent from "./ChartComponents/FormComponent";
 import SpecificControl from "./Controls/SpecificControl";
 import { DataContext } from ".";
-import ManipulationLayer from "./ChartComponents/ManipulationLayer";
+import RangeLayer from "./ChartComponents/RangeLayer";
 import { useEffect } from "react";
 import DataHunchIndicator from "./ChartComponents/DataHunch/DataHunchIndicators";
 import { DHProps } from "./TableComponents/Table";
@@ -156,7 +156,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                 })}
             </g>
 
-            {store.inputMode === 'manipulations' ? <ManipulationLayer sendManipulation={sendManipulationToParent} /> : <></>}
+            {store.inputMode === 'manipulations' ? <RangeLayer sendManipulation={sendManipulationToParent} /> : <></>}
 
 
             {store.inputMode === 'sketch' ?
