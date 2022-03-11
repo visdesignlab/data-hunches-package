@@ -1,12 +1,14 @@
 import { Delaunay } from "d3-delaunay";
 import { observer } from "mobx-react-lite";
-import { FC, useContext, useEffect, useRef, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
+import { Point } from "react-rough";
 import { DataContext } from "../..";
-import { makeValueScale, makeBandScale, makeCategoricalScale, getRectFill } from "../../HelperFunctions/ScaleGenerator";
-import { DarkGray, LightGray, margin } from "../../Interfaces/Constants";
+import { makeValueScale, makeBandScale, makeCategoricalScale } from "../../HelperFunctions/ScaleGenerator";
+import { margin } from "../../Interfaces/Constants";
 import { stateUpdateWrapperUseJSON } from "../../Interfaces/StateChecker";
 import Store from "../../Interfaces/Store";
 import { DataHunch } from "../../Interfaces/Types";
+import SketchyPolygon from "./SketchyPolygon";
 
 type Props = {
     dataHunchArrayString: string;
@@ -48,10 +50,10 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
                 [margin.left + width - borderWidth, (bandScale(barChartPoint.label) || 0) + height - borderWidth]
             ];
 
-            const xDirBoxes = Math.floor(width / 5);
-            const yDirBoxes = Math.floor(height / 3);
+            const xDirBoxes = width / 4;
+            const yDirBoxes = height / 3;
 
-            for (let xDir = 1; xDir <= 4; xDir++) {
+            for (let xDir = 1; xDir <= 3; xDir++) {
                 for (let yDir = 1; yDir <= 2; yDir++) {
 
                     const randomX = getRandomArbitrary(
@@ -68,7 +70,7 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
 
             // add points along the edge
 
-            for (let xDir = 1; xDir <= 5; xDir++) {
+            for (let xDir = 1; xDir <= 4; xDir++) {
                 randomPoints.push([
                     getRandomArbitrary(
                         margin.left + xDirBoxes * (xDir - 0.5) - borderWidth, margin.left + xDirBoxes * (xDir - 0.5) + borderWidth
@@ -96,7 +98,7 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
 
             setPolygonPoints(Array.from(iterator));
         }
-    }, [dataHunchArrayString]);
+    }, [dataHunchArray]);
 
     // Random
     // const chooseFill = () => {
@@ -113,9 +115,9 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
     const chooseFill = (index: number) => {
         if (index < dataHunchArray.length) {
 
-            return [categoricalColorScale(dataHunchArray[index].content) as string, 0.5 + 0.1 * dataHunchArray[index].confidenceLevel];
+            return [categoricalColorScale(dataHunchArray[index].content) as string, 0.5 + 0.1 * dataHunchArray[index].confidenceLevel] as [string, number];
         }
-        return ['none', 1];
+        return ['none', 1] as [string, number];
     };
 
     const makePointArray = (input: Delaunay.Triangle) => {
@@ -128,17 +130,24 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
     };
 
     return (dataHunchArray.length > 0 ?
-        <g>
+        <g display={store.needToShowPreview ? 'none' : undefined} >
             {polygonPoints.map((d: Delaunay.Triangle, i) => {
-                return <polygon
-                    key={`polygon-${i}`}
-                    points={makePointArray(d)}
-                    fill={chooseFill(i)[0].toString()}
-                    strokeOpacity={0.2}
-                    // opacity={chooseFill(i)[1]}
-                    opacity={1}
-                    strokeWidth={2}
-                    stroke={'white'} />;
+                if (i < dataHunchArray.length) {
+                    return <SketchyPolygon
+                        dataHunch={dataHunchArray[i]}
+                        points={d as Point[]}
+                        opacity={chooseFill(i)[1]}
+                        fill={chooseFill(i)[0].toString()} />;
+                } else {
+                    return <polygon
+                        key={`polygon-${i}`}
+                        points={makePointArray(d)}
+                        fill={chooseFill(i)[0].toString()}
+                        strokeOpacity={1}
+                        opacity={chooseFill(i)[1]}
+                        strokeWidth={0.5}
+                        stroke={'white'} />;
+                }
             })}
         </g> : <></>);
 };

@@ -2,11 +2,10 @@ import { observer } from "mobx-react-lite";
 import { FC, useContext, useState } from "react";
 import BarElement from './ChartComponents/BarElement';
 import { makeBandScale, makeCategoricalScale, makeValueScale } from "./HelperFunctions/ScaleGenerator";
-import { DarkBlue, DarkGray, DefaultForeignObjectHeight, DefaultForeignObjectWidth, IndicatorSize, IndicatorSpace, margin } from "./Interfaces/Constants";
+import { DarkBlue, DefaultForeignObjectHeight, DefaultForeignObjectWidth, IndicatorSize, IndicatorSpace, margin } from "./Interfaces/Constants";
 import Store from "./Interfaces/Store";
-import { axisBottom, axisLeft, axisTop } from "d3-axis";
+import { axisLeft, axisTop } from "d3-axis";
 import { select } from "d3-selection";
-import GeneralControl from "./Controls/GeneralControl";
 import FormComponent from "./ChartComponents/FormComponent";
 import SpecificControl from "./Controls/SpecificControl";
 import { DataContext } from ".";
@@ -42,9 +41,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
         }
     }, [store.inputMode]);
 
-
     const [allChartDHArray, setAllChartDHArray] = useState<DataHunch[]>([]);
-
 
     useEffect(() => {
         let tempArray = dataHunchArray.filter(d => d.label === 'all chart');
@@ -67,10 +64,6 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
         .attr("transform", `translate(${margin.left},0)`)
         .call(xAxis);
 
-    const findStart = () => {
-
-        return store.svgWidth * 0.5 - IndicatorSpace * (allChartDHArray.length - 1) * 0.5 - (allChartDHArray.length - 1) * IndicatorSize;
-    };
 
     return <div>
 
@@ -95,7 +88,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                                 y={store.svgHeight - margin.bottom + 30 + Math.floor(i / 2) * (IndicatorSpace + IndicatorSize)}
                                 fontSize='larger'
                             >
-                                {`* ${d.content.length > 30 ? `${d.content.slice(0, 30)}...` : d.content}`}
+                                {`* ${d.content.length > 25 ? `${d.content.slice(0, 25)}...` : d.content}`}
                             </DHIndicatorText>
                         </Tooltip>
                     );

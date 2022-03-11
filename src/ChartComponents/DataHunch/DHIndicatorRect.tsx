@@ -13,9 +13,10 @@ type Props = {
     yPos: number;
     height: number;
     dataHunch: DataHunch;
+    highlighted: boolean;
 };
 
-const DHIndicatorRect: FC<Props> = ({ xPos, yPos, height, dataHunch }: Props) => {
+const DHIndicatorRect: FC<Props> = ({ xPos, yPos, height, dataHunch, highlighted }: Props) => {
 
     const store = useContext(Store);
     const dhRef = useRef(null);
@@ -41,6 +42,16 @@ const DHIndicatorRect: FC<Props> = ({ xPos, yPos, height, dataHunch }: Props) =>
 
         };
     }, [xPos, yPos, height]);
+
+    useLayoutEffect(() => {
+        if (dhRef.current !== null) {
+            if (highlighted) {
+                select(dhRef.current).selectAll('path').attr('stroke', BrightOrange);
+            } else {
+                select(dhRef.current).selectAll('path').attr('stroke', DarkGray);
+            }
+        }
+    }, [highlighted]);
 
     return (<Tooltip title={dataHunch.reasoning}>
         <g display={store.needToShowPreview ? 'none' : undefined}

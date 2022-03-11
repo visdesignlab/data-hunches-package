@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { FC, useContext, useLayoutEffect, useRef } from "react";
 import 'roughjs';
 import * as rough from 'roughjs/bin/rough';
-import { BrightOrange } from "../../Interfaces/Constants";
+import { BrightOrange, DarkGray } from "../../Interfaces/Constants";
 import Store from "../../Interfaces/Store";
 import { DataHunch } from "../../Interfaces/Types";
 
@@ -14,9 +14,10 @@ type Props = {
     width: number;
     height: number;
     dataHunch: DataHunch;
+    highlighted: boolean;
 };
 
-const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch }: Props) => {
+const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch, highlighted }: Props) => {
 
     const store = useContext(Store);
     const dhRef = useRef(null);
@@ -29,8 +30,8 @@ const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch }: Props) 
             const rc = rough.default.svg(drawingG);
 
             const sketchyDH = rc.rectangle(xPos, yPos, width, height, {
-                fill: BrightOrange,
-                stroke: BrightOrange,
+                fill: DarkGray,
+                stroke: DarkGray,
                 fillStyle: 'zigzag',
                 roughness: 2,
                 hachureAngle: 60,
@@ -42,6 +43,16 @@ const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch }: Props) 
 
         };
     }, [xPos, yPos, width, height]);
+
+    useLayoutEffect(() => {
+        if (dhRef.current !== null) {
+            if (highlighted) {
+                select(dhRef.current).selectAll('path').attr('stroke', BrightOrange);
+            } else {
+                select(dhRef.current).selectAll('path').attr('stroke', DarkGray);
+            }
+        }
+    }, [highlighted]);
 
     return (<Tooltip title={dataHunch.reasoning}>
         <g display={store.needToShowPreview ? 'none' : undefined}

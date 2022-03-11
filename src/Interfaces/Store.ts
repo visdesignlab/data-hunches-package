@@ -84,7 +84,6 @@ export class RootStore {
 
         this.setNextIndex(this.nextIndex + 1);
         this.setTotalDH(this.numOfDH + 1);
-
     }
 
     setWidth(newWidth: number) {
