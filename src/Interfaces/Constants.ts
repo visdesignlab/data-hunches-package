@@ -45,3 +45,13 @@ export const ConfidenceInput = ['Not at all confident', 'Not very confident', 'S
 export const CategoricalColor = [DarkBlue, '#a77c4e', '#a74e7a'];
 
 export const firebaseSetup = getFirestore(initializeApp(FirebaseSetupConstants));
+
+// Need color and stroke
+export const DefaultSketchyOptions = {
+    fillStyle: 'zigzag',
+    roughness: 2,
+    hachureAngle: 60,
+    hachureGap: 10,
+    fillWeight: 1,
+    strokeWidth: 2,
+};

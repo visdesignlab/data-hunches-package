@@ -117,7 +117,6 @@ const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                             xPos={calculateX(d, true)}
                             height={bandScale.bandwidth()}
                             yPos={bandScale(d.label) || 0}
-
                         />
                     );
                 } else {

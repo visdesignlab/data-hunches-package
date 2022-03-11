@@ -6,6 +6,7 @@ declare type Props = {
     yPos: number;
     height: number;
     dataHunch: DataHunch;
+    highlighted: boolean;
 };
 declare const _default: import("react").FunctionComponent<Props>;
 export default _default;

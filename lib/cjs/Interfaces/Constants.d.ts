@@ -21,3 +21,11 @@ export declare const TransitionDuration = 500;
 export declare const ConfidenceInput: string[];
 export declare const CategoricalColor: string[];
 export declare const firebaseSetup: import("firebase/firestore/lite").Firestore;
+export declare const DefaultSketchyOptions: {
+    fillStyle: string;
+    roughness: number;
+    hachureAngle: number;
+    hachureGap: number;
+    fillWeight: number;
+    strokeWidth: number;
+};

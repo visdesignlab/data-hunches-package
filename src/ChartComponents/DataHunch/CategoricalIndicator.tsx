@@ -135,6 +135,7 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
                 if (i < dataHunchArray.length) {
                     return <SketchyPolygon
                         dataHunch={dataHunchArray[i]}
+                        key={`polygon-${i}`}
                         points={d as Point[]}
                         opacity={chooseFill(i)[1]}
                         fill={chooseFill(i)[0].toString()} />;

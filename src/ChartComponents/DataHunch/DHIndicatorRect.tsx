@@ -29,7 +29,6 @@ const DHIndicatorRect: FC<Props> = ({ xPos, yPos, height, dataHunch, highlighted
             const rc = rough.default.svg(drawingG);
 
             const sketchyDH = rc.rectangle(xPos, yPos, 4, height, {
-
                 stroke: DarkGray,
                 roughness: 2.8,
                 hachureAngle: 60,

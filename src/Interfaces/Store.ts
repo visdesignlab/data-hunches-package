@@ -1,7 +1,7 @@
 import { select } from "d3-selection";
 import { makeAutoObservable } from "mobx";
 import { createContext } from "react";
-import { collection, setDoc, doc } from 'firebase/firestore/lite';
+import { collection, setDoc, doc, updateDoc } from 'firebase/firestore/lite';
 
 import { DataHunch, InputMode } from "./Types";
 import { firebaseSetup } from "./Constants";
@@ -78,7 +78,7 @@ export class RootStore {
         this.inputMode = 'none';
         const databaseRef = collection(firebaseSetup, this.datasetName, `sub${this.currentVol}`, 'dhs');
 
-        await setDoc(doc(collection(firebaseSetup, this.datasetName), `sub${this.currentVol}`), { nextIndex: this.nextIndex + 1 });
+        await updateDoc(doc(collection(firebaseSetup, this.datasetName), `sub${this.currentVol}`), { nextIndex: this.nextIndex + 1 });
 
         await setDoc(doc(databaseRef, this.nextIndex.toString()), dataHunchToSubmit);
 

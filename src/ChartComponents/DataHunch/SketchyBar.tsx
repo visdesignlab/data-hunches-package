@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { FC, useContext, useLayoutEffect, useRef } from "react";
 import 'roughjs';
 import * as rough from 'roughjs/bin/rough';
-import { BrightOrange, DarkGray } from "../../Interfaces/Constants";
+import { BrightOrange, DarkGray, DefaultSketchyOptions } from "../../Interfaces/Constants";
 import Store from "../../Interfaces/Store";
 import { DataHunch } from "../../Interfaces/Types";
 
@@ -29,16 +29,12 @@ const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch, highlight
 
             const rc = rough.default.svg(drawingG);
 
-            const sketchyDH = rc.rectangle(xPos, yPos, width, height, {
-                fill: DarkGray,
-                stroke: DarkGray,
-                fillStyle: 'zigzag',
-                roughness: 2,
-                hachureAngle: 60,
-                hachureGap: 10,
-                fillWeight: 1,
-                strokeWidth: 2,
-            });
+            const sketchyDH = rc.rectangle(xPos, yPos, width, height,
+                {
+                    ...DefaultSketchyOptions,
+                    fill: DarkGray,
+                    stroke: DarkGray,
+                });
             drawingG.appendChild(sketchyDH);
 
         };

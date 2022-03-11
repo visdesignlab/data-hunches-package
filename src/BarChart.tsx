@@ -158,7 +158,6 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
             {store.inputMode === 'manipulations' ? <RangeLayer sendManipulation={sendManipulationToParent} /> : <></>}
 
-
             {store.inputMode === 'sketch' ?
                 <SketchLayer sendManipulation={sendManipulationToParent} /> : <></>
             }
@@ -170,8 +169,8 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
         </svg>
         <div style={{ width: DefaultForeignObjectWidth, height: DefaultForeignObjectHeight }}>
-            {store.inputMode === 'sketch' ?
-                <ManipulationForm manipulationOutput={manipulationResult} type='sketch' /> : <></>
+            {(store.inputMode === 'sketch' || store.inputMode === 'manipulations') ?
+                <ManipulationForm manipulationOutput={manipulationResult} type={store.inputMode} /> : <></>
             }
         </div>
     </div>;

@@ -25,8 +25,8 @@ const FormComponent: FC<Props> = ({ manipulationOutput }: Props) => {
             <RatingForm />,
         'data space':
             <DataSpaceForm isIncExc={!store.selectedDP} />,
-        manipulations:
-            <ManipulationForm manipulationOutput={manipulationOutput} type='manipulations' />,
+        // manipulations:
+        //     <ManipulationForm manipulationOutput={manipulationOutput} type='manipulations' />,
         categorical:
             <CategoricalForm />,
         model:
