@@ -162,6 +162,7 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                 <SketchLayer sendManipulation={sendManipulationToParent} /> : <></>
             }
 
+
             <FormComponent manipulationOutput={manipulationResult} />
 
             <SpecificControl />

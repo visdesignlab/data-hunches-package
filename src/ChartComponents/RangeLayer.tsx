@@ -7,6 +7,7 @@ import { BrightOrange, DefaultSketchyOptions, LightGray, margin } from "../Inter
 import Store from "../Interfaces/Store";
 import * as rough from 'roughjs/bin/rough';
 import { max, min } from "d3-array";
+import { timer, now } from 'd3-timer';
 
 type Props = {
     sendManipulation: (manipulationResult: string) => void;
@@ -17,6 +18,8 @@ const RangeLayer: FC<Props> = ({ sendManipulation }: Props) => {
 
     const [isMouseDown, setIsMouseDown] = useState(false);
     const [pointerStartX, setPointerStartX] = useState(0);
+
+    let timer0: number | null = null;
 
     const resultRef = useRef(null);
 
@@ -33,12 +36,12 @@ const RangeLayer: FC<Props> = ({ sendManipulation }: Props) => {
     //TODO sketchy render might need a timer or maybe use a mask?
 
     const dragHandler = (e: any) => {
-        console.log('dragHandler');
+
         if (isMouseDown) {
             const xPos = pointerStartX < pointer(e)[0] ? pointerStartX : pointer(e)[0];
 
-            if (resultRef.current !== null) {
-
+            if (resultRef.current !== null && ((now() - (timer0 || 0)) > 50)) {
+                console.log('dragHandler');
                 select(resultRef.current).selectAll('*').remove();
                 const drawingG = resultRef.current as any;
 
@@ -46,6 +49,8 @@ const RangeLayer: FC<Props> = ({ sendManipulation }: Props) => {
 
                 const sketchyRec = rc.rectangle(xPos || 0, bandScale(store.selectedDP || '') || 0, Math.abs(pointerStartX - pointer(e)[0]), bandScale.bandwidth(), sketchyOption);
                 drawingG.appendChild(sketchyRec);
+
+                timer0 = now();
             }
         }
     };
@@ -77,7 +82,7 @@ const RangeLayer: FC<Props> = ({ sendManipulation }: Props) => {
 
         setIsMouseDown(true);
         setPointerStartX(pointer(e)[0]);
-
+        timer0 = now();
     };
 
     return (
