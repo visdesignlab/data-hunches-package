@@ -2,6 +2,7 @@ export declare const useStyles: (props?: any) => import("@material-ui/styles").C
 interface FontProps {
     fontSize: 'larger' | 'small';
     isHighlighted: boolean;
+    isSelected: boolean;
 }
 export declare const DHIndicatorText: import("styled-components").StyledComponent<"text", any, FontProps, never>;
 interface RectProps {
