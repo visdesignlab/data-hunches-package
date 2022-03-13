@@ -37,8 +37,6 @@ const DHIndicatorRect: FC<Props> = ({ xPos, yPos, height, dataHunch, highlighted
                 strokeWidth: 2,
             });
             drawingG.appendChild(sketchyDH);
-
-
         };
     }, [xPos, yPos, height]);
 
@@ -55,10 +53,14 @@ const DHIndicatorRect: FC<Props> = ({ xPos, yPos, height, dataHunch, highlighted
     return (<Tooltip title={dataHunch.reasoning}>
         <g display={store.needToShowPreview ? 'none' : undefined}
             ref={dhRef}
-            onMouseOver={() => { store.setSelectedDH([dataHunch.id]); store.setHighlightedDH(dataHunch.id); }}
+            onMouseOver={() => {
+                //  store.setSelectedDH([dataHunch.id]);
+                store.setHighlightedDH(dataHunch.id);
+            }}
             onMouseOut={() => {
                 store.setHighlightedDH(-1);
             }}
+            onClick={() => { store.setSelectedDH([dataHunch.id]); }}
             cursor='pointer' />
     </Tooltip>);
 };

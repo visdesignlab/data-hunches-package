@@ -82,7 +82,8 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                     return (
                         <Tooltip title={d.reasoning}>
                             <DHIndicatorText
-                                isHighlighted={d.id === store.highlightedDH}
+                                isHighlighted={d.id === store.highlightedDH || store.selectedDH.includes(d.id)}
+                                onClick={() => { store.setSelectedDH([d.id]); }}
                                 x={(store.svgWidth - margin.left - margin.right) / 2 * (i % 2)}
                                 key={`${d.id}-text`}
                                 y={store.svgHeight - margin.bottom + 30 + Math.floor(i / 2) * (IndicatorSpace + IndicatorSize)}
@@ -147,8 +148,6 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                         //             dataHunchArrayString={JSON.stringify(catDH.filter(d => store.selectedDH.includes(d.id)))}
                         //             key={`${barDP.label}-catindicator`} />
                         //     </>);
-
-
 
                     } else {
                         return <></>;

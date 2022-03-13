@@ -25,6 +25,7 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
     const [needReset, setNeedReset] = useState(false);
     const [dhWithDelete, setDHWithDelete] = useState<DHwithDelete[]>([]);
+    // const [selectionArray, ]
 
     const dataSet = useContext(DataContext);
 
@@ -53,7 +54,7 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
 
     const rowHoverHandler = (dataHunch: DataHunch) => {
-        store.setSelectedDH([dataHunch.id]);
+        // store.setSelectedDH([dataHunch.id]);
         store.setHighlightedDH(dataHunch.id);
         if (dataHunch.type === 'exclusion') {
             setNeedReset(true);
@@ -71,7 +72,7 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
     };
 
     const rowOutHandler = () => {
-        store.setSelectedDH([]);
+        // store.setSelectedDH([]);
         store.setHighlightedDH(-1);
         if (needReset) {
             store.setNeedToShowPreview(false);
@@ -99,6 +100,7 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                 columns={columns}
                 checkboxSelection={true}
                 onSelectionModelChange={(d) => { store.setSelectedDH(d as number[]); }}
+                selectionModel={store.selectedDH}
                 onCellClick={deleteDHHandler}
                 rows={dhWithDelete} />
         </div>

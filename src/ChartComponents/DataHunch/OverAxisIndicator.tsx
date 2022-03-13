@@ -37,11 +37,11 @@ const OverAxisIndicator: FC<Props> = ({ dataHunch }: Props) => {
             <g
                 cursor='pointer'
                 onMouseOver={() => {
-                    store.setSelectedDH([dataHunch.id]);
+                    // store.setSelectedDH([dataHunch.id]);
                     store.setHighlightedDH(dataHunch.id);
                 }}
                 onMouseOut={() => {
-                    store.setSelectedDH([]);
+                    // store.setSelectedDH([]);
                     store.setHighlightedDH(-1);
                 }}
             >

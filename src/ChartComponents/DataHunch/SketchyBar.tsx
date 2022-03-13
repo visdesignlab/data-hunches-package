@@ -57,6 +57,7 @@ const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch, highlight
             onMouseOut={() => {
                 store.setHighlightedDH(-1);
             }}
+            onClick={() => { store.setSelectedDH([dataHunch.id]); }}
             cursor='pointer' />
     </Tooltip>);
 };

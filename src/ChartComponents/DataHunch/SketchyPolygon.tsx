@@ -6,14 +6,16 @@ import Store from "../../Interfaces/Store";
 import { DataHunch } from "../../Interfaces/Types";
 import * as rough from 'roughjs/bin/rough';
 import { Point } from "react-rough";
+import { BrightOrange } from "../../Interfaces/Constants";
 
 type Props = {
     dataHunch: DataHunch;
     points: Point[];
     fill: string;
     opacity: number;
+    highlighted: boolean;
 };
-const SketchyPolygon: FC<Props> = ({ dataHunch, points, fill, opacity }: Props) => {
+const SketchyPolygon: FC<Props> = ({ dataHunch, points, fill, opacity, highlighted }: Props) => {
 
     const dhRef = useRef(null);
     const store = useContext(Store);
@@ -39,10 +41,23 @@ const SketchyPolygon: FC<Props> = ({ dataHunch, points, fill, opacity }: Props) 
         }
     }, [points, fill]);
 
+    // "rect[col='2']"
+
+    useLayoutEffect(() => {
+        if (dhRef.current !== null) {
+            if (highlighted) {
+                select(dhRef.current).selectAll("path[stroke='white']").attr('stroke', BrightOrange);
+            } else {
+                select(dhRef.current).selectAll("path[stroke='#eb9800']").attr('stroke', "white");
+            }
+        }
+    }, [highlighted]);
+
     return (<Tooltip title={dataHunch.reasoning}>
         <g ref={dhRef}
             onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
             onMouseOut={() => { store.setHighlightedDH(-1); }}
+            onClick={() => { store.setSelectedDH([dataHunch.id]); }}
             opacity={opacity}
             cursor='pointer' />
     </Tooltip>
