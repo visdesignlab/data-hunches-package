@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { FC, useContext, useRef, useState } from "react";
 import { DataContext } from "..";
 import { makeValueScale, makeBandScale } from "../HelperFunctions/ScaleGenerator";
-import { BrightOrange, DefaultSketchyOptions, LightGray, margin } from "../Interfaces/Constants";
+import { SelectionColor, DefaultSketchyOptions, LightGray, margin } from "../Interfaces/Constants";
 import Store from "../Interfaces/Store";
 import * as rough from 'roughjs/bin/rough';
 import { max, min } from "d3-array";
@@ -29,8 +29,8 @@ const RangeLayer: FC<Props> = ({ sendManipulation }: Props) => {
 
     const sketchyOption = {
         ...DefaultSketchyOptions,
-        fill: BrightOrange,
-        stroke: BrightOrange,
+        fill: SelectionColor,
+        stroke: SelectionColor,
         fillWeight: 3,
     };
 

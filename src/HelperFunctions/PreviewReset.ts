@@ -2,7 +2,7 @@ import { axisLeft, axisTop } from "d3-axis";
 import { scaleLinear } from "d3-scale";
 import { select } from "d3-selection";
 import { parse } from "mathjs";
-import { margin, BrightOrange, TransitionDuration } from "../Interfaces/Constants";
+import { margin, SelectionColor, TransitionDuration } from "../Interfaces/Constants";
 import { BarChartDataPoint } from "../Interfaces/Types";
 import { makeValueScale, makeBandScale, makeCategoricalScale, getRectFill } from "./ScaleGenerator";
 
@@ -20,7 +20,7 @@ export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPrev
         .data(ogDataSet)
         .join("rect")
         .attr('stroke-width', 4)
-        .attr('stroke', d => d.label === labelToPreview ? BrightOrange : 'none')
+        .attr('stroke', d => d.label === labelToPreview ? SelectionColor : 'none')
         .attr('x', margin.left)
         .attr('width', d => valueScale(d.value) - margin.left)
         .attr("y", d => bandScale(d.label) || 0)
@@ -77,7 +77,7 @@ export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPrev
         .data(newData)
         .join(
             enter => enter.append('rect')
-                .attr('fill', BrightOrange)
+                .attr('fill', SelectionColor)
                 .attr('x', margin.left)
                 .attr('width', newValueScale(0))
                 .attr('height', bandScale.bandwidth())
@@ -116,9 +116,9 @@ export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPrev
         .call((axisTop(newValueScale) as any));
 
     newScale.selectAll('path')
-        .attr('stroke', BrightOrange);
-    newScale.selectAll('g').selectAll('line').attr('stroke', BrightOrange);
-    newScale.selectAll('g').selectAll('text').attr('fill', BrightOrange);
+        .attr('stroke', SelectionColor);
+    newScale.selectAll('g').selectAll('line').attr('stroke', SelectionColor);
+    newScale.selectAll('g').selectAll('text').attr('fill', SelectionColor);
 
     select('#band-axis').transition().duration(TransitionDuration).call(axisLeft(newBandScale) as any);
 };
@@ -155,7 +155,7 @@ export const handleResetOnClick = (ogDataSet: BarChartDataPoint[], svgHeight: nu
         .data(ogDataSet)
         .join('rect')
         .attr('fill', d => getRectFill(d, doesContainCategory, selectedDP, categoricalScale))
-        .attr('stroke', d => d.label === selectedDP ? BrightOrange : 'none')
+        .attr('stroke', d => d.label === selectedDP ? SelectionColor : 'none')
         .attr('x', margin.left)
         .attr('width', d => valueScale(d.value) - margin.left)
         .attr('y', d => bandScale(d.label) || 0)

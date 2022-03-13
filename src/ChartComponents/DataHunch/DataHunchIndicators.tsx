@@ -113,7 +113,8 @@ const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                         <DHIndicatorRect
                             key={`${d.id}-dhindicatorRect`}
                             dataHunch={d}
-                            highlighted={d.id === store.highlightedDH || store.selectedDH.includes(d.id)}
+                            highlighted={d.id === store.highlightedDH}
+                            selected={store.selectedDH.includes(d.id)}
                             xPos={calculateX(d, true)}
                             height={bandScale.bandwidth()}
                             yPos={bandScale(d.label) || 0}
@@ -126,7 +127,8 @@ const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                             xPos={calculateX(d, false)}
                             key={`${d.id}-dhindicatorSketchy`}
                             yPos={(bandScale(d.label) || 0) + bandScale.bandwidth() / inVisDH.length * i}
-                            highlighted={d.id === store.highlightedDH || store.selectedDH.includes(d.id)}
+                            highlighted={d.id === store.highlightedDH}
+                            selected={store.selectedDH.includes(d.id)}
                             width={calculateWidth(d)}
                             height={bandScale.bandwidth() / inVisDH.length} />
                     );
@@ -135,13 +137,23 @@ const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
 
             {offVisDH.map((d, i) => {
                 return (
-                    <Tooltip title={d.reasoning}>
+                    <Tooltip title={
+                        <div>
+                            <p>
+                                Content: {d.content}
+                            </p>
+                            <p>
+                                Reasoning: {d.reasoning}
+                            </p>
+                        </div>
+                    }>
                         <DHIndicatorText
                             x={findXPos(d, i, offVisDH.length)}
                             y={(bandScale(d.label) || 0) + 0.5 * bandScale.bandwidth() + (2 * IndicatorSize) * (i % 2 === 0 ? -1 : 1)}
                             fontSize='larger'
                             key={`${d.id}-text`}
-                            isHighlighted={d.id === store.highlightedDH || store.selectedDH.includes(d.id)}
+                            isHighlighted={d.id === store.highlightedDH}
+                            isSelected={store.selectedDH.includes(d.id)}
                             onClick={() => { store.setSelectedDH([d.id]); }}
                             onMouseOver={() => { store.setHighlightedDH(d.id); }}
                             onMouseOut={() => { store.setHighlightedDH(-1); }}>
@@ -151,9 +163,18 @@ const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
             })}
 
             {exDH.map((d, i) => {
-                return (<Tooltip title={d.reasoning}>
+                return (<Tooltip title={<div>
+                    <p>
+                        Exclusion: {d.content}
+                    </p>
+                    <p>
+                        Reasoning: {d.reasoning}
+                    </p>
+                </div>
+                }>
                     <DHIndicatorText
-                        isHighlighted={d.id === store.highlightedDH || store.selectedDH.includes(d.id)}
+                        isHighlighted={d.id === store.highlightedDH}
+                        isSelected={store.selectedDH.includes(d.id)}
                         x={IndicatorSize * (Math.floor(i / 2) + 1)}
                         y={(bandScale(d.label) || 0) + 0.5 * bandScale.bandwidth() + (2 * IndicatorSize) * (i % 2 === 0 ? -1 : 1)}
                         fontSize='small'

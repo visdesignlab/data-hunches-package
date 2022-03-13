@@ -1,4 +1,4 @@
-import { BrightOrange, CategoricalColor, DarkBlue, LargeNumber, margin } from "../Interfaces/Constants";
+import { SelectionColor, CategoricalColor, DarkBlue, LargeNumber, margin } from "../Interfaces/Constants";
 import { BarChartDataPoint } from "../Interfaces/Types";
 import { scaleLinear, scaleBand, scaleOrdinal, ScaleOrdinal } from 'd3-scale';
 import { max } from "d3-array";

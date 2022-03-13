@@ -13,7 +13,9 @@ export const DarkGray = '#9f9f9f';
 
 export const LightGray = '#eeeeee';
 
-export const BrightOrange = '#eb9800';
+export const SelectionColor = '#eb9800';
+
+export const HighlightColor = '#eb0053';
 
 export const DarkBlue = '#4ea6a7';
 

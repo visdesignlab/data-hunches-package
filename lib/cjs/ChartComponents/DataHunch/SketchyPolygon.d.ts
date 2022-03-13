@@ -6,6 +6,7 @@ declare type Props = {
     points: Point[];
     fill: string;
     opacity: number;
+    highlighted: boolean;
 };
 declare const _default: import("react").FunctionComponent<Props>;
 export default _default;

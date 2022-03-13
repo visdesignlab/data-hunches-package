@@ -2,7 +2,7 @@ import { pointer, select } from "d3-selection";
 import { observer } from "mobx-react-lite";
 import { useContext } from "react";
 import { FC } from "react";
-import { BrightOrange, ControlFOHeight, ControlFOWidth, DefaultForeignObjectHeight, DefaultForeignObjectWidth } from "../Interfaces/Constants";
+import { SelectionColor, ControlFOHeight, ControlFOWidth, DefaultForeignObjectHeight, DefaultForeignObjectWidth } from "../Interfaces/Constants";
 import Store from "../Interfaces/Store";
 import { BarChartDataPoint } from "../Interfaces/Types";
 
@@ -51,7 +51,7 @@ const BarElement: FC<Props> = ({ width, height, xPos, yPos, fill, dataElement }:
         // onMouseLeave={() => { store.setHighlightedDH(-1); store.setSelectedDH([]); }}
         fill={fill}
         strokeWidth={4}
-        stroke={store.selectedDP === dataElement.label ? BrightOrange : 'none'}>
+        stroke={store.selectedDP === dataElement.label ? SelectionColor : 'none'}>
     </rect>;
 };
 

@@ -80,9 +80,18 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                 >{store.datasetName}</text>
                 {allChartDHArray.map((d, i) => {
                     return (
-                        <Tooltip title={d.reasoning}>
+                        <Tooltip title={
+                            <div>
+                                <p>
+                                    Content: {d.content}
+                                </p>
+                                <p>
+                                    Reasoning: {d.reasoning}
+                                </p>
+                            </div>}>
                             <DHIndicatorText
-                                isHighlighted={d.id === store.highlightedDH || store.selectedDH.includes(d.id)}
+                                isHighlighted={d.id === store.highlightedDH}
+                                isSelected={store.selectedDH.includes(d.id)}
                                 onClick={() => { store.setSelectedDH([d.id]); }}
                                 x={(store.svgWidth - margin.left - margin.right) / 2 * (i % 2)}
                                 key={`${d.id}-text`}

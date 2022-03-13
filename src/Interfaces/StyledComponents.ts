@@ -1,6 +1,6 @@
 import { createStyles, makeStyles, Theme } from "@material-ui/core";
 import styled from "styled-components";
-import { BrightOrange, DarkGray } from "./Constants";
+import { SelectionColor, DarkGray, HighlightColor } from "./Constants";
 
 let WebFont = require('webfontloader');
 WebFont.load({
@@ -61,6 +61,7 @@ export const useStyles = makeStyles((theme: Theme) =>
 interface FontProps {
     fontSize: 'larger' | 'small';
     isHighlighted: boolean;
+    isSelected: boolean;
 }
 
 export const DHIndicatorText = styled(`text`) <FontProps>`
@@ -68,8 +69,8 @@ export const DHIndicatorText = styled(`text`) <FontProps>`
     font-size:${props => props.fontSize};
     alignment-baseline:middle;
     text-anchor: start;
-    stroke: ${props => props.isHighlighted ? BrightOrange : DarkGray};
-    fill:${props => props.isHighlighted ? BrightOrange : DarkGray};
+    stroke: ${props => props.isHighlighted ? HighlightColor : (props.isSelected ? SelectionColor : DarkGray)};
+    fill:${props => props.isHighlighted ? HighlightColor : (props.isSelected ? SelectionColor : DarkGray)};
     font-family: 'Nanum Brush Script', cursive;
 `;
 
