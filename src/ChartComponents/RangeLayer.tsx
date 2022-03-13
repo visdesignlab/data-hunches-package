@@ -30,10 +30,10 @@ const RangeLayer: FC<Props> = ({ sendManipulation }: Props) => {
     const sketchyOption = {
         ...DefaultSketchyOptions,
         fill: BrightOrange,
-        stroke: BrightOrange
+        stroke: BrightOrange,
+        fillWeight: 3,
     };
 
-    //TODO sketchy render might need a timer or maybe use a mask?
 
     const dragHandler = (e: any) => {
 
@@ -93,7 +93,7 @@ const RangeLayer: FC<Props> = ({ sendManipulation }: Props) => {
                 y={(bandScale(store.selectedDP || '') || 0) - 50}
                 width={store.svgWidth - margin.left - margin.right}
                 height={bandScale.bandwidth() + 100}
-                opacity={0.4}
+                opacity={0.5}
                 fill={LightGray}
                 onMouseLeave={() => { setIsMouseDown(false); }}
                 onMouseUp={mouseUpHandler}
