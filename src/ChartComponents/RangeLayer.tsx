@@ -41,7 +41,7 @@ const RangeLayer: FC<Props> = ({ sendManipulation }: Props) => {
             const xPos = pointerStartX < pointer(e)[0] ? pointerStartX : pointer(e)[0];
 
             if (resultRef.current !== null && ((now() - (timer0 || 0)) > 50)) {
-                console.log('dragHandler');
+
                 select(resultRef.current).selectAll('*').remove();
                 const drawingG = resultRef.current as any;
 
@@ -56,18 +56,17 @@ const RangeLayer: FC<Props> = ({ sendManipulation }: Props) => {
     };
 
     const mouseUpHandler = (e: any) => {
-        console.log('mouseUpHandler');
+
         setIsMouseDown(false);
         let manipulationResult: string;
         const pointerEndX = pointer(e)[0];
-
         manipulationResult =
             [valueScale.invert(min([pointerEndX, pointerStartX]) || 0).toFixed(2), valueScale.invert(max([pointerEndX, pointerStartX]) || 0).toFixed(2)].toString();
         sendManipulation(manipulationResult);
     };
 
     const mouseDownHandler = (e: any) => {
-        console.log('mousedown');
+
         if (!isMouseDown && resultRef.current !== null) {
 
             select(resultRef.current).selectAll('*').remove();
@@ -76,10 +75,8 @@ const RangeLayer: FC<Props> = ({ sendManipulation }: Props) => {
             const rc = rough.default.svg(drawingG);
 
             const sketchyRec = rc.rectangle(pointer(e)[0] || 0, bandScale(store.selectedDP || '') || 0, 2, bandScale.bandwidth(), sketchyOption);
-
             drawingG.appendChild(sketchyRec);
         }
-
         setIsMouseDown(true);
         setPointerStartX(pointer(e)[0]);
         timer0 = now();
