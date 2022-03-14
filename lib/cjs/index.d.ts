@@ -5,6 +5,7 @@ declare type Props = {
     datasetName: string;
     svgWidth: number;
     svgHeight: number;
+    datasetExplanation: string;
 };
 export declare const DataContext: import("react").Context<BarChartDataPoint[]>;
 declare const _default: import("react").FunctionComponent<Props>;

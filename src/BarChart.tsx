@@ -12,7 +12,6 @@ import { DataContext } from ".";
 import RangeLayer from "./ChartComponents/RangeLayer";
 import { useEffect } from "react";
 import DataHunchIndicator from "./ChartComponents/DataHunch/DataHunchIndicators";
-import { DHProps } from "./TableComponents/Table";
 import { DataHunch } from "./Interfaces/Types";
 import { stateUpdateWrapperUseJSON } from "./Interfaces/StateChecker";
 import { Tooltip } from "@material-ui/core";
@@ -21,9 +20,14 @@ import CategoricalIndicator from "./ChartComponents/DataHunch/CategoricalIndicat
 import ChartLegends from "./ChartComponents/ChartLegends";
 import SketchLayer from "./ChartComponents/SketchLayer";
 import ManipulationForm from "./ChartComponents/Forms/ManipulationForm";
+import { format } from "d3-format";
+import { textwrap } from 'd3-textwrap';
 
-
-const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
+type Props = {
+    dataHunchArray: DataHunch[];
+    datasetExplanation: string;
+};
+const BarChart: FC<Props> = ({ dataHunchArray, datasetExplanation }: Props) => {
 
     const store = useContext(Store);
 
@@ -53,31 +57,37 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
     const bandScale = makeBandScale(dataSet, store.svgHeight);
     const categoricalColorScale = makeCategoricalScale(dataSet);
 
-    const yAxis: any = axisTop(valueScale);
+    const yAxis: any = axisTop(valueScale).tickFormat(format('.2s'));
     const xAxis: any = axisLeft(bandScale);
 
     select('#vertical-axis')
         .attr('transform', `translate(0,${margin.top})`)
         .call(yAxis);
 
+
+    const wrap = textwrap().bounds({ width: 50, height: bandScale.bandwidth() }).method('tspans');
+
     select('#band-axis')
         .attr("transform", `translate(${margin.left},0)`)
-        .call(xAxis);
+        .call(xAxis)
+        .selectAll(".tick text")
+        .call(wrap);
+
 
 
     return <div>
-
-
         <svg width={store.svgWidth} height={store.svgHeight} >
             <ChartLegends />
             <g id='chart-title'>
-                <text
-                    x={store.svgWidth * 0.5}
-                    y={store.svgHeight - margin.bottom}
-                    alignmentBaseline='hanging'
-                    textAnchor="middle"
-                    fontSize='large'
-                >{store.datasetName}</text>
+                <Tooltip title={datasetExplanation} >
+                    <text
+                        x={store.svgWidth * 0.5}
+                        y={store.svgHeight - margin.bottom}
+                        alignmentBaseline='hanging'
+                        textAnchor="middle"
+                        fontSize='large'
+                    >{store.datasetName}{datasetExplanation.length > 0 ? '*' : ''}</text>
+                </Tooltip>
                 {allChartDHArray.map((d, i) => {
                     return (
                         <Tooltip title={
@@ -129,8 +139,6 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
             </g>
 
 
-
-
             <g id='data-hunches-container'>
 
                 {/* TODO this part needs some redo depending on how alex wants the indicator/full bar look like */}
@@ -146,7 +154,6 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                             <CategoricalIndicator dataHunchArrayString={JSON.stringify(catDH)} key={`${barDP.label}-catindicator`} />
                         </>);
 
-
                         // return (
                         //     <>
                         //         <DataHunchIndicator
@@ -157,7 +164,6 @@ const BarChart: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                         //             dataHunchArrayString={JSON.stringify(catDH.filter(d => store.selectedDH.includes(d.id)))}
                         //             key={`${barDP.label}-catindicator`} />
                         //     </>);
-
                     } else {
                         return <></>;
                     }

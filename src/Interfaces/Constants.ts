@@ -2,7 +2,7 @@ import { schemeTableau10 } from 'd3-scale-chromatic';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore/lite';
 
-export const margin = ({ top: 30, right: 100, bottom: 100, left: 30 });
+export const margin = ({ top: 30, right: 100, bottom: 100, left: 70 });
 
 export const LargeNumber = 999;
 

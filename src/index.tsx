@@ -1,6 +1,5 @@
 import { createContext, FC, useContext, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
-import BarChart from "./BarChart";
 import { BarChartDataPoint, DataHunch } from "./Interfaces/Types";
 import Store from "./Interfaces/Store";
 import TopBar from "./Controls/TopBar";
@@ -9,17 +8,19 @@ import Table from "./TableComponents/Table";
 import { getDocs, collection, getDoc, doc } from "firebase/firestore/lite";
 import { stateUpdateWrapperUseJSON } from "./Interfaces/StateChecker";
 import { firebaseSetup } from "./Interfaces/Constants";
+import BarChart from "./BarChart";
 
 type Props = {
     dataSet: BarChartDataPoint[];
     datasetName: string;
     svgWidth: number;
     svgHeight: number;
+    datasetExplanation: string;
 };
 
 export const DataContext = createContext<BarChartDataPoint[]>([]);
 
-const BarChartWithDH: FC<Props> = ({ datasetName, dataSet, svgWidth, svgHeight }: Props) => {
+const BarChartWithDH: FC<Props> = ({ datasetName, dataSet, svgWidth, svgHeight, datasetExplanation }: Props) => {
     const store = useContext(Store);
 
     const [improvedDataSet, setImprovedDataSet] = useState(dataSet);
@@ -92,7 +93,9 @@ const BarChartWithDH: FC<Props> = ({ datasetName, dataSet, svgWidth, svgHeight }
                 <TopBar />
                 <Grid container spacing={1}>
                     <Grid item xs={12} lg={6} >
-                        <BarChart dataHunchArray={savedDH} />
+                        <BarChart
+                            dataHunchArray={savedDH}
+                            datasetExplanation={datasetExplanation} />
                     </Grid>
                     <Grid item xs={12} lg={6}>
                         <Table dataHunchArray={savedDH} />

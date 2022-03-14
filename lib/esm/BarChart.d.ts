@@ -1,4 +1,8 @@
 /// <reference types="react" />
-import { DHProps } from "./TableComponents/Table";
-declare const _default: import("react").FunctionComponent<DHProps>;
+import { DataHunch } from "./Interfaces/Types";
+declare type Props = {
+    dataHunchArray: DataHunch[];
+    datasetExplanation: string;
+};
+declare const _default: import("react").FunctionComponent<Props>;
 export default _default;
