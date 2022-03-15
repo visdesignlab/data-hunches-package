@@ -30,13 +30,12 @@ const SketchyPolygon: FC<Props> = ({ dataHunch, points, fill, opacity, highlight
             const sketchyDH = rc.polygon((points), {
                 fill: fill,
                 stroke: 'white',
-                fillStyle: 'solid',
+                fillStyle: 'zigzag',
                 roughness: 2,
-                hachureAngle: 60,
-                hachureGap: 10,
-                fillWeight: 1,
+                hachureAngle: 5,
+                hachureGap: 5,
+                fillWeight: 2,
                 strokeWidth: 1,
-
             });
             drawingG.appendChild(sketchyDH);
         }
@@ -62,6 +61,7 @@ const SketchyPolygon: FC<Props> = ({ dataHunch, points, fill, opacity, highlight
             onMouseOut={() => { store.setHighlightedDH(-1); }}
             onClick={() => { store.setSelectedDH([dataHunch.id]); }}
             opacity={opacity}
+            // opacity={1}
             cursor='pointer' />
     </Tooltip>
     );

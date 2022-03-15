@@ -22,6 +22,7 @@ import SketchLayer from "./ChartComponents/SketchLayer";
 import ManipulationForm from "./ChartComponents/Forms/ManipulationForm";
 import { format } from "d3-format";
 import { textwrap } from 'd3-textwrap';
+import ManipulationLayer from "./ChartComponents/ManipulationLayer";
 
 type Props = {
     dataHunchArray: DataHunch[];
@@ -170,7 +171,9 @@ const BarChart: FC<Props> = ({ dataHunchArray, datasetExplanation }: Props) => {
                 })}
             </g>
 
-            {store.inputMode === 'manipulations' ? <RangeLayer sendManipulation={sendManipulationToParent} /> : <></>}
+            {store.inputMode === 'range' ? <RangeLayer sendManipulation={sendManipulationToParent} /> : <></>}
+
+            {store.inputMode === 'manipulations' ? <ManipulationLayer sendManipulation={sendManipulationToParent}></ManipulationLayer> : <></>}
 
             {store.inputMode === 'sketch' ?
                 <SketchLayer sendManipulation={sendManipulationToParent} /> : <></>
@@ -184,7 +187,7 @@ const BarChart: FC<Props> = ({ dataHunchArray, datasetExplanation }: Props) => {
 
         </svg>
         <div style={{ width: DefaultForeignObjectWidth, height: DefaultForeignObjectHeight }}>
-            {(store.inputMode === 'sketch' || store.inputMode === 'manipulations') ?
+            {(store.inputMode === 'sketch' || store.inputMode === 'manipulations' || store.inputMode === 'range') ?
                 <ManipulationForm manipulationOutput={manipulationResult} type={store.inputMode} /> : <></>
             }
         </div>
@@ -192,3 +195,4 @@ const BarChart: FC<Props> = ({ dataHunchArray, datasetExplanation }: Props) => {
 };
 
 export default observer(BarChart);
+

@@ -39,7 +39,7 @@ export const useStyles = makeStyles((theme: Theme) =>
         },
         foreignObjectContainer: {
             backgroundColor: 'rgb(238, 238, 238, 0.8)',
-            padding: '5px',
+            padding: '5px !important',
         },
         radioStyle: {
             marginTop: -7,

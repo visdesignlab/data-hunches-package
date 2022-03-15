@@ -35,7 +35,7 @@ const FormComponent: FC<Props> = ({ manipulationOutput }: Props) => {
 
     return (
         <foreignObject id='form-component'
-            display={!['none', 'manipulations', 'sketch'].includes(store.inputMode) ? undefined : 'none'}
+            display={!['none', 'manipulations', 'sketch', 'range'].includes(store.inputMode) ? undefined : 'none'}
             width={DefaultForeignObjectWidth}
             height={DefaultForeignObjectHeight}>
             {formContent[store.inputMode]}

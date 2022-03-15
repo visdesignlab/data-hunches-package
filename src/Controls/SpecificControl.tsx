@@ -31,6 +31,12 @@ const SpecificControl: FC = () => {
         store.selectADataPointMode(false);
     };
 
+
+    const rangeOnClickHandler = () => {
+        store.setInputMode('range');
+        store.selectADataPointMode(false);
+    };
+
     const categoricalClickHandler = () => {
         store.setInputMode('categorical');
         store.selectADataPointMode(false);
@@ -52,8 +58,11 @@ const SpecificControl: FC = () => {
                     <Button onClick={annotationOnClickHandler}>
                         Annotation
                     </Button>
+                    <Button onClick={rangeOnClickHandler}>
+                        Range
+                    </Button>
                     <Button onClick={manipulationOnClickHandler}>
-                        Direct Manipulation
+                        Manipulation
                     </Button>
                     <Button onClick={ratingClickHandler}>
                         Rating

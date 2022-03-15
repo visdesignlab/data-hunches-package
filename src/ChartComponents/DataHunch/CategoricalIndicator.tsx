@@ -115,7 +115,7 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
     const chooseFill = (index: number) => {
         if (index < dataHunchArray.length) {
 
-            return [categoricalColorScale(dataHunchArray[index].content) as string, 0.5 + 0.1 * dataHunchArray[index].confidenceLevel] as [string, number];
+            return [categoricalColorScale(dataHunchArray[index].content) as string, .75 + 0.05 * dataHunchArray[index].confidenceLevel] as [string, number];
         }
         return ['none', 1] as [string, number];
     };

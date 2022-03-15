@@ -35,7 +35,7 @@ export type InputMode =
     'sketch' |
     'rating' |
     'data space' |
-    'model' |
+    'model' | 'range' |
     'manipulations';
 
 export type SelectionType = Selection<any, undefined, HTMLElement, undefined>;

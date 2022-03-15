@@ -9,7 +9,7 @@ import SubmitCancelButtons from "./SubmitCancelButtons";
 
 type Props = {
     manipulationOutput: string;
-    type: 'manipulations' | 'sketch';
+    type: 'manipulations' | 'sketch' | 'range';
 };
 
 const ManipulationForm: FC<Props> = ({ manipulationOutput, type }: Props) => {
@@ -25,18 +25,13 @@ const ManipulationForm: FC<Props> = ({ manipulationOutput, type }: Props) => {
         setConfidenceInput(confidenceValue);
     };
 
-    const calculateType = () => {
-        const parsedResult = JSON.parse('[' + manipulationOutput + ']');
-        return parsedResult.length > 1 ? 'range' : 'manipulations';
-    };
-
     return (
         <Container className={styles.foreignObjectContainer}>
             <ReasonConfidenceInput updateConfidenceReason={sendConfidenceReasonToParent} />
             <SubmitCancelButtons disableSubmit={
                 reasonInput.length === 0 || manipulationOutput === ''}
                 dhToSubmit={{
-                    type: type === 'manipulations' ? calculateType() : type,
+                    type: type,
                     user: store.userName,
                     label: `${store.selectedDP === undefined ? 'all chart' : store.selectedDP}`,
                     // Add Content
