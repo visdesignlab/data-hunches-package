@@ -74,7 +74,7 @@ const ManipulationLayer: FC<Props> = ({ sendManipulation }: Props) => {
 
             const rc = rough.default.svg(drawingG);
 
-            const sketchyRec = rc.rectangle(pointer(e)[0] || 0, bandScale(store.selectedDP || '') || 0, pointer(e)[0] - margin.left, bandScale.bandwidth(), sketchyOption);
+            const sketchyRec = rc.rectangle(margin.left, bandScale(store.selectedDP || '') || 0, pointer(e)[0] - margin.left, bandScale.bandwidth(), sketchyOption);
             drawingG.appendChild(sketchyRec);
         }
         setIsMouseDown(true);
@@ -89,10 +89,12 @@ const ManipulationLayer: FC<Props> = ({ sendManipulation }: Props) => {
 
             <rect id='drag-rect'
                 x={margin.left}
-                y={(bandScale(store.selectedDP || '') || 0) - 50}
+                // y={(bandScale(store.selectedDP || '') || 0) - 50}
+                y={margin.top}
                 width={store.svgWidth - margin.left - margin.right}
-                height={bandScale.bandwidth() + 100}
-                opacity={0.5}
+                // height={bandScale.bandwidth() + 100}
+                height={store.svgHeight - margin.top - margin.bottom}
+                opacity={0}
                 fill={LightGray}
                 onMouseLeave={() => { setIsMouseDown(false); }}
                 onMouseUp={mouseUpHandler}

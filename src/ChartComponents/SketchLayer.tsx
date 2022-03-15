@@ -69,13 +69,13 @@ const SketchLayer: FC<Props> = ({ sendManipulation }: Props) => {
     }, [rectRef]);
 
     return (
-        <g id='dragging-layer'>
+        <g id='dragging-layer' display={store.inputMode === 'sketch' ? undefined : 'none'}>
             <rect
                 ref={rectRef}
                 x={0}
                 y={0}
                 fill={LightGray}
-                opacity={0.5}
+                opacity={0.2}
                 width={store.svgWidth}
                 height={store.svgHeight}
             />

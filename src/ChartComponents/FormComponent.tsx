@@ -6,7 +6,6 @@ import Store from "../Interfaces/Store";
 import AnnotationForm from "./Forms/AnnotationForm";
 import CategoricalForm from "./Forms/CategoricalForm";
 import DataSpaceForm from "./Forms/DataSpaceForm";
-import ManipulationForm from "./Forms/ManipulationForm";
 import ModelInputForm from "./Forms/ModelInputForm";
 import RatingForm from "./Forms/RatingForm";
 

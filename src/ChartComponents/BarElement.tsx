@@ -22,6 +22,13 @@ type Props = {
 const BarElement: FC<Props> = ({ width, height, xPos, yPos, fill, dataElement }: Props) => {
     const store = useContext(Store);
 
+    const evaluateHighlight = () => {
+        if (!['none', 'manipulations', 'sketch', 'range'].includes(store.inputMode)) {
+            return store.selectedDP === dataElement.label ? SelectionColor : 'none';
+        }
+        return 'none';
+    };
+
     const barElementOnClick = (e: any) => {
         if (store.selectingADataPoint) {
             store.setCurrentSelectedDP(dataElement.label);
@@ -39,6 +46,7 @@ const BarElement: FC<Props> = ({ width, height, xPos, yPos, fill, dataElement }:
             select('#form-component')
                 .attr('x', formXLoc)
                 .attr('y', formYLoc);
+
         }
     };
 
@@ -51,7 +59,7 @@ const BarElement: FC<Props> = ({ width, height, xPos, yPos, fill, dataElement }:
         // onMouseLeave={() => { store.setHighlightedDH(-1); store.setSelectedDH([]); }}
         fill={fill}
         strokeWidth={4}
-        stroke={store.selectedDP === dataElement.label ? SelectionColor : 'none'}>
+        stroke={evaluateHighlight()}>
     </rect>;
 };
 

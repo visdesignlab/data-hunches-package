@@ -84,16 +84,18 @@ const RangeLayer: FC<Props> = ({ sendManipulation }: Props) => {
 
     return (
         <g
-            display={store.inputMode === 'manipulations' ? undefined : 'none'}>
+            display={store.inputMode === 'range' ? undefined : 'none'}>
 
             <g id='result-rect' ref={resultRef} />
 
             <rect id='drag-rect'
                 x={margin.left}
-                y={(bandScale(store.selectedDP || '') || 0) - 50}
+                // y={(bandScale(store.selectedDP || '') || 0) - 50}
+                y={margin.top}
                 width={store.svgWidth - margin.left - margin.right}
-                height={bandScale.bandwidth() + 100}
-                opacity={0.5}
+                // height={bandScale.bandwidth() + 100}
+                height={store.svgHeight - margin.top - margin.bottom}
+                opacity={0}
                 fill={LightGray}
                 onMouseLeave={() => { setIsMouseDown(false); }}
                 onMouseUp={mouseUpHandler}

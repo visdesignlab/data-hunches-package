@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { FC, useContext, useState } from "react";
 import BarElement from './ChartComponents/BarElement';
 import { makeBandScale, makeCategoricalScale, makeValueScale } from "./HelperFunctions/ScaleGenerator";
-import { DarkBlue, DefaultForeignObjectHeight, DefaultForeignObjectWidth, IndicatorSize, IndicatorSpace, margin } from "./Interfaces/Constants";
+import { DarkBlue, DefaultForeignObjectHeight, DefaultForeignObjectWidth, IndicatorSize, IndicatorSpace, margin, SelectionColor } from "./Interfaces/Constants";
 import Store from "./Interfaces/Store";
 import { axisLeft, axisTop } from "d3-axis";
 import { select } from "d3-selection";
@@ -23,6 +23,7 @@ import ManipulationForm from "./ChartComponents/Forms/ManipulationForm";
 import { format } from "d3-format";
 import { textwrap } from 'd3-textwrap';
 import ManipulationLayer from "./ChartComponents/ManipulationLayer";
+import { useLayoutEffect } from "react";
 
 type Props = {
     dataHunchArray: DataHunch[];
@@ -73,6 +74,14 @@ const BarChart: FC<Props> = ({ dataHunchArray, datasetExplanation }: Props) => {
         .call(xAxis)
         .selectAll(".tick text")
         .call(wrap);
+
+    useLayoutEffect(() => {
+        if (store.selectedDP) {
+            select('#band-axis').selectAll(".tick text").attr('fill', d => d === store.selectedDP ? SelectionColor : 'black');
+        } else {
+            select('#band-axis').selectAll(".tick text").attr('fill', 'black');
+        }
+    }, [store.selectedDP]);
 
 
 
@@ -142,8 +151,6 @@ const BarChart: FC<Props> = ({ dataHunchArray, datasetExplanation }: Props) => {
 
             <g id='data-hunches-container'>
 
-                {/* TODO this part needs some redo depending on how alex wants the indicator/full bar look like */}
-
                 {dataSet.map((barDP) => {
                     if (barDP.dataHunchArray) {
                         const catDH = barDP.dataHunchArray.filter(d => d.type === 'categorical');
@@ -171,13 +178,11 @@ const BarChart: FC<Props> = ({ dataHunchArray, datasetExplanation }: Props) => {
                 })}
             </g>
 
-            {store.inputMode === 'range' ? <RangeLayer sendManipulation={sendManipulationToParent} /> : <></>}
+            <RangeLayer sendManipulation={sendManipulationToParent} />
 
-            {store.inputMode === 'manipulations' ? <ManipulationLayer sendManipulation={sendManipulationToParent}></ManipulationLayer> : <></>}
+            <ManipulationLayer sendManipulation={sendManipulationToParent} />
+            <SketchLayer sendManipulation={sendManipulationToParent} />
 
-            {store.inputMode === 'sketch' ?
-                <SketchLayer sendManipulation={sendManipulationToParent} /> : <></>
-            }
 
 
             <FormComponent manipulationOutput={manipulationResult} />
