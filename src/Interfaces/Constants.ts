@@ -51,9 +51,11 @@ export const firebaseSetup = getFirestore(initializeApp(FirebaseSetupConstants))
 // Need color and stroke
 export const DefaultSketchyOptions = {
     fillStyle: 'zigzag',
-    roughness: 2,
-    hachureAngle: 60,
-    hachureGap: 10,
+    roughness: 1.5,
+    hachureAngle: 50,
+    hachureGap: 8,
     fillWeight: 1,
     strokeWidth: 2,
+    fill: DarkGray,
+    stroke: DarkGray,
 };

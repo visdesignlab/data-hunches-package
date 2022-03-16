@@ -16,7 +16,6 @@ import { DHIndicatorText } from "../../Interfaces/StyledComponents";
 import { Tooltip } from "@material-ui/core";
 import OverAxisIndicator from "./OverAxisIndicator";
 import { DHProps } from "../../TableComponents/Table";
-import DHIndicatorRect from "./DHIndicatorRect";
 
 
 const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
@@ -108,31 +107,19 @@ const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                 if (parseFloat(d.content) > valueScale.domain()[1]) {
                     return <OverAxisIndicator dataHunch={d} key={`${d.id}-overaxis`} />;
                 }
-                if (inVisDH.length > 3) {
-                    return (
-                        <DHIndicatorRect
-                            key={`${d.id}-dhindicatorRect`}
-                            dataHunch={d}
-                            highlighted={d.id === store.highlightedDH}
-                            selected={store.selectedDH.includes(d.id)}
-                            xPos={calculateX(d, true)}
-                            height={bandScale.bandwidth()}
-                            yPos={bandScale(d.label) || 0}
-                        />
-                    );
-                } else {
-                    return (
-                        <SketchyBar
-                            dataHunch={d}
-                            xPos={calculateX(d, false)}
-                            key={`${d.id}-dhindicatorSketchy`}
-                            yPos={(bandScale(d.label) || 0) + bandScale.bandwidth() / inVisDH.length * i}
-                            highlighted={d.id === store.highlightedDH}
-                            selected={store.selectedDH.includes(d.id)}
-                            width={calculateWidth(d)}
-                            height={bandScale.bandwidth() / inVisDH.length} />
-                    );
-                }
+                return (
+                    <SketchyBar
+                        valueScaleDomain={JSON.stringify(valueScale.domain())}
+                        valueScaleRange={JSON.stringify(valueScale.range())}
+                        dataHunch={d}
+                        xPos={calculateX(d, d.type === 'range' || inVisDH.length > 3)}
+                        key={`${d.id}-dhindicatorSketchy`}
+                        yPos={(bandScale(d.label) || 0) + (inVisDH.length > 3 ? 0 : (bandScale.bandwidth() / inVisDH.length * i))}
+                        highlighted={d.id === store.highlightedDH}
+                        selected={store.selectedDH.includes(d.id)}
+                        width={(d.type === 'range' || inVisDH.length > 3) ? 4 : calculateWidth(d)}
+                        height={bandScale.bandwidth() / (inVisDH.length > 3 ? 1 : inVisDH.length)} />
+                );
             })}
 
             {offVisDH.map((d, i) => {
