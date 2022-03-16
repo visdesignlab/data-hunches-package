@@ -1,6 +1,6 @@
 {
     "name": "@visdesignlab/data-hunches-react",
-    "version": "0.0.27",
+    "version": "0.0.28",
     "main": "./lib/cjs/index.js",
     "module": "./lib/esm/index.js",
     "types": "./lib/esm/index.d.ts",
