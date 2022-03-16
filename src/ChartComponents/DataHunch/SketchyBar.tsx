@@ -3,9 +3,8 @@ import { scaleLinear } from "d3-scale";
 import { select } from "d3-selection";
 import { observer } from "mobx-react-lite";
 import { FC, useCallback, useContext, useLayoutEffect, useRef } from "react";
-import 'roughjs';
 import * as rough from 'roughjs/bin/rough';
-import { SelectionColor, DarkGray, DefaultSketchyOptions, margin } from "../../Interfaces/Constants";
+import { SelectionColor, DarkGray, DefaultSketchyOptions, HighlightColor } from "../../Interfaces/Constants";
 import Store from "../../Interfaces/Store";
 import { DataHunch } from "../../Interfaces/Types";
 
@@ -64,7 +63,7 @@ const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch, highlight
     useLayoutEffect(() => {
         if (dhRef.current !== null) {
             if (highlighted) {
-                select(dhRef.current).selectAll('path').attr('stroke', SelectionColor);
+                select(dhRef.current).selectAll('path').attr('stroke', HighlightColor);
             } else if (selected) {
                 select(dhRef.current).selectAll('path').attr('stroke', SelectionColor);
             } else {

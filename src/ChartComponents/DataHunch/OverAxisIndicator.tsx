@@ -1,72 +1,63 @@
 import { Tooltip } from "@material-ui/core";
+import { select } from "d3-selection";
 import { observer } from "mobx-react-lite";
+import { useLayoutEffect } from "react";
+import { useRef } from "react";
 import { FC, useContext, useEffect, useState } from "react";
 import { DataContext } from "../..";
 import { handlePreviewOnClick, handleResetOnClick } from "../../HelperFunctions/PreviewReset";
-import { makeBandScale } from "../../HelperFunctions/ScaleGenerator";
-import { margin, DarkGray } from "../../Interfaces/Constants";
+import { makeBandScale, makeValueScale } from "../../HelperFunctions/ScaleGenerator";
+import { margin, DarkGray, DefaultSketchyOptions, HighlightColor, SelectionColor } from "../../Interfaces/Constants";
 import Store from "../../Interfaces/Store";
-import { NonRoughDHIndicatorRect } from "../../Interfaces/StyledComponents";
-import { DataHunch } from "../../Interfaces/Types";
+import { BarChartDataPoint, DataHunch } from "../../Interfaces/Types";
+import * as rough from 'roughjs/bin/rough';
+import SingleOverAxisIndicator from "./SingleOverAxisIndicator";
 type Props = {
-    dataHunch: DataHunch;
+    dataHunchArray: DataHunch[];
+    dataPoint: BarChartDataPoint;
 };
-const OverAxisIndicator: FC<Props> = ({ dataHunch }: Props) => {
+const OverAxisIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => {
     const store = useContext(Store);
 
     const dataSet = useContext(DataContext);
 
-    const [needReset, setNeedReset] = useState(false);
+    const curveRef = useRef(null);
 
-    const honrizontalBandScale = makeBandScale(dataSet, store.svgWidth);
 
-    useEffect(() => {
-        if (store.selectedDH.includes(dataHunch.id)) {
-            store.setNeedToShowPreview(true);
-            setNeedReset(true);
-            handlePreviewOnClick(dataSet, dataHunch.label, parseFloat(dataHunch.content), store.svgHeight, store.svgWidth, store.containCategory.length > 0, undefined);
-        } else if (!store.selectedDH.includes(dataHunch.id) && needReset) {
-            store.setNeedToShowPreview(false);
-            setNeedReset(false);
-            handleResetOnClick(dataSet, store.svgHeight, store.svgWidth, store.containCategory.length > 0, store.selectedDP);
-        }
-    }, [store.selectedDH]);
+    const bandScale = makeBandScale(dataSet, store.svgHeight);
+    const valueScale = makeValueScale(dataSet, store.svgWidth);
 
     return (
-        <Tooltip title={dataHunch.reasoning}>
-            <g
-                cursor='pointer'
-                onMouseOver={() => {
-                    // store.setSelectedDH([dataHunch.id]);
-                    store.setHighlightedDH(dataHunch.id);
-                }}
-                onMouseOut={() => {
-                    // store.setSelectedDH([]);
-                    store.setHighlightedDH(-1);
-                }}
+        <g>
+            <text
+                x={valueScale(dataPoint.value) + 7}
+                y={(bandScale(dataPoint.label) || 0) + 0.75 * bandScale.bandwidth() - 2}
+                textAnchor="middle"
+                fontSize="smaller"
+                alignmentBaseline="hanging"
             >
-                <line
-                    x1={(honrizontalBandScale(dataHunch.label) || 0) + 0.5 * honrizontalBandScale.bandwidth()}
-                    x2={(honrizontalBandScale(dataHunch.label) || 0) + 0.5 * honrizontalBandScale.bandwidth()}
-                    stroke={DarkGray}
-                    strokeWidth={4}
-                    y1={margin.top - 10}
-                    y2={margin.top - 25} />
-                <polygon
-                    points="0,0 7,5 -7,5"
-                    fill={DarkGray}
-                    stroke='none'
-                    transform={`translate(${(honrizontalBandScale(dataHunch.label) || 0) + 0.5 * honrizontalBandScale.bandwidth()},${margin.top - 25})`}
-                />
-                <NonRoughDHIndicatorRect
-
-                    x={honrizontalBandScale(dataHunch.label) || 0}
-                    width={honrizontalBandScale.bandwidth()}
-                    y={margin.top - 10}
-
-                />
-            </g>
-        </Tooltip>
+                {dataPoint.value}
+            </text>
+            <g ref={curveRef} />
+            {dataHunchArray.map((dataHunch, i) => {
+                const startingPoint = valueScale(dataPoint.value) + 10;
+                return (<SingleOverAxisIndicator
+                    dataHunch={dataHunch}
+                    highlighted={store.highlightedDH === dataHunch.id}
+                    selected={store.selectedDH.includes(dataHunch.id)}
+                    curvePoints={JSON.stringify([
+                        [startingPoint, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()],
+                        [startingPoint + (i + 1) * 15, (bandScale(dataPoint.label) || 0)],
+                        [startingPoint + (i + 1) * 30, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()]])}
+                    arrowPoints={JSON.stringify([
+                        [startingPoint + (i + 1) * 30 - 8, (bandScale(dataPoint.label) || 0) - 5 + 0.5 * bandScale.bandwidth()],
+                        [startingPoint + (i + 1) * 30 - 3, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth() + 5],
+                        [startingPoint + (i + 1) * 30 + 2, (bandScale(dataPoint.label) || 0) - 5 + 0.5 * bandScale.bandwidth()]])}
+                    key={`overaxis${dataHunch.id}`}
+                    textX={valueScale(dataPoint.value) + 7 + (i + 1) * 30}
+                    textY={(bandScale(dataPoint.label) || 0) + 0.75 * bandScale.bandwidth()} />);
+            })}
+        </g>
     );
 };
 

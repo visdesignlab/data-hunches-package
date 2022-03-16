@@ -5,12 +5,11 @@ import { FC, useContext, useLayoutEffect, useRef } from "react";
 import Store from "../../Interfaces/Store";
 import { DataHunch } from "../../Interfaces/Types";
 import * as rough from 'roughjs/bin/rough';
-import { Point } from "react-rough";
 import { HighlightColor, SelectionColor } from "../../Interfaces/Constants";
 
 type Props = {
     dataHunch: DataHunch;
-    points: Point[];
+    points: [number, number][];
     fill: string;
     opacity: number;
     highlighted: boolean;

@@ -1,10 +1,11 @@
 /// <reference types="react" />
 import { DataHunch } from "../../Interfaces/Types";
 declare type Props = {
+    curvePoints: string;
+    arrowPoints: string;
+    textX: number;
+    textY: number;
     dataHunch: DataHunch;
-    points: [number, number][];
-    fill: string;
-    opacity: number;
     highlighted: boolean;
     selected: boolean;
 };

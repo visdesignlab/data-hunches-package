@@ -1,20 +1,20 @@
 import { Delaunay } from "d3-delaunay";
 import { observer } from "mobx-react-lite";
 import { FC, useContext, useEffect, useState } from "react";
-import { Point } from "react-rough";
 import { DataContext } from "../..";
 import { makeValueScale, makeBandScale, makeCategoricalScale } from "../../HelperFunctions/ScaleGenerator";
 import { margin } from "../../Interfaces/Constants";
 import { stateUpdateWrapperUseJSON } from "../../Interfaces/StateChecker";
 import Store from "../../Interfaces/Store";
-import { DataHunch } from "../../Interfaces/Types";
+import { BarChartDataPoint, DataHunch } from "../../Interfaces/Types";
 import SketchyPolygon from "./SketchyPolygon";
 
 type Props = {
     dataHunchArrayString: string;
+    barChartPoint: BarChartDataPoint;
 };
 
-const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
+const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString, barChartPoint }: Props) => {
 
     const dataSet = useContext(DataContext);
     const store = useContext(Store);
@@ -36,7 +36,6 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
     //seperate this part out so random points stay the same
     useEffect(() => {
         if (dataHunchArray.length > 0 && polygonPoints.length === 0) {
-            const barChartPoint = dataSet.filter(dp => dp.label === dataHunchArray[0].label)[0];
             const height = bandScale.bandwidth();
             const width = valueScale(barChartPoint.value) - margin.left;
 
@@ -138,7 +137,7 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString }: Props) => {
                         key={`polygon-${i}`}
                         highlighted={dataHunchArray[i].id === store.highlightedDH}
                         selected={store.selectedDH.includes(dataHunchArray[i].id)}
-                        points={d as Point[]}
+                        points={d as [number, number][]}
                         opacity={chooseFill(i)[1]}
                         fill={chooseFill(i)[0].toString()} />;
                 } else {

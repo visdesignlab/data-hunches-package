@@ -10,15 +10,19 @@ import { IndicatorSize, IndicatorSpace, margin } from "../../Interfaces/Constant
 import { stateUpdateWrapperUseJSON } from "../../Interfaces/StateChecker";
 import Store from "../../Interfaces/Store";
 import 'roughjs';
-import { DataHunch } from "../../Interfaces/Types";
+import { BarChartDataPoint, DataHunch } from "../../Interfaces/Types";
 import SketchyBar from "./SketchyBar";
 import { DHIndicatorText } from "../../Interfaces/StyledComponents";
 import { Tooltip } from "@material-ui/core";
 import OverAxisIndicator from "./OverAxisIndicator";
 import { DHProps } from "../../TableComponents/Table";
 
+type Props = {
+    dataHunchArray: DataHunch[],
+    dataPoint: BarChartDataPoint;
+};
 
-const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
+const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => {
     const store = useContext(Store);
 
     const dataSet = useContext(DataContext);
@@ -30,16 +34,20 @@ const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
     const [inVisDH, setInVisDH] = useState<DataHunch[]>([]);
     const [offVisDH, setOffVisDH] = useState<DataHunch[]>([]);
     const [exDH, setExDH] = useState<DataHunch[]>([]);
+    const [aboveAxisDH, setAboveAxisDH] = useState<DataHunch[]>([]);
 
     useEffect(() => {
         let tempInVis: DataHunch[] = [];
         let tempOffVis: DataHunch[] = [];
         let tempExDH: DataHunch[] = [];
+        let tempAboveAxisDH: DataHunch[] = [];
         dataHunchArray.forEach((d) => {
             if (['annotation', 'categorical'].includes(d.type)) {
                 tempOffVis.push(d);
             } else if (d.type === 'exclusion') {
                 tempExDH.push(d);
+            } else if (d.type === 'data space' && parseFloat(d.content) > valueScale.domain()[1]) {
+                tempAboveAxisDH.push(d);
             }
             else {
                 tempInVis.push(d);
@@ -48,6 +56,7 @@ const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
         stateUpdateWrapperUseJSON(inVisDH, tempInVis, setInVisDH);
         stateUpdateWrapperUseJSON(offVisDH, tempOffVis, setOffVisDH);
         stateUpdateWrapperUseJSON(exDH, tempExDH, setExDH);
+        stateUpdateWrapperUseJSON(aboveAxisDH, tempAboveAxisDH, setAboveAxisDH);
     }, [dataHunchArray]);
 
     const calculateX = (dataHunch: DataHunch, condensed: boolean) => {
@@ -104,9 +113,6 @@ const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
     return (
         <g >
             {inVisDH.map((d, i) => {
-                if (parseFloat(d.content) > valueScale.domain()[1]) {
-                    return <OverAxisIndicator dataHunch={d} key={`${d.id}-overaxis`} />;
-                }
                 return (
                     <SketchyBar
                         valueScaleDomain={JSON.stringify(valueScale.domain())}
@@ -122,23 +128,31 @@ const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                 );
             })}
 
+            {aboveAxisDH.length > 0 ?
+                <OverAxisIndicator dataPoint={dataPoint} dataHunchArray={aboveAxisDH} />
+                :
+                <></>}
+
+
             {offVisDH.map((d, i) => {
                 return (
-                    <Tooltip title={
-                        <div>
-                            <p>
-                                Content: {d.content}
-                            </p>
-                            <p>
-                                Reasoning: {d.reasoning}
-                            </p>
-                        </div>
-                    }>
+                    <Tooltip
+                        key={`${d.id}-text`}
+                        title={
+                            <div>
+                                <p>
+                                    Content: {d.content}
+                                </p>
+                                <p>
+                                    Reasoning: {d.reasoning}
+                                </p>
+                            </div>
+                        }>
                         <DHIndicatorText
                             x={findXPos(d, i, offVisDH.length)}
                             y={(bandScale(d.label) || 0) + 0.5 * bandScale.bandwidth() + (2 * IndicatorSize) * (i % 2 === 0 ? -1 : 1)}
                             fontSize='larger'
-                            key={`${d.id}-text`}
+
                             isHighlighted={d.id === store.highlightedDH}
                             isSelected={store.selectedDH.includes(d.id)}
                             onClick={() => { store.setSelectedDH([d.id]); }}
@@ -150,15 +164,16 @@ const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
             })}
 
             {exDH.map((d, i) => {
-                return (<Tooltip title={<div>
-                    <p>
-                        Exclusion: {d.content}
-                    </p>
-                    <p>
-                        Reasoning: {d.reasoning}
-                    </p>
-                </div>
-                }>
+                return (<Tooltip key={`${d.id}-text`}
+                    title={<div>
+                        <p>
+                            Exclusion: {d.content}
+                        </p>
+                        <p>
+                            Reasoning: {d.reasoning}
+                        </p>
+                    </div>
+                    }>
                     <DHIndicatorText
                         isHighlighted={d.id === store.highlightedDH}
                         isSelected={store.selectedDH.includes(d.id)}
@@ -166,7 +181,7 @@ const DataHunchIndicator: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
                         y={(bandScale(d.label) || 0) + 0.5 * bandScale.bandwidth() + (2 * IndicatorSize) * (i % 2 === 0 ? -1 : 1)}
                         fontSize='small'
                         onClick={() => { store.setSelectedDH([d.id]); }}
-                        key={`${d.id}-text`}>
+                    >
                         x
                     </DHIndicatorText>
                 </Tooltip>);

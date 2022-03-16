@@ -57,9 +57,9 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
         // store.setSelectedDH([dataHunch.id]);
         store.setHighlightedDH(dataHunch.id);
         if (dataHunch.type === 'exclusion') {
-            setNeedReset(true);
-            store.setNeedToShowPreview(true);
-            handlePreviewOnClick(dataSet, dataHunch.label, undefined, store.svgHeight, store.svgWidth, store.containCategory.length > 0, undefined);
+            // setNeedReset(true);
+            // store.setNeedToShowPreview(true);
+            // handlePreviewOnClick(dataSet, dataHunch.label, undefined, store.svgHeight, store.svgWidth, store.containCategory.length > 0, undefined);
         } else if (dataHunch.type === 'model') {
             setNeedReset(true);
             store.setNeedToShowPreview(true);

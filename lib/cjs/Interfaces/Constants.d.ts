@@ -29,4 +29,6 @@ export declare const DefaultSketchyOptions: {
     hachureGap: number;
     fillWeight: number;
     strokeWidth: number;
+    fill: string;
+    stroke: string;
 };

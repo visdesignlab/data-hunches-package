@@ -156,10 +156,14 @@ const BarChart: FC<Props> = ({ dataHunchArray, datasetExplanation }: Props) => {
                         const catDH = barDP.dataHunchArray.filter(d => d.type === 'categorical');
                         return (<>
                             <DataHunchIndicator
+                                dataPoint={barDP}
                                 key={`${barDP.label}-dhindicator`}
                                 dataHunchArray={barDP.dataHunchArray}
                             />
-                            <CategoricalIndicator dataHunchArrayString={JSON.stringify(catDH)} key={`${barDP.label}-catindicator`} />
+                            <CategoricalIndicator
+                                dataHunchArrayString={JSON.stringify(catDH)}
+                                barChartPoint={barDP}
+                                key={`${barDP.label}-catindicator`} />
                         </>);
 
                         // return (
