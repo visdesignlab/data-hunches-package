@@ -1,5 +1,4 @@
 /// <reference types="react" />
-import 'roughjs';
 import { DataHunch } from "../../Interfaces/Types";
 declare type Props = {
     xPos: number;
