@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { FC } from "react";
 import { DataContext } from "../..";
 import { makeValueScale, makeBandScale } from "../../HelperFunctions/ScaleGenerator";
-import { IndicatorSize, IndicatorSpace, margin } from "../../Interfaces/Constants";
+import { IndicatorSize, margin } from "../../Interfaces/Constants";
 import { stateUpdateWrapperUseJSON } from "../../Interfaces/StateChecker";
 import Store from "../../Interfaces/Store";
 import 'roughjs';
@@ -14,8 +14,8 @@ import { BarChartDataPoint, DataHunch } from "../../Interfaces/Types";
 import SketchyBar from "./SketchyBar";
 import { DHIndicatorText } from "../../Interfaces/StyledComponents";
 import { Tooltip } from "@material-ui/core";
-import OverAxisIndicator from "./OverAxisIndicator";
-import { DHProps } from "../../TableComponents/Table";
+import SingleOverAxisIndicator from "./SingleOverAxisIndicator";
+import ExclusionIndicator from "./ExclusionIndicator";
 
 type Props = {
     dataHunchArray: DataHunch[],
@@ -23,13 +23,12 @@ type Props = {
 };
 
 const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => {
-    const store = useContext(Store);
 
+    const store = useContext(Store);
     const dataSet = useContext(DataContext);
 
     const valueScale = makeValueScale(dataSet, store.svgWidth);
     const bandScale = makeBandScale(dataSet, store.svgHeight);
-    // const categoricalColorScale = makeCategoricalScale(dataSet);
 
     const [inVisDH, setInVisDH] = useState<DataHunch[]>([]);
     const [offVisDH, setOffVisDH] = useState<DataHunch[]>([]);
@@ -129,13 +128,42 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
             })}
 
             {aboveAxisDH.length > 0 ?
-                <OverAxisIndicator dataPoint={dataPoint} dataHunchArray={aboveAxisDH} />
+                <g>
+                    <text
+                        x={valueScale(dataPoint.value) + 7}
+                        y={(bandScale(dataPoint.label) || 0) + 0.75 * bandScale.bandwidth() - 2}
+                        textAnchor="middle"
+                        fontSize="smaller"
+                        alignmentBaseline="hanging"
+                    >
+                        {dataPoint.value}
+                    </text>
+                    {aboveAxisDH.map((dataHunch, i) => {
+                        const startingPoint = valueScale(dataPoint.value) + 10;
+                        return (<SingleOverAxisIndicator
+                            dataHunch={dataHunch}
+                            highlighted={store.highlightedDH === dataHunch.id}
+                            selected={store.selectedDH.includes(dataHunch.id)}
+                            curvePoints={JSON.stringify([
+                                [startingPoint, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()],
+                                [startingPoint + (i + 1) * 15, (bandScale(dataPoint.label) || 0)],
+                                [startingPoint + (i + 1) * 30, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()]])}
+                            arrowPoints={JSON.stringify([
+                                [startingPoint + (i + 1) * 30 - 8, (bandScale(dataPoint.label) || 0) - 5 + 0.5 * bandScale.bandwidth()],
+                                [startingPoint + (i + 1) * 30 - 3, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth() + 5],
+                                [startingPoint + (i + 1) * 30 + 2, (bandScale(dataPoint.label) || 0) - 5 + 0.5 * bandScale.bandwidth()]])}
+                            key={`overaxis${dataHunch.id}`}
+                            textX={valueScale(dataPoint.value) + 7 + (i + 1) * 30}
+                            textY={(bandScale(dataPoint.label) || 0) + 0.75 * bandScale.bandwidth()} />);
+                    })}
+                </g>
                 :
                 <></>}
 
 
             {offVisDH.map((d, i) => {
                 return (
+
                     <Tooltip
                         key={`${d.id}-text`}
                         title={
@@ -152,7 +180,6 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                             x={findXPos(d, i, offVisDH.length)}
                             y={(bandScale(d.label) || 0) + 0.5 * bandScale.bandwidth() + (2 * IndicatorSize) * (i % 2 === 0 ? -1 : 1)}
                             fontSize='larger'
-
                             isHighlighted={d.id === store.highlightedDH}
                             isSelected={store.selectedDH.includes(d.id)}
                             onClick={() => { store.setSelectedDH([d.id]); }}
@@ -160,31 +187,43 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                             onMouseOut={() => { store.setHighlightedDH(-1); }}>
                             {calculateText(d.content, findXPos(d, i, offVisDH.length), offVisDH.length)}
                         </DHIndicatorText>
-                    </Tooltip>);
+                    </Tooltip>
+                );
             })}
 
             {exDH.map((d, i) => {
-                return (<Tooltip key={`${d.id}-text`}
-                    title={<div>
-                        <p>
-                            Exclusion: {d.content}
-                        </p>
-                        <p>
-                            Reasoning: {d.reasoning}
-                        </p>
-                    </div>
-                    }>
-                    <DHIndicatorText
-                        isHighlighted={d.id === store.highlightedDH}
-                        isSelected={store.selectedDH.includes(d.id)}
-                        x={IndicatorSize * (Math.floor(i / 2) + 1)}
-                        y={(bandScale(d.label) || 0) + 0.5 * bandScale.bandwidth() + (2 * IndicatorSize) * (i % 2 === 0 ? -1 : 1)}
-                        fontSize='small'
-                        onClick={() => { store.setSelectedDH([d.id]); }}
-                    >
-                        x
-                    </DHIndicatorText>
-                </Tooltip>);
+                return (
+                    <ExclusionIndicator
+                        dataPoint={dataPoint}
+                        highlighted={store.highlightedDH === d.id}
+                        selected={store.selectedDH.includes(d.id)}
+                        dataHunch={d}
+                        centerX={valueScale(dataPoint.value) - 20 - i * 10}
+                        centerY={(bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()}
+                        bandWidth={bandScale.bandwidth()}
+                    />
+                    // <Tooltip key={`${d.id}-text`}
+                    //     title={<div>
+                    //         <p>
+                    //             Exclusion: {d.content}
+                    //         </p>
+                    //         <p>
+                    //             Reasoning: {d.reasoning}
+                    //         </p>
+                    //     </div>
+                    //     }>
+                    //     <DHIndicatorText
+                    //         isHighlighted={d.id === store.highlightedDH}
+                    //         isSelected={store.selectedDH.includes(d.id)}
+                    //         x={IndicatorSize * (Math.floor(i / 2) + 1)}
+                    //         y={(bandScale(d.label) || 0) + 0.5 * bandScale.bandwidth() + (2 * IndicatorSize) * (i % 2 === 0 ? -1 : 1)}
+                    //         fontSize='small'
+                    //         onClick={() => { store.setSelectedDH([d.id]); }}
+                    //     >
+                    //         x
+                    //     </DHIndicatorText>
+                    // </Tooltip>
+                );
             })}
         </g>
     );
