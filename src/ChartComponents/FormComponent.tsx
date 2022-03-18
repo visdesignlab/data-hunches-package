@@ -10,11 +10,7 @@ import ManipulationForm from "./Forms/ManipulationForm";
 import ModelInputForm from "./Forms/ModelInputForm";
 import RatingForm from "./Forms/RatingForm";
 
-type Props = {
-    manipulationOutput: string;
-};
-
-const FormComponent: FC<Props> = ({ manipulationOutput }: Props) => {
+const FormComponent: FC = () => {
 
     const store = useContext(Store);
 

@@ -83,7 +83,7 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
     const deleteDHHandler = (e: any) => {
         if (e.field === 'delete' && e.value === 'x') {
             //https://firebase.google.com/docs/firestore/manage-data/delete-data
-            deleteDoc(doc(firebaseSetup, store.datasetName, `sub${store.currentVol}`, 'dhs', e.row.id.toString())).then(output => {
+            deleteDoc(doc(firebaseSetup, store.dbTag, `sub${store.currentVol}`, 'dhs', e.row.id.toString())).then(output => {
                 store.setTotalDH(store.numOfDH - 1);
             }).catch(error => { console.log(error); });
         }

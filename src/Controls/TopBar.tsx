@@ -38,7 +38,12 @@ const TopBar: FC = () => {
             </Typography>
             <GeneralControl />
             <div className={styles.rightToolbar}>
-                <VolSelector />
+
+                {/* Only show vol on logged in*/}
+                {store.userName ?
+                    <VolSelector /> : <></>
+                }
+
                 {store.userName ?
                     <Button onClick={handleMenu}
                         size='small'

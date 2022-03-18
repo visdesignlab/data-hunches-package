@@ -16,7 +16,7 @@ export class RootStore {
     inputMode: InputMode;
     userName: string;
     nextIndex: number;
-    datasetName: string;
+    dbTag: string;
     selectedDH: number[];
     highlightedDH: number;
     needToShowPreview: boolean;
@@ -35,7 +35,7 @@ export class RootStore {
         this.userName = '';
         this.selectedDH = [];
         this.highlightedDH = -1;
-        this.datasetName = '';
+        this.dbTag = 'test2';
         this.nextIndex = 0;
         this.numOfDH = 0;
         this.currentVol = 1;
@@ -58,8 +58,8 @@ export class RootStore {
         this.needToShowPreview = input;
     }
 
-    setDataSetName(input: string) {
-        this.datasetName = input;
+    setDBTag(input: string) {
+        this.dbTag = input;
     }
 
     setNextIndex(input: number) {
@@ -76,9 +76,9 @@ export class RootStore {
 
     async submitDH(dataHunchToSubmit: DataHunch) {
         this.inputMode = 'none';
-        const databaseRef = collection(firebaseSetup, this.datasetName, `sub${this.currentVol}`, 'dhs');
+        const databaseRef = collection(firebaseSetup, this.dbTag, `sub${this.currentVol}`, 'dhs');
 
-        await updateDoc(doc(collection(firebaseSetup, this.datasetName), `sub${this.currentVol}`), { nextIndex: this.nextIndex + 1 });
+        await updateDoc(doc(collection(firebaseSetup, this.dbTag), `sub${this.currentVol}`), { nextIndex: this.nextIndex + 1 });
 
         await setDoc(doc(databaseRef, this.nextIndex.toString()), dataHunchToSubmit);
 

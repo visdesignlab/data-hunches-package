@@ -17,15 +17,15 @@ const NewVolDialog: FC<Props> = ({ open, sendCloseSignal }: Props) => {
 
     const confirmVol = async () => {
 
-        const attrRef = doc(firebaseSetup, store.datasetName, 'attr');
+        const attrRef = doc(firebaseSetup, store.dbTag, 'attr');
         const attrResult = await getDoc(attrRef);
         if (attrResult.exists()) {
             const numberOfSubs = attrResult.data().subs;
-            await updateDoc(doc(firebaseSetup, store.datasetName, 'attr'), {
+            await updateDoc(doc(firebaseSetup, store.dbTag, 'attr'), {
                 subs: numberOfSubs + 1
             });
 
-            await setDoc(doc(collection(firebaseSetup, store.datasetName), `sub${numberOfSubs + 1}`), { name: volName });
+            await setDoc(doc(collection(firebaseSetup, store.dbTag), `sub${numberOfSubs + 1}`), { name: volName });
 
             sendCloseSignal(false);
             store.setCurrentVol(numberOfSubs + 1);

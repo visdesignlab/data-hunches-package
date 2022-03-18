@@ -14,7 +14,7 @@ import { useEffect } from "react";
 import DataHunchIndicator from "./ChartComponents/DataHunch/DataHunchIndicators";
 import { DataHunch } from "./Interfaces/Types";
 import { stateUpdateWrapperUseJSON } from "./Interfaces/StateChecker";
-import { Tooltip } from "@material-ui/core";
+import { Grid, Tooltip } from "@material-ui/core";
 import { DHIndicatorText } from "./Interfaces/StyledComponents";
 import CategoricalIndicator from "./ChartComponents/DataHunch/CategoricalIndicator";
 import ChartLegends from "./ChartComponents/ChartLegends";
@@ -24,12 +24,12 @@ import { format } from "d3-format";
 import { textwrap } from 'd3-textwrap';
 import ManipulationLayer from "./ChartComponents/ManipulationLayer";
 import { useLayoutEffect } from "react";
+import ChartTitle from "./ChartComponents/ChartTitle";
 
 type Props = {
     dataHunchArray: DataHunch[];
-    datasetExplanation: string;
 };
-const BarChart: FC<Props> = ({ dataHunchArray, datasetExplanation }: Props) => {
+const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
 
     const store = useContext(Store);
 
@@ -88,42 +88,9 @@ const BarChart: FC<Props> = ({ dataHunchArray, datasetExplanation }: Props) => {
     return <div>
         <svg width={store.svgWidth} height={store.svgHeight} >
             <ChartLegends />
-            <g id='chart-title'>
-                <Tooltip title={datasetExplanation} >
-                    <text
-                        x={store.svgWidth * 0.5}
-                        y={store.svgHeight - margin.bottom}
-                        alignmentBaseline='hanging'
-                        textAnchor="middle"
-                        fontSize='large'
-                    >{store.datasetName}{datasetExplanation.length > 0 ? '*' : ''}</text>
-                </Tooltip>
-                {allChartDHArray.map((d, i) => {
-                    return (
-                        <Tooltip title={
-                            <div>
-                                <p>
-                                    Content: {d.content}
-                                </p>
-                                <p>
-                                    Reasoning: {d.reasoning}
-                                </p>
-                            </div>}>
-                            <DHIndicatorText
-                                isHighlighted={d.id === store.highlightedDH}
-                                isSelected={store.selectedDH.includes(d.id)}
-                                onClick={() => { store.setSelectedDH([d.id]); }}
-                                x={(store.svgWidth - margin.left - margin.right) / 2 * (i % 2)}
-                                key={`${d.id}-text`}
-                                y={store.svgHeight - margin.bottom + 30 + Math.floor(i / 2) * (IndicatorSpace + IndicatorSize)}
-                                fontSize='larger'
-                            >
-                                {`* ${d.content.length > 25 ? `${d.content.slice(0, 25)}...` : d.content}`}
-                            </DHIndicatorText>
-                        </Tooltip>
-                    );
-                })}
-            </g>
+            <ChartTitle />
+
+
 
             <g className='axis' id="band-axis" />
 
@@ -189,17 +156,50 @@ const BarChart: FC<Props> = ({ dataHunchArray, datasetExplanation }: Props) => {
 
 
 
-            <FormComponent manipulationOutput={manipulationResult} />
+            <FormComponent />
 
             <SpecificControl />
 
 
         </svg>
-        <div style={{ width: DefaultForeignObjectWidth, height: DefaultForeignObjectHeight }}>
-            {(store.inputMode === 'sketch' || store.inputMode === 'manipulations' || store.inputMode === 'range') ?
-                <ManipulationForm manipulationOutput={manipulationResult} type={store.inputMode} /> : <></>
+        <Grid container>
+            <Grid item xs={6}>{
+                (store.inputMode === 'sketch' || store.inputMode === 'manipulations' || store.inputMode === 'range') ? <div style={{ width: DefaultForeignObjectWidth, height: DefaultForeignObjectHeight }}>
+                    <ManipulationForm manipulationOutput={manipulationResult} type={store.inputMode} />
+                </div> : <></>
             }
-        </div>
+
+                <ChartTitle />
+            </Grid>
+            <Grid item xs={6}>
+                {allChartDHArray.map((d, i) => {
+                    return (
+                        <Tooltip title={
+                            <div>
+                                <p>
+                                    Content: {d.content}
+                                </p>
+                                <p>
+                                    Reasoning: {d.reasoning}
+                                </p>
+                            </div>}>
+                            <DHIndicatorText
+                                isHighlighted={d.id === store.highlightedDH}
+                                isSelected={store.selectedDH.includes(d.id)}
+                                onClick={() => { store.setSelectedDH([d.id]); }}
+                                x={(store.svgWidth - margin.left - margin.right) / 2 * (i % 2)}
+                                key={`${d.id}-text`}
+                                y={store.svgHeight - margin.bottom + 30 + Math.floor(i / 2) * (IndicatorSpace + IndicatorSize)}
+                                fontSize='larger'
+                            >
+                                {`* ${d.content.length > 25 ? `${d.content.slice(0, 25)}...` : d.content}`}
+                            </DHIndicatorText>
+                        </Tooltip>
+                    );
+                })}
+            </Grid>
+        </Grid>
+
     </div>;
 };
 

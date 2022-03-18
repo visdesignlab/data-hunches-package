@@ -7,39 +7,38 @@ import { Grid } from "@material-ui/core";
 import Table from "./TableComponents/Table";
 import { getDocs, collection, getDoc, doc } from "firebase/firestore/lite";
 import { stateUpdateWrapperUseJSON } from "./Interfaces/StateChecker";
-import { firebaseSetup } from "./Interfaces/Constants";
+import { DataPreset, firebaseSetup } from "./Interfaces/Constants";
 import BarChart from "./BarChart";
 
 type Props = {
-    dataSet: BarChartDataPoint[];
-    datasetName: string;
     svgWidth: number;
     svgHeight: number;
-    datasetExplanation: string;
 };
 
 export const DataContext = createContext<BarChartDataPoint[]>([]);
 
-const BarChartWithDH: FC<Props> = ({ datasetName, dataSet, svgWidth, svgHeight, datasetExplanation }: Props) => {
+const BarChartWithDH: FC<Props> = ({ svgWidth, svgHeight }: Props) => {
+
     const store = useContext(Store);
-
-    const [improvedDataSet, setImprovedDataSet] = useState(dataSet);
-
-    useEffect(() => {
-        if (dataSet[0].categorical) {
-            store.setContainCategory(Array.from(new Set(dataSet.map(d => d.categorical || 'a'))));
-        }
-    }, [dataSet]);
 
     store.setWidth(svgWidth);
     store.setHeight(svgHeight);
-    store.setDataSetName(datasetName);
+
+
+    const [improvedDataSet, setImprovedDataSet] = useState<BarChartDataPoint[]>([]);
+
+    useEffect(() => {
+        const dataSet = DataPreset[store.dbTag].data;
+        if (dataSet[0].categorical) {
+            store.setContainCategory(Array.from(new Set(dataSet.map(d => d.categorical || 'a'))));
+        }
+    }, [store.dbTag]);
 
     const [savedDH, setSavedDH] = useState<DataHunch[]>([]);
 
     useEffect(() => {
         //first time retrieve DH from DB
-        getDoc(doc(firebaseSetup, store.datasetName, `sub${store.currentVol}`)).then((dhNextIndex) => {
+        getDoc(doc(firebaseSetup, store.dbTag, `sub${store.currentVol}`)).then((dhNextIndex) => {
             if (dhNextIndex.exists()) {
                 store.setNextIndex(dhNextIndex.data().nextIndex);
             } else {
@@ -47,7 +46,7 @@ const BarChartWithDH: FC<Props> = ({ datasetName, dataSet, svgWidth, svgHeight, 
             }
         });
 
-        getDocs(collection(firebaseSetup, store.datasetName, `sub${store.currentVol}`, 'dhs')).then((dhResult) => {
+        getDocs(collection(firebaseSetup, store.dbTag, `sub${store.currentVol}`, 'dhs')).then((dhResult) => {
             store.setTotalDH(dhResult.size);
         });
 
@@ -56,9 +55,11 @@ const BarChartWithDH: FC<Props> = ({ datasetName, dataSet, svgWidth, svgHeight, 
 
     useEffect(() => {
         // Retrieve saved DH from DB
-        getDocs(collection(firebaseSetup, store.datasetName, `sub${store.currentVol}`, 'dhs'))
+        getDocs(collection(firebaseSetup, store.dbTag, `sub${store.currentVol}`, 'dhs'))
             .then(async result => {
                 const tempDHArray: DataHunch[] = [];
+
+                const dataSet = DataPreset[store.dbTag].data;
 
                 let copyOfImpDataSet = JSON.parse(JSON.stringify(dataSet));
                 result.forEach((doc) => {
@@ -85,7 +86,7 @@ const BarChartWithDH: FC<Props> = ({ datasetName, dataSet, svgWidth, svgHeight, 
                 setSavedDH(tempDHArray);
                 stateUpdateWrapperUseJSON(improvedDataSet, copyOfImpDataSet, setImprovedDataSet);
             });
-    }, [store.numOfDH, store.currentVol]);
+    }, [store.numOfDH, store.currentVol, store.dbTag]);
 
     return (
         <DataContext.Provider value={improvedDataSet}>
@@ -95,7 +96,7 @@ const BarChartWithDH: FC<Props> = ({ datasetName, dataSet, svgWidth, svgHeight, 
                     <Grid item xs={12} lg={6} >
                         <BarChart
                             dataHunchArray={savedDH}
-                            datasetExplanation={datasetExplanation} />
+                        />
                     </Grid>
                     <Grid item xs={12} lg={6}>
                         <Table dataHunchArray={savedDH} />
