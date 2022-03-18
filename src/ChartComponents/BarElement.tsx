@@ -29,8 +29,9 @@ const BarElement: FC<Props> = ({ width, height, xPos, yPos, fill, dataElement }:
         return 'none';
     };
 
-    const barElementOnClick = (e: any) => {
-        if (store.selectingADataPoint) {
+    const barElementOnClick = (e: any, rightClick?: boolean) => {
+        e.preventDefault();
+        if (store.userName && ((rightClick && store.selectingADataPoint) || !rightClick)) {
             store.setCurrentSelectedDP(dataElement.label);
             const xLoc = (pointer(e)[0] + ControlFOWidth) > store.svgWidth ? (pointer(e)[0] - ControlFOWidth) : pointer(e)[0];
             const yLoc = (pointer(e)[1] + ControlFOHeight) > store.svgHeight ? (pointer(e)[1] - ControlFOHeight) : pointer(e)[1];
@@ -54,8 +55,9 @@ const BarElement: FC<Props> = ({ width, height, xPos, yPos, fill, dataElement }:
         height={height}
         x={xPos}
         y={yPos}
-        cursor={store.selectingADataPoint ? 'pointer' : undefined}
-        onClick={barElementOnClick}
+        cursor={store.userName ? 'pointer' : undefined}
+        onContextMenu={barElementOnClick}
+        onClick={(e) => { barElementOnClick(e, true); }}
         // onMouseLeave={() => { store.setHighlightedDH(-1); store.setSelectedDH([]); }}
         fill={fill}
         strokeWidth={4}

@@ -2,7 +2,7 @@ import { schemeTableau10 } from 'd3-scale-chromatic';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore/lite';
 
-export const margin = ({ top: 30, right: 100, bottom: 100, left: 70 });
+export const margin = ({ top: 30, right: 100, bottom: 150, left: 70 });
 
 export const LargeNumber = 999;
 
@@ -27,7 +27,7 @@ export const DefaultForeignObjectHeight = 255;
 
 export const ControlFOWidth = 152;
 
-export const ControlFOHeight = 245;
+export const ControlFOHeight = 285;
 
 export const WithoutCatControlFOHeight = 208;
 

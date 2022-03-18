@@ -16,11 +16,11 @@ import SubmitCancelButtons from "./SubmitCancelButtons";
 
 
 type Props = {
-    isIncExc: boolean;
+    isInc: boolean;
 
 };
 
-const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
+const DataSpaceForm: FC<Props> = ({ isInc }: Props) => {
 
     const store = useContext(Store);
     const styles = useStyles();
@@ -67,7 +67,7 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
     }, []);
 
     const checkIfDisable = () => {
-        if (isIncExc && labelInput.length > 0) {
+        if (isInc && labelInput.length > 0) {
             if (!data.map(d => d.label).includes(labelInput)) {
                 return dataInput === '';
             } else {
@@ -79,7 +79,7 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
     };
 
     const makeDHContent = () => {
-        if (isIncExc) {
+        if (isInc) {
             if (data.map(d => d.label).includes(labelInput)) {
                 return 'ignore';
             } else {
@@ -91,7 +91,7 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
     };
 
     const determineDHType = () => {
-        if (isIncExc) {
+        if (isInc) {
             if (data.map(d => d.label).includes(labelInput)) {
                 return 'exclusion';
             } else {
@@ -113,10 +113,10 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
                     error={labelInput.length > 20}
                     value={labelInput}
                     placeholder={`Suggest label to include/exclude`}
-                    style={{ display: isIncExc ? undefined : 'none', paddingBottom: '5px' }}
+                    style={{ display: isInc ? undefined : 'none', paddingBottom: '5px' }}
                 />
             </Grid>
-            <Grid item xs={isIncExc ? 6 : 12}>
+            <Grid item xs={isInc ? 6 : 12}>
                 <TextField
                     required
                     type="number"
@@ -144,7 +144,7 @@ const DataSpaceForm: FC<Props> = ({ isIncExc }: Props) => {
             dhToSubmit={{
                 type: determineDHType(),
                 user: store.userName,
-                label: isIncExc ? labelInput : (store.selectedDP ? store.selectedDP : ''),
+                label: isInc ? labelInput : (store.selectedDP ? store.selectedDP : ''),
                 content: makeDHContent(),
                 reasoning: reasonInput,
                 id: store.nextIndex,

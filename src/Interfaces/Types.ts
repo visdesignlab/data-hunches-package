@@ -8,7 +8,7 @@ export interface BarChartDataPoint {
 }
 
 export interface DataHunch {
-    type: AnnotationType;
+    type: InputMode;
     user: string;
     label: string;
     content: string;
@@ -17,16 +17,16 @@ export interface DataHunch {
     confidenceLevel: number;
 }
 
-export type AnnotationType =
-    "annotation"
-    | 'categorical'
-    | "data space"
-    | "manipulations"
-    | "range"
-    | 'model'
-    | 'sketch'
-    | 'inclusion'
-    | 'exclusion';
+// export type AnnotationType =
+//     "annotation"
+//     | 'categorical'
+//     | "data space"
+//     | "manipulations"
+//     | "range"
+//     | 'model'
+//     | 'sketch'
+//     | 'inclusion'
+//     | 'exclusion';
 
 export type InputMode =
     'categorical' |
@@ -35,7 +35,10 @@ export type InputMode =
     'sketch' |
     'rating' |
     'data space' |
-    'model' | 'range' |
+    'model' |
+    'range' |
+    'inclusion' |
+    'exclusion' |
     'manipulations';
 
 export type SelectionType = Selection<any, undefined, HTMLElement, undefined>;

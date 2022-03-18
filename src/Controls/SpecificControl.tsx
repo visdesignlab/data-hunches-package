@@ -6,41 +6,17 @@ import { ControlFOHeight, ControlFOWidth, WithoutCatControlFOHeight } from "../I
 import Store from "../Interfaces/Store";
 import { useStyles } from "../Interfaces/StyledComponents";
 import CloseIcon from '@material-ui/icons/Close';
+import { InputMode } from "../Interfaces/Types";
 
 const SpecificControl: FC = () => {
     const store = useContext(Store);
     const styles = useStyles();
 
-    const annotationOnClickHandler = () => {
-        store.selectADataPointMode(false);
-        store.setInputMode('annotation');
-    };
-
-    const ratingClickHandler = () => {
-        store.selectADataPointMode(false);
-        store.setInputMode('rating');
-    };
-
-    const dataSpaceClickHandler = () => {
-        store.setInputMode('data space');
+    const clickHandler = (inputMode: InputMode) => {
+        store.setInputMode(inputMode);
         store.selectADataPointMode(false);
     };
 
-    const manipulationOnClickHandler = () => {
-        store.setInputMode('manipulations');
-        store.selectADataPointMode(false);
-    };
-
-
-    const rangeOnClickHandler = () => {
-        store.setInputMode('range');
-        store.selectADataPointMode(false);
-    };
-
-    const categoricalClickHandler = () => {
-        store.setInputMode('categorical');
-        store.selectADataPointMode(false);
-    };
 
 
     return (
@@ -50,27 +26,41 @@ const SpecificControl: FC = () => {
             width={ControlFOWidth} height={store.containCategory ? ControlFOHeight : WithoutCatControlFOHeight}>
             <Container className={styles.foreignObjectContainer} >
                 <ButtonGroup
-                    // ref={divRef}
                     orientation="vertical"
                     color="primary"
                     aria-label="vertical outlined primary button group"
                 >
-                    <Button onClick={annotationOnClickHandler}>
+                    <Button onClick={() => { clickHandler('annotation'); }}>
                         Annotation
                     </Button>
-                    <Button onClick={rangeOnClickHandler}>
+                    <Button onClick={() => {
+                        clickHandler('range');
+                    }}>
                         Range
                     </Button>
-                    <Button onClick={manipulationOnClickHandler}>
+                    <Button onClick={() => {
+                        clickHandler('manipulations');
+                    }}>
                         Manipulation
                     </Button>
-                    <Button onClick={ratingClickHandler}>
+                    <Button onClick={() => {
+                        clickHandler('rating');
+                    }}>
                         Rating
                     </Button>
-                    <Button onClick={dataSpaceClickHandler}>
+                    <Button onClick={() => {
+                        clickHandler('data space');
+                    }}>
                         Data Space
                     </Button>
-                    {store.containCategory ? <Button onClick={categoricalClickHandler}>
+                    <Button onClick={() => {
+                        clickHandler('exclusion');
+                    }}>
+                        Exclusion
+                    </Button>
+                    {store.containCategory ? <Button onClick={() => {
+                        clickHandler('categorical');
+                    }}>
                         Categorical
                     </Button> : <></>}
 

@@ -9,7 +9,7 @@ import SubmitCancelButtons from "./SubmitCancelButtons";
 
 type Props = {
     manipulationOutput: string;
-    type: 'manipulations' | 'sketch' | 'range';
+    type: 'manipulations' | 'sketch' | 'range' | 'exclusion';
 };
 
 const ManipulationForm: FC<Props> = ({ manipulationOutput, type }: Props) => {
@@ -34,7 +34,6 @@ const ManipulationForm: FC<Props> = ({ manipulationOutput, type }: Props) => {
                     type: type,
                     user: store.userName,
                     label: `${store.selectedDP === undefined ? 'all chart' : store.selectedDP}`,
-                    // Add Content
                     content: manipulationOutput,
                     reasoning: reasonInput,
                     id: store.nextIndex,
