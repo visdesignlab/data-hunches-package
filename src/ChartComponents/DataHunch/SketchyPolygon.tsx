@@ -1,4 +1,3 @@
-import { Tooltip } from "@material-ui/core";
 import { select } from "d3-selection";
 import { observer } from "mobx-react-lite";
 import { FC, useContext, useLayoutEffect, useRef } from "react";
@@ -6,6 +5,7 @@ import Store from "../../Interfaces/Store";
 import { DataHunch } from "../../Interfaces/Types";
 import * as rough from 'roughjs/bin/rough';
 import { HighlightColor, SelectionColor } from "../../Interfaces/Constants";
+import { LightTooltip } from "../../Interfaces/StyledComponents";
 
 type Props = {
     dataHunch: DataHunch;
@@ -40,7 +40,6 @@ const SketchyPolygon: FC<Props> = ({ dataHunch, points, fill, opacity, highlight
         }
     }, [points, fill]);
 
-    // "rect[col='2']"
 
     useLayoutEffect(() => {
         if (dhRef.current !== null) {
@@ -54,7 +53,7 @@ const SketchyPolygon: FC<Props> = ({ dataHunch, points, fill, opacity, highlight
         }
     }, [highlighted, selected]);
 
-    return (<Tooltip title={dataHunch.reasoning}>
+    return (<LightTooltip title={dataHunch.reasoning}>
         <g ref={dhRef}
             onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
             onMouseOut={() => { store.setHighlightedDH(-1); }}
@@ -62,7 +61,7 @@ const SketchyPolygon: FC<Props> = ({ dataHunch, points, fill, opacity, highlight
             opacity={opacity}
             // opacity={1}
             cursor='pointer' />
-    </Tooltip>
+    </LightTooltip>
     );
 };
 

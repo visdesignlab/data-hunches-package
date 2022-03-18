@@ -10,17 +10,17 @@ export const LargeNumber = 999;
 export const IndicatorSize = 6;
 export const IndicatorSpace = 10;
 
-export const DarkGray = '#9f9f9f';
+export const DarkGray = '#5d5d5d';
 
 export const LightGray = '#eeeeee';
 
-export const SelectionColor = '#eb9800';
+export const SelectionColor = '#e29609';
 
-export const HighlightColor = '#eb0053';
+export const HighlightColor = '#ffcf76';
 
-export const DarkBlue = '#4ea6a7';
+export const DataHunchColor = '#337ab7';
 
-export const ColorPallate = schemeTableau10;
+export const DefaultBar = '#ec7936';
 
 export const DefaultForeignObjectWidth = 200;
 
@@ -45,7 +45,7 @@ const FirebaseSetupConstants = {
 
 export const ConfidenceInput = ['Not at all confident', 'Not very confident', 'Somewhat confident', 'Very confident', 'Extremely confident'];
 
-export const CategoricalColor = [DarkBlue, '#a77c4e', '#a74e7a'];
+export const CategoricalColor = [DefaultBar, '#b08aa6', '#75c4c2', '#24b466'];
 
 export const firebaseSetup = getFirestore(initializeApp(FirebaseSetupConstants));
 
@@ -57,8 +57,8 @@ export const DefaultSketchyOptions = {
     hachureGap: 8,
     fillWeight: 1,
     strokeWidth: 2,
-    fill: DarkGray,
-    stroke: DarkGray,
+    fill: DataHunchColor,
+    stroke: DataHunchColor,
 };
 
 type dataAttribute = {

@@ -6,7 +6,7 @@ import { useState } from "react";
 import { FC } from "react";
 import { DataContext } from "../..";
 import { makeValueScale, makeBandScale, makeCategoricalScale, getRectFill } from "../../HelperFunctions/ScaleGenerator";
-import { margin, DarkBlue } from "../../Interfaces/Constants";
+import { margin } from "../../Interfaces/Constants";
 import Store from "../../Interfaces/Store";
 import { useStyles } from "../../Interfaces/StyledComponents";
 import { BarChartDataPoint, DataHunch } from "../../Interfaces/Types";

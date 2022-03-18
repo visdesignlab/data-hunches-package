@@ -10,7 +10,7 @@ export declare class RootStore {
     inputMode: InputMode;
     userName: string;
     nextIndex: number;
-    datasetName: string;
+    dbTag: string;
     selectedDH: number[];
     highlightedDH: number;
     needToShowPreview: boolean;
@@ -21,7 +21,7 @@ export declare class RootStore {
     setSelectedDH(input: number[]): void;
     setHighlightedDH(input: number): void;
     setNeedToShowPreview(input: boolean): void;
-    setDataSetName(input: string): void;
+    setDBTag(input: string): void;
     setNextIndex(input: number): void;
     setTotalDH(input: number): void;
     setCurrentVol(input: number): void;

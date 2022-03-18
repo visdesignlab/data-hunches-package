@@ -1,12 +1,11 @@
-import { Tooltip } from "@material-ui/core";
 import { select } from "d3-selection";
 import { observer } from "mobx-react-lite";
 import { FC, useContext, useLayoutEffect, useRef } from "react";
-import { DarkGray, DefaultSketchyOptions, HighlightColor, SelectionColor } from "../../Interfaces/Constants";
+import { DataHunchColor, DefaultSketchyOptions, HighlightColor, SelectionColor } from "../../Interfaces/Constants";
 import Store from "../../Interfaces/Store";
 import { DataHunch } from "../../Interfaces/Types";
 import * as rough from 'roughjs/bin/rough';
-import { i } from "mathjs";
+import { LightTooltip } from "../../Interfaces/StyledComponents";
 
 type Props = {
     curvePoints: string;
@@ -53,14 +52,14 @@ const SingleOverAxisIndicator: FC<Props> = ({ textX, textY, dataHunch, curvePoin
             } else if (selected) {
                 select(curveRef.current).selectAll('path').attr('stroke', SelectionColor);
             } else {
-                select(curveRef.current).selectAll('path').attr('stroke', DarkGray);
+                select(curveRef.current).selectAll('path').attr('stroke', DataHunchColor);
             }
         }
     }, [highlighted, selected]);
 
 
     return (
-        <Tooltip title={dataHunch.reasoning}>
+        <LightTooltip title={dataHunch.reasoning}>
             <g cursor="pointer"
                 onClick={() => { store.setSelectedDH([dataHunch.id]); }}
                 onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
@@ -69,7 +68,7 @@ const SingleOverAxisIndicator: FC<Props> = ({ textX, textY, dataHunch, curvePoin
                 <text
                     textAnchor="middle"
                     alignmentBaseline="hanging"
-                    fill={highlighted ? HighlightColor : (selected ? SelectionColor : DarkGray)}
+                    fill={highlighted ? HighlightColor : (selected ? SelectionColor : DataHunchColor)}
 
                     x={textX}
                     y={textY}
@@ -79,7 +78,7 @@ const SingleOverAxisIndicator: FC<Props> = ({ textX, textY, dataHunch, curvePoin
                     {dataHunch.content}
                 </text>
             </g>
-        </Tooltip>
+        </LightTooltip>
     );
 };
 

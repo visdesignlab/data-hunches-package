@@ -1,4 +1,4 @@
-import { SelectionColor, CategoricalColor, DarkBlue, LargeNumber, margin } from "../Interfaces/Constants";
+import { SelectionColor, CategoricalColor, DefaultBar, LargeNumber, margin } from "../Interfaces/Constants";
 import { BarChartDataPoint } from "../Interfaces/Types";
 import { scaleLinear, scaleBand, scaleOrdinal, ScaleOrdinal } from 'd3-scale';
 import { max } from "d3-array";
@@ -22,5 +22,5 @@ export const makeCategoricalScale = (newInputData: BarChartDataPoint[]) => {
 };
 
 export const getRectFill = (d: BarChartDataPoint, doesContainCategory: boolean, selectedDP: string | undefined, categoricalScale: ScaleOrdinal<string, unknown, never>) => {
-    return doesContainCategory ? ((categoricalScale(d.categorical!) as any) || DarkBlue) : DarkBlue;
+    return doesContainCategory ? ((categoricalScale(d.categorical!) as any) || DefaultBar) : DefaultBar;
 };

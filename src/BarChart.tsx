@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { FC, useContext, useState } from "react";
 import BarElement from './ChartComponents/BarElement';
 import { makeBandScale, makeCategoricalScale, makeValueScale } from "./HelperFunctions/ScaleGenerator";
-import { DarkBlue, DefaultForeignObjectHeight, DefaultForeignObjectWidth, IndicatorSize, IndicatorSpace, margin, SelectionColor } from "./Interfaces/Constants";
+import { DefaultBar, DefaultForeignObjectHeight, DefaultForeignObjectWidth, margin, SelectionColor } from "./Interfaces/Constants";
 import Store from "./Interfaces/Store";
 import { axisLeft, axisTop } from "d3-axis";
 import { select } from "d3-selection";
@@ -14,8 +14,8 @@ import { useEffect } from "react";
 import DataHunchIndicator from "./ChartComponents/DataHunch/DataHunchIndicators";
 import { DataHunch } from "./Interfaces/Types";
 import { stateUpdateWrapperUseJSON } from "./Interfaces/StateChecker";
-import { Grid, Tooltip } from "@material-ui/core";
-import { DHIndicatorText } from "./Interfaces/StyledComponents";
+import { Grid } from "@material-ui/core";
+import { DHIndicatorText, LightTooltip, useStyles } from "./Interfaces/StyledComponents";
 import CategoricalIndicator from "./ChartComponents/DataHunch/CategoricalIndicator";
 import ChartLegends from "./ChartComponents/ChartLegends";
 import SketchLayer from "./ChartComponents/SketchLayer";
@@ -32,7 +32,7 @@ type Props = {
 const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
 
     const store = useContext(Store);
-
+    const styles = useStyles();
     const dataSet = useContext(DataContext);
 
     const [manipulationResult, setManipulationResult] = useState('');
@@ -62,10 +62,10 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
     const yAxis: any = axisTop(valueScale).tickFormat(format('.2s'));
     const xAxis: any = axisLeft(bandScale);
 
+
     select('#vertical-axis')
         .attr('transform', `translate(0,${margin.top})`)
         .call(yAxis);
-
 
     const wrap = textwrap().bounds({ width: 50, height: bandScale.bandwidth() }).method('tspans');
 
@@ -83,14 +83,9 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
         }
     }, [store.selectedDP]);
 
-
-
     return <div>
         <svg width={store.svgWidth} height={store.svgHeight} >
             <ChartLegends />
-            <ChartTitle />
-
-
 
             <g className='axis' id="band-axis" />
 
@@ -110,11 +105,10 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
                             height={bandScale.bandwidth()}
                             xPos={margin.left}
                             yPos={bandScale(d.label) || 0}
-                            fill={store.containCategory.length > 0 ? (categoricalColorScale(d.categorical || 'a') as string) : DarkBlue}
+                            fill={store.containCategory.length > 0 ? (categoricalColorScale(d.categorical || 'a') as string) : DefaultBar}
                         />;
                     })}
             </g>
-
 
             <g id='data-hunches-container'>
 
@@ -132,17 +126,6 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
                                 barChartPoint={barDP}
                                 key={`${barDP.label}-catindicator`} />
                         </>);
-
-                        // return (
-                        //     <>
-                        //         <DataHunchIndicator
-                        //             key={`${barDP.label}-dhindicator`}
-                        //             dataHunchArray={barDP.dataHunchArray.filter(d => ["annotation", 'exclusion', 'categorical'].includes(d.type) || store.selectedDH.includes(d.id))}
-                        //         />
-                        //         <CategoricalIndicator
-                        //             dataHunchArrayString={JSON.stringify(catDH.filter(d => store.selectedDH.includes(d.id)))}
-                        //             key={`${barDP.label}-catindicator`} />
-                        //     </>);
                     } else {
                         return <></>;
                     }
@@ -154,12 +137,9 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
             <ManipulationLayer sendManipulation={sendManipulationToParent} />
             <SketchLayer sendManipulation={sendManipulationToParent} />
 
-
-
             <FormComponent />
 
             <SpecificControl />
-
 
         </svg>
         <Grid container>
@@ -171,36 +151,42 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
 
                 <ChartTitle />
             </Grid>
-            <Grid item xs={6}>
-                {allChartDHArray.map((d, i) => {
-                    return (
-                        <Tooltip title={
-                            <div>
-                                <p>
-                                    Content: {d.content}
-                                </p>
-                                <p>
-                                    Reasoning: {d.reasoning}
-                                </p>
-                            </div>}>
-                            <DHIndicatorText
-                                isHighlighted={d.id === store.highlightedDH}
-                                isSelected={store.selectedDH.includes(d.id)}
-                                onClick={() => { store.setSelectedDH([d.id]); }}
-                                x={(store.svgWidth - margin.left - margin.right) / 2 * (i % 2)}
-                                key={`${d.id}-text`}
-                                y={store.svgHeight - margin.bottom + 30 + Math.floor(i / 2) * (IndicatorSpace + IndicatorSize)}
-                                fontSize='larger'
-                            >
-                                {`* ${d.content.length > 25 ? `${d.content.slice(0, 25)}...` : d.content}`}
-                            </DHIndicatorText>
-                        </Tooltip>
-                    );
-                })}
+            <Grid item xs={6} style={{ textAlign: 'start' }}>
+                <ul className={styles.noBulletsList}>
+                    {allChartDHArray.map((d, i) => {
+                        return (
+                            <LightTooltip title={
+                                <div>
+                                    <div>
+                                        Content: {d.content}
+                                    </div>
+                                    <div>
+                                        Reasoning: {d.reasoning}
+                                    </div>
+                                </div>}>
+                                <li>
+                                    <DHIndicatorText
+                                        isHighlighted={d.id === store.highlightedDH}
+                                        isSelected={store.selectedDH.includes(d.id)}
+                                        onClick={() => { store.setSelectedDH([d.id]); }}
+                                        onMouseOver={() => { store.setHighlightedDH(d.id); }}
+                                        onMouseOut={() => { store.setHighlightedDH(-1); }}
+                                        key={`${d.id}-text`}
+                                        fontSize='larger'
+                                        needBold={true}
+                                        style={{ textOverflow: 'ellipsis' }}
+                                    >
+                                        *{d.type === 'sketch' ? 'sketch' : d.content}
+                                    </DHIndicatorText>
+                                </li>
+                            </LightTooltip>
+                        );
+                    })}
+                </ul>
             </Grid>
         </Grid>
 
-    </div>;
+    </div >;
 };
 
 export default observer(BarChart);

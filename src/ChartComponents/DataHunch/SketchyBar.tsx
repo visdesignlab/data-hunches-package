@@ -1,11 +1,11 @@
-import { Tooltip } from "@material-ui/core";
 import { scaleLinear } from "d3-scale";
 import { select } from "d3-selection";
 import { observer } from "mobx-react-lite";
 import { FC, useCallback, useContext, useLayoutEffect, useRef } from "react";
 import * as rough from 'roughjs/bin/rough';
-import { SelectionColor, DarkGray, DefaultSketchyOptions, HighlightColor } from "../../Interfaces/Constants";
+import { SelectionColor, DefaultSketchyOptions, HighlightColor, DataHunchColor } from "../../Interfaces/Constants";
 import Store from "../../Interfaces/Store";
+import { LightTooltip } from "../../Interfaces/StyledComponents";
 import { DataHunch } from "../../Interfaces/Types";
 
 type Props = {
@@ -67,13 +67,13 @@ const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch, highlight
             } else if (selected) {
                 select(dhRef.current).selectAll('path').attr('stroke', SelectionColor);
             } else {
-                select(dhRef.current).selectAll('path').attr('stroke', DarkGray);
+                select(dhRef.current).selectAll('path').attr('stroke', DataHunchColor);
             }
         }
     }, [highlighted, selected]);
 
     return (
-        <Tooltip title={dataHunch.reasoning}>
+        <LightTooltip title={dataHunch.reasoning}>
             <g display={store.needToShowPreview ? 'none' : undefined}
                 ref={dhRef}
                 onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
@@ -82,7 +82,7 @@ const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch, highlight
                 }}
                 onClick={() => { store.setSelectedDH([dataHunch.id]); }}
                 cursor='pointer' />
-        </Tooltip>);
+        </LightTooltip>);
 };
 
 export default observer(SketchyBar);

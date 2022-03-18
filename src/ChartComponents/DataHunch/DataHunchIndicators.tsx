@@ -12,8 +12,7 @@ import Store from "../../Interfaces/Store";
 import 'roughjs';
 import { BarChartDataPoint, DataHunch } from "../../Interfaces/Types";
 import SketchyBar from "./SketchyBar";
-import { DHIndicatorText } from "../../Interfaces/StyledComponents";
-import { Tooltip } from "@material-ui/core";
+import { DHIndicatorText, LightTooltip } from "../../Interfaces/StyledComponents";
 import SingleOverAxisIndicator from "./SingleOverAxisIndicator";
 import ExclusionIndicator from "./ExclusionIndicator";
 
@@ -164,22 +163,23 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
             {offVisDH.map((d, i) => {
                 return (
 
-                    <Tooltip
+                    <LightTooltip
                         key={`${d.id}-text`}
                         title={
                             <div>
-                                <p>
+                                <div>
                                     Content: {d.content}
-                                </p>
-                                <p>
+                                </div>
+                                <div>
                                     Reasoning: {d.reasoning}
-                                </p>
+                                </div>
                             </div>
                         }>
                         <DHIndicatorText
                             x={findXPos(d, i, offVisDH.length)}
                             y={(bandScale(d.label) || 0) + 0.5 * bandScale.bandwidth() + (2 * IndicatorSize) * (i % 2 === 0 ? -1 : 1)}
                             fontSize='larger'
+                            needBold={false}
                             isHighlighted={d.id === store.highlightedDH}
                             isSelected={store.selectedDH.includes(d.id)}
                             onClick={() => { store.setSelectedDH([d.id]); }}
@@ -187,7 +187,7 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                             onMouseOut={() => { store.setHighlightedDH(-1); }}>
                             {calculateText(d.content, findXPos(d, i, offVisDH.length), offVisDH.length)}
                         </DHIndicatorText>
-                    </Tooltip>
+                    </LightTooltip>
                 );
             })}
 
@@ -202,27 +202,6 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                         centerY={(bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()}
                         bandWidth={bandScale.bandwidth()}
                     />
-                    // <Tooltip key={`${d.id}-text`}
-                    //     title={<div>
-                    //         <p>
-                    //             Exclusion: {d.content}
-                    //         </p>
-                    //         <p>
-                    //             Reasoning: {d.reasoning}
-                    //         </p>
-                    //     </div>
-                    //     }>
-                    //     <DHIndicatorText
-                    //         isHighlighted={d.id === store.highlightedDH}
-                    //         isSelected={store.selectedDH.includes(d.id)}
-                    //         x={IndicatorSize * (Math.floor(i / 2) + 1)}
-                    //         y={(bandScale(d.label) || 0) + 0.5 * bandScale.bandwidth() + (2 * IndicatorSize) * (i % 2 === 0 ? -1 : 1)}
-                    //         fontSize='small'
-                    //         onClick={() => { store.setSelectedDH([d.id]); }}
-                    //     >
-                    //         x
-                    //     </DHIndicatorText>
-                    // </Tooltip>
                 );
             })}
         </g>

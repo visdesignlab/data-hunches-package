@@ -1,4 +1,3 @@
-import { Tooltip } from "@material-ui/core";
 import { observer } from "mobx-react-lite";
 import { useContext, useRef } from "react";
 import { useLayoutEffect } from "react";
@@ -8,7 +7,8 @@ import Store from "../../Interfaces/Store";
 import * as rough from 'roughjs/bin/rough';
 import { BarChartDataPoint, DataHunch } from "../../Interfaces/Types";
 import { select } from "d3-selection";
-import { DarkGray, DefaultSketchyOptions, HighlightColor, SelectionColor } from "../../Interfaces/Constants";
+import { DataHunchColor, DefaultSketchyOptions, HighlightColor, SelectionColor } from "../../Interfaces/Constants";
+import { LightTooltip } from "../../Interfaces/StyledComponents";
 
 type Props = {
     dataPoint: BarChartDataPoint;
@@ -47,13 +47,13 @@ const ExclusionIndicator: FC<Props> = ({ dataHunch, dataPoint, centerX, centerY,
             } else if (selected) {
                 select(dhRef.current).selectAll('path').attr('stroke', SelectionColor);
             } else {
-                select(dhRef.current).selectAll('path').attr('stroke', DarkGray);
+                select(dhRef.current).selectAll('path').attr('stroke', DataHunchColor);
             }
         }
     }, [highlighted, selected]);
 
     return (
-        <Tooltip title={dataHunch.reasoning}>
+        <LightTooltip title={dataHunch.reasoning}>
             <g ref={dhRef}
                 onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
                 onMouseOut={() => {
@@ -61,7 +61,7 @@ const ExclusionIndicator: FC<Props> = ({ dataHunch, dataPoint, centerX, centerY,
                 }}
                 onClick={() => { store.setSelectedDH([dataHunch.id]); }}
                 cursor='pointer' />
-        </Tooltip>
+        </LightTooltip>
     );
 };
 

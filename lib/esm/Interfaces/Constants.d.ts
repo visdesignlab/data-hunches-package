@@ -8,12 +8,12 @@ export declare const margin: {
 export declare const LargeNumber = 999;
 export declare const IndicatorSize = 6;
 export declare const IndicatorSpace = 10;
-export declare const DarkGray = "#9f9f9f";
+export declare const DarkGray = "#5d5d5d";
 export declare const LightGray = "#eeeeee";
-export declare const SelectionColor = "#eb9800";
-export declare const HighlightColor = "#eb0053";
-export declare const DarkBlue = "#4ea6a7";
-export declare const ColorPallate: readonly string[];
+export declare const SelectionColor = "#e29609";
+export declare const HighlightColor = "#ffcf76";
+export declare const DataHunchColor = "#337ab7";
+export declare const DefaultBar = "#ec7936";
 export declare const DefaultForeignObjectWidth = 200;
 export declare const DefaultForeignObjectHeight = 255;
 export declare const ControlFOWidth = 152;

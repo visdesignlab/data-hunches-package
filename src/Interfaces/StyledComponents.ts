@@ -1,6 +1,6 @@
-import { createStyles, makeStyles, Theme } from "@material-ui/core";
+import { createStyles, makeStyles, Theme, Tooltip, withStyles } from "@material-ui/core";
 import styled from "styled-components";
-import { SelectionColor, DarkGray, HighlightColor } from "./Constants";
+import { SelectionColor, HighlightColor, DataHunchColor } from "./Constants";
 
 let WebFont = require('webfontloader');
 WebFont.load({
@@ -8,8 +8,25 @@ WebFont.load({
         families: ['Nanum Brush Script']
     }
 });
+
+export const LightTooltip = withStyles((theme: Theme) => ({
+    tooltip: {
+        backgroundColor: theme.palette.common.white,
+        color: 'rgba(0, 0, 0, 0.87)',
+        boxShadow: theme.shadows[1],
+        fontSize: 20,
+        fontFamily: "'Nanum Brush Script', cursive",
+        fontWeight: 'bold'
+    },
+}))(Tooltip);
+
 export const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+        noBulletsList: {
+            listStyleType: 'none',
+            padding: '0px',
+            margin: '0px'
+        },
         table: {
             '& .MuiDataGrid-columnHeaderTitle': {
                 fontSize: 'small',
@@ -55,13 +72,21 @@ export const useStyles = makeStyles((theme: Theme) =>
             border: '1px solid black',
             clear: 'both',
             margin: '2px'
-        }
+        },
+        // tooltipStyle: {
+
+        //     backgroundColor: theme.palette.common.white,
+        //     color: 'rgba(0, 0, 0, 0.87)',
+        //     boxShadow: theme.shadows[1],
+        //     fontSize: 20,
+        // }
     }));
 
 interface FontProps {
     fontSize: 'larger' | 'small';
     isHighlighted: boolean;
     isSelected: boolean;
+    needBold: boolean;
 }
 
 export const DHIndicatorText = styled(`text`) <FontProps>`
@@ -69,8 +94,10 @@ export const DHIndicatorText = styled(`text`) <FontProps>`
     font-size:${props => props.fontSize};
     alignment-baseline:middle;
     text-anchor: start;
-    stroke: ${props => props.isHighlighted ? HighlightColor : (props.isSelected ? SelectionColor : DarkGray)};
-    fill:${props => props.isHighlighted ? HighlightColor : (props.isSelected ? SelectionColor : DarkGray)};
+    stroke: ${props => props.isHighlighted ? HighlightColor : (props.isSelected ? SelectionColor : DataHunchColor)};
+    fill:${props => props.isHighlighted ? HighlightColor : (props.isSelected ? SelectionColor : DataHunchColor)};
+    color:${props => props.isHighlighted ? HighlightColor : (props.isSelected ? SelectionColor : DataHunchColor)};
+    font-weight:${props => props.needBold ? 'bold' : ''};
     font-family: 'Nanum Brush Script', cursive;
 `;
 
@@ -86,7 +113,6 @@ export const NonRoughDHIndicatorRect = styled(`rect`) <RectProps>`
     y:${props => props.y}px;
     width:${props => props.width}px;
     height:4px;
-    fill:${DarkGray};
+    fill:${DataHunchColor};
     opacity:0.7;
-
 `;
