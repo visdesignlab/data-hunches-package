@@ -2,7 +2,7 @@
 import { DataHunch, InputMode } from "./Types";
 export declare class RootStore {
     showDataHunches: boolean;
-    containCategory: string[];
+    showCategory: boolean;
     svgHeight: number;
     svgWidth: number;
     selectingADataPoint: boolean;
@@ -28,7 +28,7 @@ export declare class RootStore {
     submitDH(dataHunchToSubmit: DataHunch): Promise<void>;
     setWidth(newWidth: number): void;
     setHeight(newHeight: number): void;
-    setContainCategory(input: string[]): void;
+    setShowCategory(input: boolean): void;
     setShowDH(input: boolean): void;
     setInputMode(input: InputMode): void;
     selectADataPointMode(input: boolean): void;

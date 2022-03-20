@@ -21,13 +21,13 @@ const PreviewResetButtons: FC<Props> = ({ labelToPreview, valueToPreview, disabl
     const previewHandler = () => {
         store.setNeedToShowPreview(true);
 
-        handlePreviewOnClick(dataSet, labelToPreview, valueToPreview, store.svgHeight, store.svgWidth, store.containCategory.length > 0, modelInput);
+        handlePreviewOnClick(dataSet, labelToPreview, valueToPreview, store.svgHeight, store.svgWidth, store.showCategory, modelInput);
 
     };
 
     const resetHandler = () => {
         store.setNeedToShowPreview(false);
-        handleResetOnClick(dataSet, store.svgHeight, store.svgWidth, store.containCategory.length > 0, store.selectedDP);
+        handleResetOnClick(dataSet, store.svgHeight, store.svgWidth, store.showCategory, store.selectedDP);
     };
 
     return (<ButtonGroup>

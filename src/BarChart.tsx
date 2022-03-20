@@ -85,7 +85,8 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
 
     return <div>
         <svg width={store.svgWidth} height={store.svgHeight} >
-            <ChartLegends />
+            {store.showCategory ? <ChartLegends /> : <></>}
+
 
             <g className='axis' id="band-axis" />
 
@@ -105,7 +106,7 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
                             height={bandScale.bandwidth()}
                             xPos={margin.left}
                             yPos={bandScale(d.label) || 0}
-                            fill={store.containCategory.length > 0 ? (categoricalColorScale(d.categorical || 'a') as string) : DefaultBar}
+                            fill={store.showCategory ? (categoricalColorScale(d.categorical || 'a') as string) : DefaultBar}
                         />;
                     })}
             </g>
@@ -114,7 +115,10 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
 
                 {dataSet.map((barDP) => {
                     if (barDP.dataHunchArray) {
-                        const catDH = barDP.dataHunchArray.filter(d => d.type === 'categorical');
+                        let catDH: DataHunch[] = [];
+                        if (store.showCategory) {
+                            catDH = barDP.dataHunchArray.filter(d => d.type === 'categorical');
+                        }
                         return (<>
                             <DataHunchIndicator
                                 dataPoint={barDP}

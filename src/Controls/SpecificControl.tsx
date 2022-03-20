@@ -23,7 +23,7 @@ const SpecificControl: FC = () => {
         <foreignObject id='specific-control'
             // display={store.selectingADataPoint ? undefined : 'none'}
             display='none'
-            width={ControlFOWidth} height={store.containCategory ? ControlFOHeight : WithoutCatControlFOHeight}>
+            width={ControlFOWidth} height={store.showCategory ? ControlFOHeight : WithoutCatControlFOHeight}>
             <Container className={styles.foreignObjectContainer} >
                 <ButtonGroup
                     orientation="vertical"
@@ -58,7 +58,7 @@ const SpecificControl: FC = () => {
                     }}>
                         Exclusion
                     </Button>
-                    {store.containCategory ? <Button onClick={() => {
+                    {store.showCategory ? <Button onClick={() => {
                         clickHandler('categorical');
                     }}>
                         Categorical

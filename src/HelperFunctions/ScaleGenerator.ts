@@ -1,8 +1,7 @@
-import { SelectionColor, CategoricalColor, DefaultBar, LargeNumber, margin } from "../Interfaces/Constants";
+import { CategoricalColor, DefaultBar, LargeNumber, margin } from "../Interfaces/Constants";
 import { BarChartDataPoint } from "../Interfaces/Types";
 import { scaleLinear, scaleBand, scaleOrdinal, ScaleOrdinal } from 'd3-scale';
 import { max } from "d3-array";
-import { select } from "d3-selection";
 
 export const makeValueScale = (newInputData: BarChartDataPoint[], width: number) => {
     return scaleLinear()

@@ -7,7 +7,7 @@ import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import { useContext } from "react";
 import Store from "../Interfaces/Store";
 import GeneralControl from "./GeneralControl";
-import VolSelector from "./VolSelector";
+import DemoOptionButtons from "./DemoOptionButtons";
 
 
 const TopBar: FC = () => {
@@ -41,7 +41,7 @@ const TopBar: FC = () => {
 
                 {/* Only show vol on logged in*/}
                 {store.userName ?
-                    <VolSelector /> : <></>
+                    <DemoOptionButtons /> : <></>
                 }
 
                 {store.userName ?

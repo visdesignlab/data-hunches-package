@@ -28,9 +28,8 @@ const BarChartWithDH: FC<Props> = ({ svgWidth, svgHeight }: Props) => {
     const [improvedDataSet, setImprovedDataSet] = useState<BarChartDataPoint[]>([]);
 
     useEffect(() => {
-        const dataSet = DataPreset[store.dbTag].data;
-        if (dataSet[0].categorical) {
-            store.setContainCategory(Array.from(new Set(dataSet.map(d => d.categorical || 'a'))));
+        if (DataPreset[store.dbTag].categories.length > 0) {
+            store.setShowCategory(true);
         }
     }, [store.dbTag]);
 

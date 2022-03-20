@@ -8,7 +8,7 @@ import Store from "../Interfaces/Store";
 import AddIcon from '@material-ui/icons/Add';
 import NewVolDialog from "./NewVolDialog";
 
-const VolSelector: FC = () => {
+const DemoOptionButtons: FC = () => {
     const store = useContext(Store);
 
     const [openDialog, setOpenDialog] = useState(false);
@@ -67,8 +67,9 @@ const VolSelector: FC = () => {
             <Button
                 size='small'
                 variant="outlined"
+                color="primary"
                 onClick={handleDBMenu}
-                color="primary">
+            >
                 Select Data
             </Button>
             <Button
@@ -78,6 +79,18 @@ const VolSelector: FC = () => {
                 color="primary">
                 Select Vol
             </Button >
+            {DataPreset[store.dbTag].categories ?
+                <Button
+                    size='small'
+                    variant='outlined'
+                    color={store.showCategory ? 'primary' : 'default'}
+                    onClick={() => {
+                        store.setShowCategory(!store.showCategory);
+                    }}
+                >Show Category
+                </Button> :
+                <></>
+            }
             <Menu
                 anchorEl={anchorVol}
                 keepMounted
@@ -126,4 +139,4 @@ const VolSelector: FC = () => {
     </>);
 };
 
-export default observer(VolSelector);
+export default observer(DemoOptionButtons);

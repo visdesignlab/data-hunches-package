@@ -2,7 +2,7 @@ import { Container, FormControlLabel, Radio, RadioGroup, TextField } from "@mate
 import { observer } from "mobx-react-lite";
 import { FC, useState, useContext, useEffect } from "react";
 import { DataContext } from "../..";
-import { CategoricalColor } from "../../Interfaces/Constants";
+import { CategoricalColor, DataPreset } from "../../Interfaces/Constants";
 import Store from "../../Interfaces/Store";
 import { useStyles } from "../../Interfaces/StyledComponents";
 import ReasonConfidenceInput from "./ReasonConfidenceInput";
@@ -16,13 +16,10 @@ const CategoricalForm: FC = () => {
     const dataSet = useContext(DataContext);
 
     const [ratingValue, setRatingValue] = useState('');
-    const [catNum, setCatNum] = useState(-1);
 
     useEffect(() => {
         const DPinData = dataSet.filter(d => d.label === store.selectedDP)[0];
-        const tempcatNum = store.containCategory.indexOf(DPinData.categorical || 'a');
         setRatingValue(DPinData.categorical || 'a');
-        setCatNum(tempcatNum);
     }, [store.selectedDP]);
 
     const handleRadioChange = (event: any) => {
@@ -41,7 +38,7 @@ const CategoricalForm: FC = () => {
     return (
         <Container className={styles.foreignObjectContainer}>
             <RadioGroup name="Rating" onChange={handleRadioChange} value={ratingValue}>
-                {store.containCategory.map((d, i) => {
+                {DataPreset[store.dbTag].categories.map((d, i) => {
                     return <FormControlLabel
                         value={d}
                         key={`${d}-radio`}

@@ -35,6 +35,7 @@ export declare const DefaultSketchyOptions: {
 };
 declare type dataAttribute = {
     data: BarChartDataPoint[];
+    categories: string[];
     name: string;
     dbTag: string;
     explanation: string;

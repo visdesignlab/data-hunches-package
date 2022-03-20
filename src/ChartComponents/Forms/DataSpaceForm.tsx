@@ -9,7 +9,6 @@ import { makeValueScale, makeBandScale, makeCategoricalScale, getRectFill } from
 import { margin } from "../../Interfaces/Constants";
 import Store from "../../Interfaces/Store";
 import { useStyles } from "../../Interfaces/StyledComponents";
-import { BarChartDataPoint, DataHunch } from "../../Interfaces/Types";
 import PreviewResetButtons from "./PreviewResetButtons";
 import ReasonConfidenceInput from "./ReasonConfidenceInput";
 import SubmitCancelButtons from "./SubmitCancelButtons";
@@ -63,7 +62,7 @@ const DataSpaceForm: FC<Props> = ({ isInc }: Props) => {
             .attr('width', bandScale.bandwidth())
             .attr("y", d => verticalScale(d.value))
             .attr("height", d => store.svgHeight - margin.bottom - verticalScale(d.value))
-            .attr("fill", d => getRectFill(d, store.containCategory.length > 0, store.selectedDP, categoricalScale));
+            .attr("fill", d => getRectFill(d, store.showCategory, store.selectedDP, categoricalScale));
     }, []);
 
     const checkIfDisable = () => {

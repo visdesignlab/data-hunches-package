@@ -63,7 +63,7 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
         } else if (dataHunch.type === 'model') {
             setNeedReset(true);
             store.setNeedToShowPreview(true);
-            handlePreviewOnClick(dataSet, undefined, undefined, store.svgHeight, store.svgWidth, store.containCategory.length > 0, dataHunch.content);
+            handlePreviewOnClick(dataSet, undefined, undefined, store.svgHeight, store.svgWidth, store.showCategory, dataHunch.content);
         } else if (dataHunch.type === 'sketch') {
             setNeedReset(true);
             store.setNeedToShowPreview(true);
@@ -76,7 +76,7 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
         store.setHighlightedDH(-1);
         if (needReset) {
             store.setNeedToShowPreview(false);
-            handleResetOnClick(dataSet, store.svgHeight, store.svgWidth, store.containCategory.length > 0, store.selectedDP);
+            handleResetOnClick(dataSet, store.svgHeight, store.svgWidth, store.showCategory, store.selectedDP);
         }
     };
 

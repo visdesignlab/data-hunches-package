@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { FC, useContext } from "react";
 import { DataContext } from "..";
 import { makeCategoricalScale } from "../HelperFunctions/ScaleGenerator";
-import { IndicatorSize, margin } from "../Interfaces/Constants";
+import { DataPreset, IndicatorSize, margin } from "../Interfaces/Constants";
 import Store from "../Interfaces/Store";
 
 const ChartLegends: FC = () => {
@@ -12,7 +12,7 @@ const ChartLegends: FC = () => {
     const categoricalColorScale = makeCategoricalScale(dataSet);
 
     return (<g transform={`translate(0,${store.svgHeight - margin.bottom})`}>
-        {store.containCategory.map((cat, i) => {
+        {DataPreset[store.dbTag].categories.map((cat, i) => {
             return (
                 <g key={`${cat}-legend`}>
                     <circle

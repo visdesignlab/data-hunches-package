@@ -8,7 +8,7 @@ import { firebaseSetup } from "./Constants";
 
 export class RootStore {
     showDataHunches: boolean;
-    containCategory: string[];
+    showCategory: boolean;
     svgHeight: number;
     svgWidth: number;
     selectingADataPoint: boolean;
@@ -25,7 +25,7 @@ export class RootStore {
 
     constructor() {
         this.showDataHunches = true;
-        this.containCategory = [];
+        this.showCategory = false;
         this.svgHeight = 500;
         this.svgWidth = 500;
         this.selectingADataPoint = false;
@@ -94,8 +94,8 @@ export class RootStore {
         this.svgHeight = newHeight;
     }
 
-    setContainCategory(input: string[]) {
-        this.containCategory = input;
+    setShowCategory(input: boolean) {
+        this.showCategory = input;
     }
 
     setShowDH(input: boolean) {
