@@ -157,14 +157,15 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
                         return (
                             <LightTooltip title={
                                 <div>
-                                    <div>
+                                    {d.type !== 'sketch' ? <div>
                                         Content: {d.content}
-                                    </div>
+                                    </div> : <></>}
+
                                     <div>
                                         Reasoning: {d.reasoning}
                                     </div>
                                 </div>}>
-                                <li>
+                                <li style={{ width: 'fit-content' }}>
                                     <DHIndicatorText
                                         isHighlighted={d.id === store.highlightedDH}
                                         isSelected={store.selectedDH.includes(d.id)}
