@@ -15,18 +15,24 @@ type Props = {
     dataHunch: DataHunch;
     highlighted: boolean;
     selected: boolean;
+    rotateX: number;
+    rotateY: number;
 };
-const SingleOverAxisIndicator: FC<Props> = ({ textX, textY, dataHunch, curvePoints, highlighted, selected, arrowPoints }: Props) => {
+const SingleOverAxisIndicator: FC<Props> = ({ textX, textY, dataHunch, curvePoints, highlighted, selected, arrowPoints, rotateX, rotateY }: Props) => {
 
     const curveRef = useRef(null);
+    const arrowRef = useRef(null);
+
     const store = useContext(Store);
 
     useLayoutEffect(() => {
-        if (curveRef.current !== null) {
+        if (curveRef.current !== null && arrowRef.current !== null) {
             select(curveRef.current).selectAll('*').remove();
+            select(arrowRef.current).selectAll('*').remove();
             const drawingG = curveRef.current as any;
+            const arrowG = arrowRef.current as any;
             const rc = rough.default.svg(drawingG);
-
+            const arrowRC = rough.default.svg(arrowG);
             const roughCurve = rc.curve(JSON.parse(curvePoints),
                 {
                     ...DefaultSketchyOptions,
@@ -34,25 +40,28 @@ const SingleOverAxisIndicator: FC<Props> = ({ textX, textY, dataHunch, curvePoin
                     fill: 'none'
                 });
 
-            const roughArrow = rc.polygon(JSON.parse(arrowPoints), {
+            const roughArrow = arrowRC.polygon(JSON.parse(arrowPoints), {
                 ...DefaultSketchyOptions,
                 fillStyle: 'solid',
             });
 
             drawingG.appendChild(roughCurve);
-            drawingG.appendChild(roughArrow);
+            arrowG.appendChild(roughArrow);
         }
     }, [arrowPoints, curvePoints]);
 
 
     useLayoutEffect(() => {
-        if (curveRef.current !== null) {
+        if (curveRef.current !== null && arrowRef.current !== null) {
             if (highlighted) {
                 select(curveRef.current).selectAll('path').attr('stroke', HighlightColor);
+                select(arrowRef.current).selectAll('path').attr('stroke', HighlightColor).attr('fill', HighlightColor);
             } else if (selected) {
                 select(curveRef.current).selectAll('path').attr('stroke', SelectionColor);
+                select(arrowRef.current).selectAll('path').attr('stroke', SelectionColor).attr('fill', SelectionColor);
             } else {
                 select(curveRef.current).selectAll('path').attr('stroke', DataHunchColor);
+                select(arrowRef.current).selectAll('path').attr('stroke', DataHunchColor).attr('fill', DataHunchColor);
             }
         }
     }, [highlighted, selected]);
@@ -65,11 +74,11 @@ const SingleOverAxisIndicator: FC<Props> = ({ textX, textY, dataHunch, curvePoin
                 onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
                 onMouseOut={() => { store.setHighlightedDH(-1); }}>
                 <g ref={curveRef} />
+                <g ref={arrowRef} transform={`rotate(45,${rotateX},${rotateY})`} />
                 <text
-                    textAnchor="middle"
+                    textAnchor="start"
                     alignmentBaseline="hanging"
                     fill={highlighted ? HighlightColor : (selected ? SelectionColor : DataHunchColor)}
-
                     x={textX}
                     y={textY}
                     fontFamily="'Nanum Brush Script', cursive"

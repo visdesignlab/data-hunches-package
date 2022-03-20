@@ -129,31 +129,34 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
             {aboveAxisDH.length > 0 ?
                 <g>
                     <text
-                        x={valueScale(dataPoint.value) + 7}
-                        y={(bandScale(dataPoint.label) || 0) + 0.75 * bandScale.bandwidth() - 2}
+                        x={valueScale(dataPoint.value) + 15}
+                        y={(bandScale(dataPoint.label) || 0) + 0.6 * bandScale.bandwidth()}
                         textAnchor="middle"
-                        fontSize="smaller"
-                        alignmentBaseline="hanging"
+                        fontSize="medium"
+                        alignmentBaseline="middle"
                     >
                         {dataPoint.value}
                     </text>
                     {aboveAxisDH.map((dataHunch, i) => {
-                        const startingPoint = valueScale(dataPoint.value) + 10;
+                        const startingPoint = valueScale(dataPoint.value);
                         return (<SingleOverAxisIndicator
                             dataHunch={dataHunch}
                             highlighted={store.highlightedDH === dataHunch.id}
                             selected={store.selectedDH.includes(dataHunch.id)}
                             curvePoints={JSON.stringify([
                                 [startingPoint, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()],
-                                [startingPoint + (i + 1) * 15, (bandScale(dataPoint.label) || 0)],
-                                [startingPoint + (i + 1) * 30, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()]])}
+                                [startingPoint + (i + 1) * 16, (bandScale(dataPoint.label) || 0)],
+                                [startingPoint + (i + 1) * 32, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()]])}
                             arrowPoints={JSON.stringify([
-                                [startingPoint + (i + 1) * 30 - 8, (bandScale(dataPoint.label) || 0) - 5 + 0.5 * bandScale.bandwidth()],
-                                [startingPoint + (i + 1) * 30 - 3, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth() + 5],
-                                [startingPoint + (i + 1) * 30 + 2, (bandScale(dataPoint.label) || 0) - 5 + 0.5 * bandScale.bandwidth()]])}
+                                [startingPoint + (i + 1) * 32 - 2, (bandScale(dataPoint.label) || 0) - 5 + 0.5 * bandScale.bandwidth()],
+                                [startingPoint + (i + 1) * 32 - 2, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth() + 5],
+                                [startingPoint + (i + 1) * 32 + 8, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()]])}
+                            rotateX={startingPoint + (i + 1) * 32 - 2}
+                            rotateY={(bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()}
                             key={`overaxis${dataHunch.id}`}
-                            textX={valueScale(dataPoint.value) + 7 + (i + 1) * 30}
-                            textY={(bandScale(dataPoint.label) || 0) + 0.75 * bandScale.bandwidth()} />);
+                            textX={valueScale(dataPoint.value) + 10 + (i + 1) * 32}
+                            textY={(bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()
+                            } />);
                     })}
                 </g>
                 :
@@ -189,7 +192,8 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                         </DHIndicatorText>
                     </LightTooltip>
                 );
-            })}
+            })
+            }
 
             {exDH.map((d, i) => {
                 return (
@@ -203,8 +207,9 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                         bandWidth={bandScale.bandwidth()}
                     />
                 );
-            })}
-        </g>
+            })
+            }
+        </g >
     );
 };
 

@@ -8,6 +8,8 @@ declare type Props = {
     dataHunch: DataHunch;
     highlighted: boolean;
     selected: boolean;
+    rotateX: number;
+    rotateY: number;
 };
 declare const _default: import("react").FunctionComponent<Props>;
 export default _default;
