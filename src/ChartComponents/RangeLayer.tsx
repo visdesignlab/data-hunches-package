@@ -39,6 +39,8 @@ const RangeLayer: FC<Props> = ({ sendManipulation }: Props) => {
 
         if (isMouseDown) {
             const xPos = pointerStartX < pointer(e)[0] ? pointerStartX : pointer(e)[0];
+            const yPos = bandScale(store.selectedDP || '') || 0;
+            const height = bandScale.bandwidth();
 
             if (resultRef.current !== null && ((now() - (timer0 || 0)) > 50)) {
 
@@ -47,8 +49,18 @@ const RangeLayer: FC<Props> = ({ sendManipulation }: Props) => {
 
                 const rc = rough.default.svg(drawingG);
 
-                const sketchyRec = rc.rectangle(xPos || 0, bandScale(store.selectedDP || '') || 0, Math.abs(pointerStartX - pointer(e)[0]), bandScale.bandwidth(), sketchyOption);
+                const sketchyRec = rc.rectangle(xPos + 0.5 * Math.abs(pointerStartX - pointer(e)[0]), yPos, 4, height, sketchyOption);
+
+
+                const rangePoly = rc.polygon([
+                    [xPos, yPos + 0.5 * height],
+                    [xPos + 0.5 * Math.abs(pointerStartX - pointer(e)[0]), yPos + 0.5 * height - 4],
+                    [xPos + Math.abs(pointerStartX - pointer(e)[0]), yPos + 0.5 * height],
+                    [xPos + 0.5 * Math.abs(pointerStartX - pointer(e)[0]), yPos + 0.5 * height + 4]
+                ], sketchyOption);
+
                 drawingG.appendChild(sketchyRec);
+                drawingG.appendChild(rangePoly);
 
                 timer0 = now();
             }
