@@ -11,13 +11,12 @@ const ChartLegends: FC = () => {
 
     const categoricalColorScale = makeCategoricalScale(dataSet);
 
-    return (<g transform={`translate(0,${store.svgHeight - margin.bottom})`}>
+    return (<g transform={`translate(0,${store.svgHeight - (IndicatorSize + 2 + (IndicatorSize + 2) * DataPreset[store.dbTag].categories.length * 2)})`}>
         {DataPreset[store.dbTag].categories.map((cat, i) => {
             return (
                 <g key={`${cat}-legend`}>
                     <circle
                         fill={categoricalColorScale(cat) as string}
-
                         cx={store.svgWidth - IndicatorSize * 2}
                         cy={IndicatorSize + 2 + (IndicatorSize + 2) * i * 2}
                         r={IndicatorSize}

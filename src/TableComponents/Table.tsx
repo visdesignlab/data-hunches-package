@@ -64,11 +64,12 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
             setNeedReset(true);
             store.setNeedToShowPreview(true);
             handlePreviewOnClick(dataSet, undefined, undefined, store.svgHeight, store.svgWidth, store.showCategory, dataHunch.content);
-        } else if (dataHunch.type === 'sketch') {
-            setNeedReset(true);
-            store.setNeedToShowPreview(true);
-            previewSketch(dataHunch.content);
         }
+        // else if (dataHunch.type === 'sketch') {
+        //     setNeedReset(true);
+        //     store.setNeedToShowPreview(true);
+        //     previewSketch(dataHunch.content);
+        // }
     };
 
     const rowOutHandler = () => {

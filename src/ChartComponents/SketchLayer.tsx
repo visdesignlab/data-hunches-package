@@ -35,7 +35,7 @@ const SketchLayer: FC<Props> = ({ sendManipulation }: Props) => {
     };
 
     const dragEnd = () => {
-        const newSetPath = currentPath.filter((_d, i) => i % 5 === 0);
+        const newSetPath = currentPath.filter((_d, i) => i % 3 === 0);
         sketchResult.push(newSetPath);
         select('#existing-path').selectAll('path')
             .data(sketchResult)

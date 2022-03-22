@@ -25,6 +25,7 @@ import { textwrap } from 'd3-textwrap';
 import ManipulationLayer from "./ChartComponents/ManipulationLayer";
 import { useLayoutEffect } from "react";
 import ChartTitle from "./ChartComponents/ChartTitle";
+import SketchyDrawings from "./ChartComponents/DataHunch/SketchyDrawings";
 
 type Props = {
     dataHunchArray: DataHunch[];
@@ -48,10 +49,16 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
     }, [store.inputMode]);
 
     const [allChartDHArray, setAllChartDHArray] = useState<DataHunch[]>([]);
+    const [sketchArray, setSketchArray] = useState<DataHunch[]>([]);
 
     useEffect(() => {
         let tempArray = dataHunchArray.filter(d => d.label === 'all chart');
+        let tempSketchArray = tempArray.filter(d => d.type === 'sketch');
+
         stateUpdateWrapperUseJSON(allChartDHArray, tempArray, setAllChartDHArray);
+
+        stateUpdateWrapperUseJSON(sketchArray, tempSketchArray, setSketchArray);
+
     }, [dataHunchArray]);
     // if needed useCallback
 
@@ -112,6 +119,12 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
             </g>
 
             <g id='data-hunches-container'>
+
+                {sketchArray.map((sketchDP) => {
+                    return <SketchyDrawings dataHunch={sketchDP} key={`sketchy-${sketchDP.id}`}
+                        highlighted={sketchDP.id === store.highlightedDH}
+                        selected={store.selectedDH.includes(sketchDP.id)} />;
+                })}
 
                 {dataSet.map((barDP) => {
                     if (barDP.dataHunchArray) {

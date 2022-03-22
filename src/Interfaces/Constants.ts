@@ -20,7 +20,7 @@ export const HighlightColor = '#ffcf76';
 
 export const DataHunchColor = '#337ab7';
 
-export const DefaultBar = '#ec7936';
+export const DefaultBar = '#b08aa6';
 
 export const DefaultForeignObjectWidth = 200;
 
@@ -45,7 +45,7 @@ const FirebaseSetupConstants = {
 
 export const ConfidenceInput = ['Not at all confident', 'Not very confident', 'Somewhat confident', 'Very confident', 'Extremely confident'];
 
-export const CategoricalColor = [DefaultBar, '#b08aa6', '#75c4c2', '#24b466'];
+export const CategoricalColor = [DefaultBar, '#75c4c2', '#f3a87c', '#24b466'];
 
 export const firebaseSetup = getFirestore(initializeApp(FirebaseSetupConstants));
 
@@ -87,9 +87,9 @@ const TestData = [
     { label: "a", value: 9, categorical: 'A' },
     { label: "b", value: 2, categorical: 'B' },
     { label: "c", value: 2, categorical: 'A' },
-    { label: "d", value: 3, categorical: 'A' },
+    { label: "d", value: 3, categorical: 'D' },
     { label: "e", value: 5, categorical: 'A' },
-    { label: "f", value: 7, categorical: 'A' },
+    { label: "f", value: 7, categorical: 'D' },
     { label: "g", value: 9, categorical: 'C' },
     { label: "h", value: 5, categorical: 'B' }];
 
@@ -106,6 +106,6 @@ export const DataPreset: { [key: string]: dataAttribute; } = {
         data: TestData,
         name: 'DH Test Data',
         explanation: 'This is a test data for data hunch development purposes. Values have no real significance',
-        categories: ['A', 'B', 'C'],
+        categories: ['A', 'B', 'C', 'D'],
     }
 };
