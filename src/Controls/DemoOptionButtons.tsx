@@ -7,6 +7,7 @@ import { stateUpdateWrapperUseJSON } from "../Interfaces/StateChecker";
 import Store from "../Interfaces/Store";
 import AddIcon from '@material-ui/icons/Add';
 import NewVolDialog from "./NewVolDialog";
+import { NonCapButton } from "../Interfaces/StyledComponents";
 
 const DemoOptionButtons: FC = () => {
     const store = useContext(Store);
@@ -64,23 +65,23 @@ const DemoOptionButtons: FC = () => {
     return (<>
         <ButtonGroup
             style={{ paddingRight: '5px' }}>
-            <Button
+            <NonCapButton
                 size='small'
                 variant="outlined"
                 color="primary"
                 onClick={handleDBMenu}
             >
                 Select Data
-            </Button>
-            <Button
+            </NonCapButton>
+            <NonCapButton
                 size='small'
                 variant="outlined"
                 onClick={handleVolMenu}
                 color="primary">
                 Select Vol
-            </Button >
+            </NonCapButton >
             {DataPreset[store.dbTag].categories ?
-                <Button
+                <NonCapButton
                     size='small'
                     variant='outlined'
                     color={store.showCategory ? 'primary' : 'default'}
@@ -88,7 +89,7 @@ const DemoOptionButtons: FC = () => {
                         store.setShowCategory(!store.showCategory);
                     }}
                 >Show Category
-                </Button> :
+                </NonCapButton> :
                 <></>
             }
             <Menu

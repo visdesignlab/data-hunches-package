@@ -4,7 +4,7 @@ import { useContext, } from "react";
 import { FC } from "react";
 import { ControlFOHeight, ControlFOWidth, WithoutCatControlFOHeight } from "../Interfaces/Constants";
 import Store from "../Interfaces/Store";
-import { useStyles } from "../Interfaces/StyledComponents";
+import { NonCapButton, useStyles } from "../Interfaces/StyledComponents";
 import CloseIcon from '@material-ui/icons/Close';
 import { InputMode } from "../Interfaces/Types";
 
@@ -30,39 +30,39 @@ const SpecificControl: FC = () => {
                     color="primary"
                     aria-label="vertical outlined primary button group"
                 >
-                    <Button onClick={() => { clickHandler('annotation'); }}>
+                    <NonCapButton onClick={() => { clickHandler('annotation'); }}>
                         Annotation
-                    </Button>
-                    <Button onClick={() => {
+                    </NonCapButton>
+                    <NonCapButton onClick={() => {
                         clickHandler('range');
                     }}>
                         Range
-                    </Button>
-                    <Button onClick={() => {
+                    </NonCapButton>
+                    <NonCapButton onClick={() => {
                         clickHandler('manipulations');
                     }}>
                         Manipulation
-                    </Button>
-                    <Button onClick={() => {
+                    </NonCapButton>
+                    <NonCapButton onClick={() => {
                         clickHandler('rating');
                     }}>
                         Rating
-                    </Button>
-                    <Button onClick={() => {
+                    </NonCapButton>
+                    <NonCapButton onClick={() => {
                         clickHandler('data space');
                     }}>
                         Data Space
-                    </Button>
-                    <Button onClick={() => {
+                    </NonCapButton>
+                    <NonCapButton onClick={() => {
                         clickHandler('exclusion');
                     }}>
                         Exclusion
-                    </Button>
-                    {store.showCategory ? <Button onClick={() => {
+                    </NonCapButton>
+                    {store.showCategory ? <NonCapButton onClick={() => {
                         clickHandler('categorical');
                     }}>
                         Categorical
-                    </Button> : <></>}
+                    </NonCapButton> : <></>}
 
                 </ButtonGroup>
                 <IconButton size="small" onClick={() => {

@@ -5,6 +5,7 @@ import { DataContext } from "../..";
 import 'd3-transition';
 import Store from "../../Interfaces/Store";
 import { handlePreviewOnClick, handleResetOnClick } from "../../HelperFunctions/PreviewReset";
+import { NonCapButton } from "../../Interfaces/StyledComponents";
 
 type Props = {
     labelToPreview: string | undefined;
@@ -31,16 +32,16 @@ const PreviewResetButtons: FC<Props> = ({ labelToPreview, valueToPreview, disabl
     };
 
     return (<ButtonGroup>
-        <Button size='small'
+        <NonCapButton size='small'
             disabled={disableButtons}
             onClick={previewHandler}>
             Preview
-        </Button>
-        <Button size='small'
+        </NonCapButton>
+        <NonCapButton size='small'
             disabled={disableButtons}
             onClick={resetHandler}>
             Reset
-        </Button>
+        </NonCapButton>
     </ButtonGroup>);
 };
 

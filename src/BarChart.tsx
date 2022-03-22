@@ -91,7 +91,13 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
     }, [store.selectedDP]);
 
     return <div>
-        <svg width={store.svgWidth} height={store.svgHeight} >
+        <svg width={store.svgWidth}
+            height={store.svgHeight}
+            onClick={() => {
+                if (store.selectingADataPoint) {
+                    store.selectADataPointMode(false);
+                }
+            }}>
             {store.showCategory ? <ChartLegends /> : <></>}
 
 

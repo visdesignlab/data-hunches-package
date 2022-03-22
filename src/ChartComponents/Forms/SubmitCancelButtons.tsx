@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useContext } from "react";
 import { FC } from "react";
 import Store from "../../Interfaces/Store";
+import { NonCapButton } from "../../Interfaces/StyledComponents";
 import { DataHunch } from "../../Interfaces/Types";
 
 type Props = {
@@ -27,14 +28,14 @@ const SubmitCancelButtons: FC<Props> = ({ dhToSubmit, disableSubmit }: Props) =>
     };
 
     return <ButtonGroup>
-        <Button size='small'
+        <NonCapButton size='small'
             onClick={submitClickHandler}
             disabled={disableSubmit} >
             Submit
-        </Button>
-        <Button size='small' onClick={cancelClickHandler} variant='outlined'>
+        </NonCapButton>
+        <NonCapButton size='small' onClick={cancelClickHandler} variant='outlined'>
             Cancel
-        </Button>
+        </NonCapButton>
     </ButtonGroup>;
 };
 

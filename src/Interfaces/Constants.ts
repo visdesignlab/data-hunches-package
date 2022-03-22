@@ -24,7 +24,7 @@ export const DefaultBar = '#b08aa6';
 
 export const DefaultForeignObjectWidth = 200;
 
-export const DefaultForeignObjectHeight = 255;
+export const DefaultForeignObjectHeight = 285;
 
 export const ControlFOWidth = 152;
 

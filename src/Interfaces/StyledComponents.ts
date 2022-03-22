@@ -1,4 +1,4 @@
-import { createStyles, makeStyles, Theme, Tooltip, withStyles } from "@material-ui/core";
+import { Button, createStyles, makeStyles, Theme, Tooltip, withStyles } from "@material-ui/core";
 import styled from "styled-components";
 import { SelectionColor, HighlightColor, DataHunchColor } from "./Constants";
 
@@ -19,6 +19,9 @@ export const LightTooltip = withStyles((theme: Theme) => ({
         fontWeight: 'bold'
     },
 }))(Tooltip);
+
+
+
 
 export const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -52,7 +55,7 @@ export const useStyles = makeStyles((theme: Theme) =>
         },
         menuButton: {
             marginRight: 16,
-            marginLeft: -12
+            marginLeft: -12,
         },
         foreignObjectContainer: {
             backgroundColor: 'rgb(238, 238, 238, 0.8)',
@@ -73,13 +76,9 @@ export const useStyles = makeStyles((theme: Theme) =>
             clear: 'both',
             margin: '2px'
         },
-        // tooltipStyle: {
-
-        //     backgroundColor: theme.palette.common.white,
-        //     color: 'rgba(0, 0, 0, 0.87)',
-        //     boxShadow: theme.shadows[1],
-        //     fontSize: 20,
-        // }
+        overrideButton: {
+            textTransform: "none",
+        }
     }));
 
 interface FontProps {
@@ -115,4 +114,8 @@ export const NonRoughDHIndicatorRect = styled(`rect`) <RectProps>`
     height:4px;
     fill:${DataHunchColor};
     opacity:0.7;
+`;
+
+export const NonCapButton = styled(Button)`
+    text-transform: none
 `;
