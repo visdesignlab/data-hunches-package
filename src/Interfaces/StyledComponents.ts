@@ -61,6 +61,10 @@ export const useStyles = makeStyles((theme: Theme) =>
             backgroundColor: 'rgb(238, 238, 238, 0.8)',
             padding: '5px !important',
         },
+        specificControlContainer: {
+            backgroundColor: 'rgb(238, 238, 238, 0.8)',
+            padding: '0px !important',
+        },
         radioStyle: {
             marginTop: -7,
             marginBottom: -7

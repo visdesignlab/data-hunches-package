@@ -26,9 +26,9 @@ export const DefaultForeignObjectWidth = 200;
 
 export const DefaultForeignObjectHeight = 285;
 
-export const ControlFOWidth = 152;
+export const ControlFOWidth = 120;
 
-export const ControlFOHeight = 285;
+export const ControlFOHeight = 260;
 
 export const WithoutCatControlFOHeight = 208;
 

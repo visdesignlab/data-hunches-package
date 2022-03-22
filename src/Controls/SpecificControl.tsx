@@ -1,12 +1,12 @@
-import { Button, ButtonGroup, Container, IconButton, } from "@material-ui/core";
+import { ButtonGroup, Container } from "@material-ui/core";
 import { observer } from "mobx-react-lite";
 import { useContext, } from "react";
 import { FC } from "react";
 import { ControlFOHeight, ControlFOWidth, WithoutCatControlFOHeight } from "../Interfaces/Constants";
 import Store from "../Interfaces/Store";
 import { NonCapButton, useStyles } from "../Interfaces/StyledComponents";
-import CloseIcon from '@material-ui/icons/Close';
 import { InputMode } from "../Interfaces/Types";
+import styled from "styled-components";
 
 const SpecificControl: FC = () => {
     const store = useContext(Store);
@@ -24,56 +24,54 @@ const SpecificControl: FC = () => {
             // display={store.selectingADataPoint ? undefined : 'none'}
             display='none'
             width={ControlFOWidth} height={store.showCategory ? ControlFOHeight : WithoutCatControlFOHeight}>
-            <Container className={styles.foreignObjectContainer} >
+            <Container className={styles.specificControlContainer} >
                 <ButtonGroup
                     orientation="vertical"
                     color="primary"
                     aria-label="vertical outlined primary button group"
                 >
-                    <NonCapButton onClick={() => { clickHandler('annotation'); }}>
+                    <ContextButton onClick={() => { clickHandler('annotation'); }}>
                         Annotation
-                    </NonCapButton>
-                    <NonCapButton onClick={() => {
+                    </ContextButton>
+                    <ContextButton onClick={() => {
                         clickHandler('range');
                     }}>
                         Range
-                    </NonCapButton>
-                    <NonCapButton onClick={() => {
+                    </ContextButton>
+                    <ContextButton onClick={() => {
                         clickHandler('manipulations');
                     }}>
                         Manipulation
-                    </NonCapButton>
-                    <NonCapButton onClick={() => {
+                    </ContextButton>
+                    <ContextButton onClick={() => {
                         clickHandler('rating');
                     }}>
                         Rating
-                    </NonCapButton>
-                    <NonCapButton onClick={() => {
+                    </ContextButton>
+                    <ContextButton onClick={() => {
                         clickHandler('data space');
                     }}>
                         Data Space
-                    </NonCapButton>
-                    <NonCapButton onClick={() => {
+                    </ContextButton>
+                    <ContextButton onClick={() => {
                         clickHandler('exclusion');
                     }}>
                         Exclusion
-                    </NonCapButton>
-                    {store.showCategory ? <NonCapButton onClick={() => {
+                    </ContextButton>
+                    {store.showCategory ? <ContextButton onClick={() => {
                         clickHandler('categorical');
                     }}>
                         Categorical
-                    </NonCapButton> : <></>}
+                    </ContextButton> : <></>}
 
                 </ButtonGroup>
-                <IconButton size="small" onClick={() => {
-                    store.setCurrentSelectedDP(undefined);
-                    store.selectADataPointMode(false);
-                }}>
-                    <CloseIcon />
-                </IconButton>
             </Container>
         </foreignObject>
     );
 };
 
 export default observer(SpecificControl);
+
+const ContextButton = styled(NonCapButton)`
+justify-content: flex-start
+`;

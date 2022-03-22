@@ -96,6 +96,7 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
             onClick={() => {
                 if (store.selectingADataPoint) {
                     store.selectADataPointMode(false);
+                    store.setCurrentSelectedDP(undefined);
                 }
             }}>
             {store.showCategory ? <ChartLegends /> : <></>}
