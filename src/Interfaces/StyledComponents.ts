@@ -9,18 +9,6 @@ WebFont.load({
     }
 });
 
-export const LightTooltip = withStyles((theme: Theme) => ({
-    tooltip: {
-        backgroundColor: theme.palette.common.white,
-        color: 'rgba(0, 0, 0, 0.87)',
-        boxShadow: theme.shadows[1],
-        fontSize: 20,
-        fontFamily: "'Nanum Brush Script', cursive",
-        fontWeight: 'bold'
-    },
-}))(Tooltip);
-
-
 
 
 export const useStyles = makeStyles((theme: Theme) =>

@@ -5,8 +5,8 @@ import { FC, useCallback, useContext, useLayoutEffect, useRef } from "react";
 import * as rough from 'roughjs/bin/rough';
 import { SelectionColor, DefaultSketchyOptions, HighlightColor, DataHunchColor } from "../../Interfaces/Constants";
 import Store from "../../Interfaces/Store";
-import { LightTooltip } from "../../Interfaces/StyledComponents";
 import { DataHunch } from "../../Interfaces/Types";
+import StyledTooltip from "./StyledTooltip";
 
 type Props = {
     xPos: number;
@@ -99,11 +99,11 @@ const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch, highlight
     }, [highlighted, selected]);
 
     return (
-        <LightTooltip title={dataHunch.reasoning}>
+        <StyledTooltip dataHunch={dataHunch} childrenComponent={
             <g display={store.needToShowPreview ? 'none' : undefined}
                 ref={dhRef}
-            />
-        </LightTooltip>);
+            />} />
+    );
 };
 
 export default observer(SketchyBar);

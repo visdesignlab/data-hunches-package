@@ -6,6 +6,7 @@ import { select } from "d3-selection";
 import * as rough from 'roughjs/bin/rough';
 import { DataHunchColor, DefaultSketchyOptions, HighlightColor, SelectionColor } from "../../Interfaces/Constants";
 import { line } from "d3-shape";
+import StyledTooltip from "./StyledTooltip";
 
 type Props = {
     dataHunch: DataHunch;
@@ -50,13 +51,15 @@ const SketchyDrawings: FC<Props> = ({ dataHunch, highlighted, selected }: Props)
     }, [highlighted, selected]);
 
     return (
-        <g ref={dhRef}
-            onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
-            onMouseOut={() => {
-                store.setHighlightedDH(-1);
-            }}
-            onClick={() => { store.setSelectedDH([dataHunch.id]); }}
-            cursor='pointer' />
+        <StyledTooltip dataHunch={dataHunch}
+            childrenComponent={
+                <g ref={dhRef}
+                    onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
+                    onMouseOut={() => {
+                        store.setHighlightedDH(-1);
+                    }}
+                    onClick={() => { store.setSelectedDH([dataHunch.id]); }}
+                    cursor='pointer' />} />
     );
 };
 

@@ -5,7 +5,7 @@ import { DataHunchColor, DefaultSketchyOptions, HighlightColor, SelectionColor }
 import Store from "../../Interfaces/Store";
 import { DataHunch } from "../../Interfaces/Types";
 import * as rough from 'roughjs/bin/rough';
-import { LightTooltip } from "../../Interfaces/StyledComponents";
+import StyledTooltip from "./StyledTooltip";
 
 type Props = {
     curvePoints: string;
@@ -68,8 +68,8 @@ const SingleOverAxisIndicator: FC<Props> = ({ textX, textY, dataHunch, curvePoin
 
 
     return (
-        <LightTooltip title={dataHunch.reasoning}>
-            <g cursor="pointer"
+        <StyledTooltip
+            childrenComponent={<g cursor="pointer"
                 onClick={() => { store.setSelectedDH([dataHunch.id]); }}
                 onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
                 onMouseOut={() => { store.setHighlightedDH(-1); }}>
@@ -86,8 +86,10 @@ const SingleOverAxisIndicator: FC<Props> = ({ textX, textY, dataHunch, curvePoin
                 >
                     {dataHunch.content}
                 </text>
-            </g>
-        </LightTooltip>
+            </g>}
+            dataHunch={dataHunch}
+        />
+
     );
 };
 

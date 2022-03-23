@@ -15,7 +15,7 @@ import DataHunchIndicator from "./ChartComponents/DataHunch/DataHunchIndicators"
 import { DataHunch } from "./Interfaces/Types";
 import { stateUpdateWrapperUseJSON } from "./Interfaces/StateChecker";
 import { Grid } from "@material-ui/core";
-import { DHIndicatorText, LightTooltip, useStyles } from "./Interfaces/StyledComponents";
+import { DHIndicatorText, useStyles } from "./Interfaces/StyledComponents";
 import CategoricalIndicator from "./ChartComponents/DataHunch/CategoricalIndicator";
 import ChartLegends from "./ChartComponents/ChartLegends";
 import SketchLayer from "./ChartComponents/SketchLayer";
@@ -26,6 +26,7 @@ import ManipulationLayer from "./ChartComponents/ManipulationLayer";
 import { useLayoutEffect } from "react";
 import ChartTitle from "./ChartComponents/ChartTitle";
 import SketchyDrawings from "./ChartComponents/DataHunch/SketchyDrawings";
+import StyledTooltip from "./ChartComponents/DataHunch/StyledTooltip";
 
 type Props = {
     dataHunchArray: DataHunch[];
@@ -179,32 +180,24 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
                 <ul className={styles.noBulletsList}>
                     {allChartDHArray.map((d, i) => {
                         return (
-                            <LightTooltip title={
-                                <div>
-                                    {d.type !== 'sketch' ? <div>
-                                        Content: {d.content}
-                                    </div> : <></>}
+                            <StyledTooltip dataHunch={d}
+                                key={`${d.id}-text`}
+                                childrenComponent={
+                                    <li style={{ width: 'fit-content' }}>
+                                        <DHIndicatorText
+                                            isHighlighted={d.id === store.highlightedDH}
+                                            isSelected={store.selectedDH.includes(d.id)}
+                                            onClick={() => { store.setSelectedDH([d.id]); }}
+                                            onMouseOver={() => { store.setHighlightedDH(d.id); }}
+                                            onMouseOut={() => { store.setHighlightedDH(-1); }}
 
-                                    <div>
-                                        Reasoning: {d.reasoning}
-                                    </div>
-                                </div>}>
-                                <li style={{ width: 'fit-content' }}>
-                                    <DHIndicatorText
-                                        isHighlighted={d.id === store.highlightedDH}
-                                        isSelected={store.selectedDH.includes(d.id)}
-                                        onClick={() => { store.setSelectedDH([d.id]); }}
-                                        onMouseOver={() => { store.setHighlightedDH(d.id); }}
-                                        onMouseOut={() => { store.setHighlightedDH(-1); }}
-                                        key={`${d.id}-text`}
-                                        fontSize='larger'
-                                        needBold={true}
-                                        style={{ textOverflow: 'ellipsis' }}
-                                    >
-                                        *{d.type === 'sketch' ? 'sketch' : d.content}
-                                    </DHIndicatorText>
-                                </li>
-                            </LightTooltip>
+                                            fontSize='larger'
+                                            needBold={true}
+                                            style={{ textOverflow: 'ellipsis' }}
+                                        >
+                                            *{d.type === 'sketch' ? 'sketch' : d.content}
+                                        </DHIndicatorText>
+                                    </li>} />
                         );
                     })}
                 </ul>

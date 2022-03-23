@@ -12,9 +12,10 @@ import Store from "../../Interfaces/Store";
 import 'roughjs';
 import { BarChartDataPoint, DataHunch } from "../../Interfaces/Types";
 import SketchyBar from "./SketchyBar";
-import { DHIndicatorText, LightTooltip } from "../../Interfaces/StyledComponents";
+import { DHIndicatorText } from "../../Interfaces/StyledComponents";
 import SingleOverAxisIndicator from "./SingleOverAxisIndicator";
 import ExclusionIndicator from "./ExclusionIndicator";
+import StyledTooltip from "./StyledTooltip";
 
 type Props = {
     dataHunchArray: DataHunch[],
@@ -165,20 +166,8 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
 
             {offVisDH.map((d, i) => {
                 return (
-
-                    <LightTooltip
-                        key={`${d.id}-text`}
-                        title={
-                            <div>
-                                <div>
-                                    Content: {d.content}
-                                </div>
-                                <div>
-                                    Reasoning: {d.reasoning}
-                                </div>
-                            </div>
-                        }>
-                        <DHIndicatorText
+                    <StyledTooltip
+                        childrenComponent={<DHIndicatorText
                             x={findXPos(d, i, offVisDH.length)}
                             y={(bandScale(d.label) || 0) + 0.5 * bandScale.bandwidth() + (2 * IndicatorSize) * (i % 2 === 0 ? -1 : 1)}
                             fontSize='larger'
@@ -189,8 +178,10 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                             onMouseOver={() => { store.setHighlightedDH(d.id); }}
                             onMouseOut={() => { store.setHighlightedDH(-1); }}>
                             {calculateText(d.content, findXPos(d, i, offVisDH.length), offVisDH.length)}
-                        </DHIndicatorText>
-                    </LightTooltip>
+                        </DHIndicatorText>}
+                        dataHunch={d}
+                        key={`${d.id}-text`}
+                    />
                 );
             })
             }

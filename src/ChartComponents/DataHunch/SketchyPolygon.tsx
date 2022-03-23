@@ -5,7 +5,7 @@ import Store from "../../Interfaces/Store";
 import { DataHunch } from "../../Interfaces/Types";
 import * as rough from 'roughjs/bin/rough';
 import { HighlightColor, SelectionColor } from "../../Interfaces/Constants";
-import { LightTooltip } from "../../Interfaces/StyledComponents";
+import StyledTooltip from "./StyledTooltip";
 
 type Props = {
     dataHunch: DataHunch;
@@ -63,11 +63,10 @@ const SketchyPolygon: FC<Props> = ({ dataHunch, points, fill, opacity, highlight
         }
     }, [highlighted, selected]);
 
-    return (<LightTooltip title={dataHunch.reasoning}>
+    return (<StyledTooltip dataHunch={dataHunch} childrenComponent={
         <g ref={dhRef}
             opacity={opacity}
-        />
-    </LightTooltip>
+        />} />
     );
 };
 

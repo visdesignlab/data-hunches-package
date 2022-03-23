@@ -8,7 +8,7 @@ import * as rough from 'roughjs/bin/rough';
 import { BarChartDataPoint, DataHunch } from "../../Interfaces/Types";
 import { select } from "d3-selection";
 import { DataHunchColor, DefaultSketchyOptions, HighlightColor, SelectionColor } from "../../Interfaces/Constants";
-import { LightTooltip } from "../../Interfaces/StyledComponents";
+import StyledTooltip from "./StyledTooltip";
 
 type Props = {
     dataPoint: BarChartDataPoint;
@@ -53,15 +53,16 @@ const ExclusionIndicator: FC<Props> = ({ dataHunch, dataPoint, centerX, centerY,
     }, [highlighted, selected]);
 
     return (
-        <LightTooltip title={dataHunch.reasoning}>
-            <g ref={dhRef}
+        <StyledTooltip
+            dataHunch={dataHunch}
+            childrenComponent={<g ref={dhRef}
                 onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
                 onMouseOut={() => {
                     store.setHighlightedDH(-1);
                 }}
                 onClick={() => { store.setSelectedDH([dataHunch.id]); }}
-                cursor='pointer' />
-        </LightTooltip>
+                cursor='pointer' />}
+        />
     );
 };
 

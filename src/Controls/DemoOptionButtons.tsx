@@ -13,23 +13,8 @@ const DemoOptionButtons: FC = () => {
 
     const styles = useStyles();
     const [openDialog, setOpenDialog] = useState(false);
-    // const [anchorVol, setAnchorVol] = useState(null);
-    // const [anchorDB, setAnchorDB] = useState(null);
 
     const [subArray, setSubArray] = useState<string[]>([]);
-
-    // const handleVolMenu = (event: any) => {
-    //     setAnchorVol(event.currentTarget);
-    // };
-
-    // const handleDBMenu = (event: any) => {
-    //     setAnchorDB(event.currentTarget);
-    // };
-
-    // const handleClose = () => {
-    //     setAnchorVol(null);
-    //     setAnchorDB(null);
-    // };
 
     const handleVolChange = (e: any) => {
         const result = e.target.value;
@@ -38,10 +23,7 @@ const DemoOptionButtons: FC = () => {
         } else {
             store.setCurrentVol(result);
         }
-
     };
-
-
 
     const sendDialogSignal = (input: boolean) => {
         setOpenDialog(input);
@@ -53,7 +35,6 @@ const DemoOptionButtons: FC = () => {
 
     useEffect(() => {
         //get how many subs there are
-
         const attrRef = doc(firebaseSetup, store.dbTag, 'attr');
         let tempSubArray: string[] = [];
         getDoc(attrRef).then(async result => {
@@ -92,16 +73,6 @@ const DemoOptionButtons: FC = () => {
             </NonCapButton> :
             <></>
         }
-        {/* <ButtonGroup
-            style={{ marginRight: '5px' }}>
-            {/* <NonCapButton
-                size='small'
-                variant="outlined"
-                color="primary"
-                onClick={handleDBMenu}
-            >
-                Select Data
-            </NonCapButton> */}
 
         <FormControl style={{ marginRight: '5px', marginLeft: '5px' }}>
             <InputLabel>Select Data</InputLabel>
@@ -124,16 +95,9 @@ const DemoOptionButtons: FC = () => {
             </Select>
 
         </FormControl>
-        {/* <NonCapButton
-            size='small'
-            variant="outlined"
-            onClick={handleVolMenu}
-            color="primary">
-            Select Vol
-        </NonCapButton > */}
 
         <FormControl style={{ marginRight: '5px', marginLeft: '5px' }}>
-            <InputLabel>Select Collection</InputLabel>
+            <InputLabel>Data Hunch Demos</InputLabel>
             <Select className={styles.inputSelect}
                 native
                 value={store.currentVol}
@@ -154,52 +118,6 @@ const DemoOptionButtons: FC = () => {
             </Select>
 
         </FormControl>
-        {/* <Menu
-            anchorEl={anchorVol}
-            keepMounted
-            open={Boolean(anchorVol)}
-            onClose={handleClose}
-        >
-            {subArray.map((d, i) => {
-                return (
-                    <MenuItem
-                        key={`SubItem${d}`}
-                        onClick={() => {
-                            store.setCurrentVol(i + 1);
-                            handleClose();
-                        }}>
-                        {store.currentVol === (i + 1) ? '> ' : ''}{d}
-                    </MenuItem>
-                );
-            })}
-            <MenuItem onClick={() => { sendDialogSignal(true); }}>
-                <AddIcon />Start new volume
-            </MenuItem>
-        </Menu> */}
-
-
-        {/* <Menu
-            anchorEl={anchorDB}
-            keepMounted
-            open={Boolean(anchorDB)}
-            onClose={handleClose}>
-            {
-                Object.keys(DataPreset).map((d) => {
-                    return (
-                        <MenuItem
-                            key={`SelectDB${d}`}
-                            onClick={() => {
-                                store.setDBTag(d);
-                                handleClose();
-                            }}>
-                            {DataPreset[d].name}
-                        </MenuItem>
-                    );
-                })
-            }
-        </Menu> */}
-
-        {/* </ButtonGroup> */}
         <NewVolDialog open={openDialog} sendCloseSignal={sendDialogSignal} />
     </>);
 };
