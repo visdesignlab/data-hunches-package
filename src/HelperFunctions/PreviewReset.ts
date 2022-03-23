@@ -6,10 +6,10 @@ import { margin, SelectionColor, TransitionDuration } from "../Interfaces/Consta
 import { BarChartDataPoint } from "../Interfaces/Types";
 import { makeValueScale, makeBandScale, makeCategoricalScale, getRectFill } from "./ScaleGenerator";
 
-export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPreview: string | undefined, valueToPreview: number | undefined, svgHeight: number, svgWidth: number, doesContainCategory: boolean, modelInput: string | undefined) => {
+export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPreview: string | undefined, valueToPreview: number | undefined, svgHeight: number, SVGWidth: number, doesContainCategory: boolean, modelInput: string | undefined) => {
 
 
-    const valueScale = makeValueScale(ogDataSet, svgWidth);
+    const valueScale = makeValueScale(ogDataSet, SVGWidth);
     const bandScale = makeBandScale(ogDataSet, svgHeight);
     const categoricalScale = makeCategoricalScale(ogDataSet);
 
@@ -55,7 +55,7 @@ export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPrev
     }
 
     const newBandScale = makeBandScale(newData, svgHeight);
-    const newValueScale = makeValueScale(newData, svgWidth);
+    const newValueScale = makeValueScale(newData, SVGWidth);
 
     const oldValueScale = scaleLinear().domain(valueScale.domain()).range([newValueScale(valueScale.domain()[0]), newValueScale(valueScale.domain()[1])]);
 
@@ -123,8 +123,8 @@ export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPrev
     select('#band-axis').transition().duration(TransitionDuration).call(axisLeft(newBandScale) as any);
 };
 
-export const handleResetOnClick = (ogDataSet: BarChartDataPoint[], svgHeight: number, svgWidth: number, doesContainCategory: boolean, selectedDP: string | undefined) => {
-    const valueScale = makeValueScale(ogDataSet, svgWidth);
+export const handleResetOnClick = (ogDataSet: BarChartDataPoint[], svgHeight: number, SVGWidth: number, doesContainCategory: boolean, selectedDP: string | undefined) => {
+    const valueScale = makeValueScale(ogDataSet, SVGWidth);
     const bandScale = makeBandScale(ogDataSet, svgHeight);
     const categoricalScale = makeCategoricalScale(ogDataSet);
 

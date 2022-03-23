@@ -9,7 +9,7 @@ import SubmitCancelButtons from "./SubmitCancelButtons";
 
 type Props = {
     manipulationOutput: string;
-    type: 'manipulations' | 'sketch' | 'range' | 'exclusion';
+    type: 'manipulations' | 'sketch' | 'range' | 'exclusion' | 'direction';
 };
 
 const ManipulationForm: FC<Props> = ({ manipulationOutput, type }: Props) => {

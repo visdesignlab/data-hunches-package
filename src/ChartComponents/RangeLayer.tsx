@@ -7,13 +7,12 @@ import { SelectionColor, DefaultSketchyOptions, LightGray, margin } from "../Int
 import Store from "../Interfaces/Store";
 import * as rough from 'roughjs/bin/rough';
 import { max, min } from "d3-array";
-import { timer, now } from 'd3-timer';
+import { now } from 'd3-timer';
+import { SendManiProps } from "./ManipulationLayer";
 
-type Props = {
-    sendManipulation: (manipulationResult: string) => void;
-};
 
-const RangeLayer: FC<Props> = ({ sendManipulation }: Props) => {
+
+const RangeLayer: FC<SendManiProps> = ({ sendManipulation }: SendManiProps) => {
     const store = useContext(Store);
 
     const [isMouseDown, setIsMouseDown] = useState(false);

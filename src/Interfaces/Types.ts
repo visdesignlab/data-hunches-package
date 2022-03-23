@@ -39,6 +39,7 @@ export type InputMode =
     'range' |
     'inclusion' |
     'exclusion' |
+    'direction' |
     'manipulations';
 
 export type SelectionType = Selection<any, undefined, HTMLElement, undefined>;

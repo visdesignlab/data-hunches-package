@@ -9,11 +9,11 @@ import * as rough from 'roughjs/bin/rough';
 import { max, min } from "d3-array";
 import { now } from 'd3-timer';
 
-type Props = {
+export type SendManiProps = {
     sendManipulation: (manipulationResult: string) => void;
 };
 
-const ManipulationLayer: FC<Props> = ({ sendManipulation }: Props) => {
+const ManipulationLayer: FC<SendManiProps> = ({ sendManipulation }: SendManiProps) => {
     const store = useContext(Store);
 
     const [isMouseDown, setIsMouseDown] = useState(false);

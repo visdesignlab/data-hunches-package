@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { FC, useContext, useState } from "react";
+import { FC, useContext, useState, useRef } from "react";
 import BarElement from './ChartComponents/BarElement';
 import { makeBandScale, makeCategoricalScale, makeValueScale } from "./HelperFunctions/ScaleGenerator";
 import { DefaultBar, DefaultForeignObjectHeight, DefaultForeignObjectWidth, margin, SelectionColor } from "./Interfaces/Constants";
@@ -27,6 +27,7 @@ import { useLayoutEffect } from "react";
 import ChartTitle from "./ChartComponents/ChartTitle";
 import SketchyDrawings from "./ChartComponents/DataHunch/SketchyDrawings";
 import StyledTooltip from "./ChartComponents/DataHunch/StyledTooltip";
+import styled from "styled-components";
 
 type Props = {
     dataHunchArray: DataHunch[];
@@ -44,7 +45,10 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
     };
 
     useEffect(() => {
-        if (store.inputMode !== 'manipulations') {
+        if (!(store.inputMode === 'sketch' ||
+            store.inputMode === 'direction' ||
+            store.inputMode === 'manipulations' ||
+            store.inputMode === 'range')) {
             setManipulationResult('');
         }
     }, [store.inputMode]);
@@ -61,7 +65,6 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
         stateUpdateWrapperUseJSON(sketchArray, tempSketchArray, setSketchArray);
 
     }, [dataHunchArray]);
-    // if needed useCallback
 
     const valueScale = makeValueScale(dataSet, store.svgWidth);
     const bandScale = makeBandScale(dataSet, store.svgHeight);
@@ -91,9 +94,26 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
         }
     }, [store.selectedDP]);
 
-    return <div>
-        <svg width={store.svgWidth}
-            height={store.svgHeight}
+    const svgRef = useRef(null);
+
+    useLayoutEffect(() => {
+
+        if (svgRef.current) {
+            store.setHeight((svgRef.current as any).clientHeight);
+            store.setWidth((svgRef.current as any).clientWidth);
+        }
+    }, [svgRef]);
+
+    window.addEventListener("resize", () => {
+        if (svgRef.current) {
+            store.setHeight((svgRef.current as any).clientHeight);
+            store.setWidth((svgRef.current as any).clientWidth);
+        }
+    });
+
+    return <div style={{ height: '100%' }}>
+        <ChartSVG
+            ref={svgRef}
             onClick={() => {
                 if (store.selectingADataPoint) {
                     store.selectADataPointMode(false);
@@ -164,14 +184,19 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
 
             <FormComponent />
 
-            <SpecificControl />
+            <SpecificControl sendManipulation={sendManipulationToParent} />
 
-        </svg>
+        </ChartSVG>
         <Grid container>
             <Grid item xs={6}>{
-                (store.inputMode === 'sketch' || store.inputMode === 'manipulations' || store.inputMode === 'range') ? <div style={{ width: DefaultForeignObjectWidth, height: DefaultForeignObjectHeight }}>
-                    <ManipulationForm manipulationOutput={manipulationResult} type={store.inputMode} />
-                </div> : <></>
+                (store.inputMode === 'sketch' ||
+                    store.inputMode === 'direction' ||
+                    store.inputMode === 'manipulations' ||
+                    store.inputMode === 'range') ?
+                    <div style={{ width: DefaultForeignObjectWidth, height: DefaultForeignObjectHeight }}>
+                        <ManipulationForm manipulationOutput={manipulationResult} type={store.inputMode} />
+                    </div> :
+                    <></>
             }
 
                 <ChartTitle />
@@ -209,3 +234,8 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
 
 export default observer(BarChart);
 
+
+const ChartSVG = styled.svg`
+  height: 70%;
+  width: 100%;
+`;

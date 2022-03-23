@@ -5,12 +5,9 @@ import { LightGray } from "../Interfaces/Constants";
 import Store from "../Interfaces/Store";
 import { drag as d3dragg } from 'd3-drag';
 import { line } from "d3-shape";
+import { SendManiProps } from "./ManipulationLayer";
 
-type Props = {
-    sendManipulation: (manipulationResult: string) => void;
-};
-
-const SketchLayer: FC<Props> = ({ sendManipulation }: Props) => {
+const SketchLayer: FC<SendManiProps> = ({ sendManipulation }: SendManiProps) => {
 
     const store = useContext(Store);
 

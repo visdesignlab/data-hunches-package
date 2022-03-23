@@ -11,20 +11,12 @@ import { DataPreset, firebaseSetup } from "./Interfaces/Constants";
 import BarChart from "./BarChart";
 import WelcomeDialog from "./WelcomeDialog";
 
-type Props = {
-    svgWidth: number;
-    svgHeight: number;
-};
 
 export const DataContext = createContext<BarChartDataPoint[]>([]);
 
-const BarChartWithDH: FC<Props> = ({ svgWidth, svgHeight }: Props) => {
+const BarChartWithDH: FC = () => {
 
     const store = useContext(Store);
-
-    store.setWidth(svgWidth);
-    store.setHeight(svgHeight);
-
 
     const [improvedDataSet, setImprovedDataSet] = useState<BarChartDataPoint[]>([]);
 

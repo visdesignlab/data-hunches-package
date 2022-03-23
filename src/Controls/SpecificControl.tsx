@@ -7,8 +7,11 @@ import Store from "../Interfaces/Store";
 import { NonCapButton, useStyles } from "../Interfaces/StyledComponents";
 import { InputMode } from "../Interfaces/Types";
 import styled from "styled-components";
+import { SendManiProps } from "../ChartComponents/ManipulationLayer";
 
-const SpecificControl: FC = () => {
+
+const SpecificControl: FC<SendManiProps> = ({ sendManipulation }: SendManiProps) => {
+
     const store = useContext(Store);
     const styles = useStyles();
 
@@ -63,6 +66,18 @@ const SpecificControl: FC = () => {
                         clickHandler('rating');
                     }}>
                         Rating
+                    </ContextButton>
+                    <ContextButton onClick={() => {
+                        clickHandler('direction');
+                        sendManipulation('higher');
+                    }}>
+                        Value should be higher.
+                    </ContextButton>
+                    <ContextButton onClick={() => {
+                        clickHandler('direction');
+                        sendManipulation('lower');
+                    }}>
+                        Value should be lower.
                     </ContextButton>
                 </ButtonGroup>
             </Container>

@@ -27,6 +27,9 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
     const store = useContext(Store);
     const dataSet = useContext(DataContext);
 
+    //   const caseScale = useCallback(() => {
+    // return CaseScaleGenerator(caseMax);
+    // }, [caseMax]);
     const valueScale = makeValueScale(dataSet, store.svgWidth);
     const bandScale = makeBandScale(dataSet, store.svgHeight);
 
@@ -41,7 +44,7 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
         let tempExDH: DataHunch[] = [];
         let tempAboveAxisDH: DataHunch[] = [];
         dataHunchArray.forEach((d) => {
-            if (['annotation', 'categorical'].includes(d.type)) {
+            if (['annotation', 'categorical', 'direction'].includes(d.type)) {
                 tempOffVis.push(d);
             } else if (d.type === 'exclusion') {
                 tempExDH.push(d);

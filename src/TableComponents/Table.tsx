@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { useContext, useEffect, useMemo } from "react";
+import { useContext, useEffect, } from "react";
 import { FC, useState } from "react";
 import { DataHunch } from "../Interfaces/Types";
 import Store from "../Interfaces/Store";
@@ -7,7 +7,6 @@ import { DataContext } from "..";
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
 import { handlePreviewOnClick, handleResetOnClick } from "../HelperFunctions/PreviewReset";
 import { useStyles } from "../Interfaces/StyledComponents";
-import { previewSketch } from "../HelperFunctions/PreviewSketch";
 import { stateUpdateWrapperUseJSON } from "../Interfaces/StateChecker";
 import { collection, deleteDoc, doc } from "firebase/firestore/lite";
 import { firebaseSetup } from "../Interfaces/Constants";
@@ -59,7 +58,7 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
         if (dataHunch.type === 'exclusion') {
             // setNeedReset(true);
             // store.setNeedToShowPreview(true);
-            // handlePreviewOnClick(dataSet, dataHunch.label, undefined, store.svgHeight, store.svgWidth, store.containCategory.length > 0, undefined);
+            // handlePreviewOnClick(dataSet, dataHunch.label, undefined, store.svgHeight, store.svgWdith, store.containCategory.length > 0, undefined);
         } else if (dataHunch.type === 'model') {
             setNeedReset(true);
             store.setNeedToShowPreview(true);

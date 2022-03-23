@@ -1,6 +1,6 @@
 import { Delaunay } from "d3-delaunay";
 import { observer } from "mobx-react-lite";
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useCallback, useContext, useEffect, useLayoutEffect, useState } from "react";
 import { DataContext } from "../..";
 import { makeValueScale, makeBandScale, makeCategoricalScale } from "../../HelperFunctions/ScaleGenerator";
 import { margin } from "../../Interfaces/Constants";
@@ -22,6 +22,7 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString, barChartPoint }
 
     const valueScale = makeValueScale(dataSet, store.svgWidth);
     const bandScale = makeBandScale(dataSet, store.svgHeight);
+
     const categoricalColorScale = makeCategoricalScale(dataSet);
 
     const [polygonPoints, setPolygonPoints] = useState<Delaunay.Triangle[]>([]);
@@ -34,8 +35,8 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString, barChartPoint }
     }, [dataHunchArrayString]);
 
     //seperate this part out so random points stay the same
-    useEffect(() => {
-        if (dataHunchArray.length > 0 && polygonPoints.length === 0) {
+    useLayoutEffect(() => {
+        if (dataHunchArray.length > 0) {
             const height = bandScale.bandwidth();
             const width = valueScale(barChartPoint.value) - margin.left;
 
@@ -95,9 +96,9 @@ const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString, barChartPoint }
 
             const iterator = delaunay.trianglePolygons();
 
-            setPolygonPoints(Array.from(iterator));
+            stateUpdateWrapperUseJSON(polygonPoints, Array.from(iterator), setPolygonPoints);
         }
-    }, [dataHunchArray]);
+    }, [dataHunchArray, store.svgWidth, store.svgHeight]);
 
     // Random
     // const chooseFill = () => {

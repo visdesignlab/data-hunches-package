@@ -1,9 +1,8 @@
-import { schemeTableau10 } from 'd3-scale-chromatic';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore/lite';
 import { BarChartDataPoint } from './Types';
 
-export const margin = ({ top: 30, right: 100, bottom: 50, left: 70 });
+export const margin = ({ top: 30, right: 150, bottom: 50, left: 70 });
 
 export const LargeNumber = 999;
 
@@ -26,9 +25,9 @@ export const DefaultForeignObjectWidth = 200;
 
 export const DefaultForeignObjectHeight = 285;
 
-export const ControlFOWidth = 200;
+export const ControlFOWidth = 190;
 
-export const ControlFOHeight = 270;
+export const ControlFOHeight = 300;
 
 export const WithoutCatControlFOHeight = 208;
 
