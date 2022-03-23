@@ -1,8 +1,8 @@
-import { AppBar, Button, ButtonGroup, Menu, MenuItem, Toolbar, Typography } from "@material-ui/core";
+import { AppBar, ButtonGroup, Menu, MenuItem, Toolbar, Typography } from "@material-ui/core";
 import { observer } from "mobx-react-lite";
 import { FC, useState } from "react";
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import { useStyles } from "../Interfaces/StyledComponents";
+import { NonCapButton, useStyles } from "../Interfaces/StyledComponents";
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import { useContext } from "react";
 import Store from "../Interfaces/Store";
@@ -34,7 +34,7 @@ const TopBar: FC = () => {
         <Toolbar>
 
             <Typography variant="h6" style={{ paddingRight: '5px' }}>
-                Data Hunch Demo
+                Data Hunches
             </Typography>
             <GeneralControl />
             <div className={styles.rightToolbar}>
@@ -45,34 +45,34 @@ const TopBar: FC = () => {
                 }
 
                 {store.userName ?
-                    <Button onClick={handleMenu}
+                    <NonCapButton onClick={handleMenu}
                         size='small'
                         variant="outlined"
                         color="primary">
                         {`Signed in as ${store.userName}`}
                         <AccountCircle />
-                    </Button> :
+                    </NonCapButton> :
                     <ButtonGroup
                     >
-                        <Button
+                        <NonCapButton
                             size='small'
                             variant='outlined'
                             onClick={() => { store.setUserName('Guest'); }}
                             color='primary'>
                             Continue as Guest
-                        </Button>
+                        </NonCapButton>
 
                         <GoogleLogin
                             clientId="565250402151-jseb9mfqk3tumg1q6vcgklmovro4h9b4.apps.googleusercontent.com"
                             render={renderProps => (
-                                <Button onClick={renderProps.onClick}
+                                <NonCapButton onClick={renderProps.onClick}
                                     size='small'
                                     variant="outlined"
                                     color="primary"
                                     disabled={renderProps.disabled}>
                                     Sign in with Google
                                     <AccountCircle />
-                                </Button>
+                                </NonCapButton>
                             )}
                             buttonText="Login"
                             onSuccess={responseGoogle}
