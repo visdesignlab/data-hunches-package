@@ -52,11 +52,37 @@ const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch, highlight
                 drawingG.appendChild(sketchyDH);
                 drawingG.appendChild(rangePoly);
 
+                select(dhRef.current).append('polygon')
+                    .attr('points', ([
+                        [valueScale()(parsedRange[0]), yPos + 0.5 * height],
+                        [xPos, yPos + 0.5 * height - 4],
+                        [valueScale()(parsedRange[1]), yPos + 0.5 * height],
+                        [xPos, yPos + 0.5 * height + 4]
+                    ]).toString())
+                    .attr('opacity', 0)
+                    .attr('fill', 'white')
+                    .attr('cursor', 'pointer')
+                    .on('mouseover', () => { store.setHighlightedDH(dataHunch.id); })
+                    .on('mouseout', () => { store.setHighlightedDH(-1); })
+                    .on('click', () => { store.setSelectedDH([dataHunch.id]); });
+
             } else {
                 const sketchyDH = rc.rectangle(xPos, yPos, width, height, DefaultSketchyOptions
                 );
                 drawingG.appendChild(sketchyDH);
             }
+
+            select(dhRef.current).append('rect')
+                .attr('x', xPos)
+                .attr('y', yPos)
+                .attr('width', width)
+                .attr('height', height)
+                .attr('opacity', 0)
+                .attr('fill', 'white')
+                .attr('cursor', 'pointer')
+                .on('mouseover', () => { store.setHighlightedDH(dataHunch.id); })
+                .on('mouseout', () => { store.setHighlightedDH(-1); })
+                .on('click', () => { store.setSelectedDH([dataHunch.id]); });
         };
     }, [xPos, yPos, width, height]);
 
@@ -76,12 +102,7 @@ const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch, highlight
         <LightTooltip title={dataHunch.reasoning}>
             <g display={store.needToShowPreview ? 'none' : undefined}
                 ref={dhRef}
-                onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
-                onMouseOut={() => {
-                    store.setHighlightedDH(-1);
-                }}
-                onClick={() => { store.setSelectedDH([dataHunch.id]); }}
-                cursor='pointer' />
+            />
         </LightTooltip>);
 };
 

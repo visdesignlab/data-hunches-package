@@ -1,6 +1,6 @@
 import { select } from "d3-selection";
 import { observer } from "mobx-react-lite";
-import { FC, useContext, useLayoutEffect, useRef } from "react";
+import { FC, useContext, useLayoutEffect, useRef, useEffect } from "react";
 import Store from "../../Interfaces/Store";
 import { DataHunch } from "../../Interfaces/Types";
 import * as rough from 'roughjs/bin/rough';
@@ -37,6 +37,16 @@ const SketchyPolygon: FC<Props> = ({ dataHunch, points, fill, opacity, highlight
                 strokeWidth: 1,
             });
             drawingG.appendChild(sketchyDH);
+
+            //Add a polygon for mouse interaction
+            select(dhRef.current).append('polygon')
+                .attr('points', points.toString())
+                .attr('opacity', 0)
+                .attr('fill', 'white')
+                .attr('cursor', 'pointer')
+                .on('mouseover', () => { store.setHighlightedDH(dataHunch.id); })
+                .on('mouseout', () => { store.setHighlightedDH(-1); })
+                .on('click', () => { store.setSelectedDH([dataHunch.id]); });
         }
     }, [points, fill]);
 
@@ -44,23 +54,19 @@ const SketchyPolygon: FC<Props> = ({ dataHunch, points, fill, opacity, highlight
     useLayoutEffect(() => {
         if (dhRef.current !== null) {
             if (highlighted) {
-                select(dhRef.current).selectAll("path[stroke='white'],path[stroke='#eb9800']").attr('stroke', HighlightColor);
+                select(dhRef.current).selectAll(`path[stroke='white'],path[stroke='${SelectionColor}']`).attr('stroke', HighlightColor);
             } else if (selected) {
-                select(dhRef.current).selectAll("path[stroke='white'],path[stroke='#eb0053']").attr('stroke', SelectionColor);
+                select(dhRef.current).selectAll(`path[stroke='white'],path[stroke='${HighlightColor}']`).attr('stroke', SelectionColor);
             } else {
-                select(dhRef.current).selectAll("path[stroke='#eb9800'],path[stroke='#eb0053']").attr('stroke', "white");
+                select(dhRef.current).selectAll(`path[stroke='${HighlightColor}'],path[stroke='${SelectionColor}']`).attr('stroke', "white");
             }
         }
     }, [highlighted, selected]);
 
     return (<LightTooltip title={dataHunch.reasoning}>
         <g ref={dhRef}
-            onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
-            onMouseOut={() => { store.setHighlightedDH(-1); }}
-            onClick={() => { store.setSelectedDH([dataHunch.id]); }}
             opacity={opacity}
-            // opacity={1}
-            cursor='pointer' />
+        />
     </LightTooltip>
     );
 };

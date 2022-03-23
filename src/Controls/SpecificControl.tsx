@@ -30,33 +30,15 @@ const SpecificControl: FC = () => {
                     color="primary"
                     aria-label="vertical outlined primary button group"
                 >
-                    <ContextButton onClick={() => { clickHandler('annotation'); }}>
-                        Annotation
+                    <ContextButton onClick={() => {
+                        clickHandler('manipulations');
+                    }}>
+                        Change Size (Manipulation)
                     </ContextButton>
                     <ContextButton onClick={() => {
                         clickHandler('range');
                     }}>
-                        Range
-                    </ContextButton>
-                    <ContextButton onClick={() => {
-                        clickHandler('manipulations');
-                    }}>
-                        Manipulation
-                    </ContextButton>
-                    <ContextButton onClick={() => {
-                        clickHandler('rating');
-                    }}>
-                        Rating
-                    </ContextButton>
-                    <ContextButton onClick={() => {
-                        clickHandler('data space');
-                    }}>
-                        Data Space
-                    </ContextButton>
-                    <ContextButton onClick={() => {
-                        clickHandler('exclusion');
-                    }}>
-                        Exclusion
+                        Specify Range
                     </ContextButton>
                     {store.showCategory ? <ContextButton onClick={() => {
                         clickHandler('categorical');
@@ -64,6 +46,24 @@ const SpecificControl: FC = () => {
                         Categorical
                     </ContextButton> : <></>}
 
+                    <ContextButton onClick={() => {
+                        clickHandler('exclusion');
+                    }}>
+                        Remove (Exclusion)
+                    </ContextButton>
+                    <ContextButton onClick={() => {
+                        clickHandler('data space');
+                    }}>
+                        Change Value (Data Space)
+                    </ContextButton>
+                    <ContextButton onClick={() => { clickHandler('annotation'); }}>
+                        Annotation
+                    </ContextButton>
+                    <ContextButton onClick={() => {
+                        clickHandler('rating');
+                    }}>
+                        Rating
+                    </ContextButton>
                 </ButtonGroup>
             </Container>
         </foreignObject>
@@ -73,5 +73,7 @@ const SpecificControl: FC = () => {
 export default observer(SpecificControl);
 
 const ContextButton = styled(NonCapButton)`
-justify-content: flex-start
+    justify-content: flex-start;
+    font-size:9pt;
+    text-align:start;
 `;
