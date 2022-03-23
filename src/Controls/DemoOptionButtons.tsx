@@ -83,7 +83,6 @@ const DemoOptionButtons: FC = () => {
             <NonCapButton
                 size='small'
                 variant='outlined'
-                style={{ paddingRight: '5px' }}
                 color={store.showCategory ? 'primary' : 'default'}
                 onClick={() => {
                     store.setShowCategory(!store.showCategory);
@@ -94,7 +93,7 @@ const DemoOptionButtons: FC = () => {
             <></>
         }
         {/* <ButtonGroup
-            style={{ paddingRight: '5px' }}>
+            style={{ marginRight: '5px' }}>
             {/* <NonCapButton
                 size='small'
                 variant="outlined"
@@ -104,7 +103,7 @@ const DemoOptionButtons: FC = () => {
                 Select Data
             </NonCapButton> */}
 
-        <FormControl style={{ paddingRight: '5px' }}>
+        <FormControl style={{ marginRight: '5px', marginLeft: '5px' }}>
             <InputLabel>Select Data</InputLabel>
             <Select className={styles.inputSelect}
                 native
@@ -133,7 +132,7 @@ const DemoOptionButtons: FC = () => {
             Select Vol
         </NonCapButton > */}
 
-        <FormControl style={{ paddingRight: '5px' }}>
+        <FormControl style={{ marginRight: '5px', marginLeft: '5px' }}>
             <InputLabel>Select Collection</InputLabel>
             <Select className={styles.inputSelect}
                 native
