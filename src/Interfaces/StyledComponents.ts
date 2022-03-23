@@ -47,11 +47,19 @@ export const useStyles = makeStyles((theme: Theme) =>
                 paddingLeft: '5px !important',
                 paddingRight: '5px !important'
             }
-        }
-        ,
+        },
+        inputSelect: {
+            '& .MuiInputBase-input': {
+                paddingBottom: '0px',
+                paddingTop: '0px'
+            },
+        },
         rightToolbar: {
             marginLeft: "auto",
-            marginRight: -12
+            marginRight: -12,
+            display: 'inline-flex',
+            alignItems: 'center',
+            height: 'fit-content'
         },
         menuButton: {
             marginRight: 16,

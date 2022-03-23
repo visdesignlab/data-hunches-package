@@ -1,38 +1,54 @@
-import { Button, ButtonGroup, Menu, MenuItem } from "@material-ui/core";
+import { Button, ButtonGroup, FormControl, FormHelperText, InputLabel, Menu, MenuItem, Select } from "@material-ui/core";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore/lite";
 import { observer } from "mobx-react-lite";
 import { FC, useContext, useEffect, useState } from "react";
 import { DataPreset, firebaseSetup } from "../Interfaces/Constants";
 import { stateUpdateWrapperUseJSON } from "../Interfaces/StateChecker";
 import Store from "../Interfaces/Store";
-import AddIcon from '@material-ui/icons/Add';
 import NewVolDialog from "./NewVolDialog";
-import { NonCapButton } from "../Interfaces/StyledComponents";
+import { NonCapButton, useStyles } from "../Interfaces/StyledComponents";
 
 const DemoOptionButtons: FC = () => {
     const store = useContext(Store);
 
+    const styles = useStyles();
     const [openDialog, setOpenDialog] = useState(false);
-    const [anchorVol, setAnchorVol] = useState(null);
-    const [anchorDB, setAnchorDB] = useState(null);
+    // const [anchorVol, setAnchorVol] = useState(null);
+    // const [anchorDB, setAnchorDB] = useState(null);
 
     const [subArray, setSubArray] = useState<string[]>([]);
 
-    const handleVolMenu = (event: any) => {
-        setAnchorVol(event.currentTarget);
+    // const handleVolMenu = (event: any) => {
+    //     setAnchorVol(event.currentTarget);
+    // };
+
+    // const handleDBMenu = (event: any) => {
+    //     setAnchorDB(event.currentTarget);
+    // };
+
+    // const handleClose = () => {
+    //     setAnchorVol(null);
+    //     setAnchorDB(null);
+    // };
+
+    const handleVolChange = (e: any) => {
+        const result = e.target.value;
+        if (result === 'new') {
+            sendDialogSignal(true);
+        } else {
+            store.setCurrentVol(result);
+        }
+
     };
 
-    const handleDBMenu = (event: any) => {
-        setAnchorDB(event.currentTarget);
-    };
 
-    const handleClose = () => {
-        setAnchorVol(null);
-        setAnchorDB(null);
-    };
 
     const sendDialogSignal = (input: boolean) => {
         setOpenDialog(input);
+    };
+
+    const handleDBChange = (e: any) => {
+        store.setDBTag(e.target.value);
     };
 
     useEffect(() => {
@@ -63,79 +79,128 @@ const DemoOptionButtons: FC = () => {
     }, [openDialog, store.dbTag]);
 
     return (<>
-        <ButtonGroup
-            style={{ paddingRight: '5px' }}>
+        {DataPreset[store.dbTag].categories ?
             <NonCapButton
+                size='small'
+                variant='outlined'
+                style={{ paddingRight: '5px' }}
+                color={store.showCategory ? 'primary' : 'default'}
+                onClick={() => {
+                    store.setShowCategory(!store.showCategory);
+                }}
+
+            >Show Category
+            </NonCapButton> :
+            <></>
+        }
+        {/* <ButtonGroup
+            style={{ paddingRight: '5px' }}>
+            {/* <NonCapButton
                 size='small'
                 variant="outlined"
                 color="primary"
                 onClick={handleDBMenu}
             >
                 Select Data
-            </NonCapButton>
-            <NonCapButton
-                size='small'
-                variant="outlined"
-                onClick={handleVolMenu}
-                color="primary">
-                Select Vol
-            </NonCapButton >
-            {DataPreset[store.dbTag].categories ?
-                <NonCapButton
-                    size='small'
-                    variant='outlined'
-                    color={store.showCategory ? 'primary' : 'default'}
-                    onClick={() => {
-                        store.setShowCategory(!store.showCategory);
-                    }}
-                >Show Category
-                </NonCapButton> :
-                <></>
-            }
-            <Menu
-                anchorEl={anchorVol}
-                keepMounted
-                open={Boolean(anchorVol)}
-                onClose={handleClose}
-            >
-                {subArray.map((d, i) => {
-                    return (
-                        <MenuItem
-                            key={`SubItem${d}`}
-                            onClick={() => {
-                                store.setCurrentVol(i + 1);
-                                handleClose();
-                            }}>
-                            {store.currentVol === (i + 1) ? '> ' : ''}{d}
-                        </MenuItem>
-                    );
-                })}
-                <MenuItem onClick={() => { sendDialogSignal(true); }}>
-                    <AddIcon />Start new volume
-                </MenuItem>
-            </Menu>
-            <Menu
-                anchorEl={anchorDB}
-                keepMounted
-                open={Boolean(anchorDB)}
-                onClose={handleClose}>
+            </NonCapButton> */}
+
+        <FormControl style={{ paddingRight: '5px' }}>
+            <InputLabel>Select Data</InputLabel>
+            <Select className={styles.inputSelect}
+                native
+                value={store.dbTag}
+                onChange={handleDBChange}>
                 {
                     Object.keys(DataPreset).map((d) => {
                         return (
-                            <MenuItem
+                            <option
+                                value={d}
                                 key={`SelectDB${d}`}
-                                onClick={() => {
-                                    store.setDBTag(d);
-                                    handleClose();
-                                }}>
+                            >
                                 {DataPreset[d].name}
-                            </MenuItem>
+                            </option>
                         );
                     })
                 }
-            </Menu>
+            </Select>
 
-        </ButtonGroup>
+        </FormControl>
+        {/* <NonCapButton
+            size='small'
+            variant="outlined"
+            onClick={handleVolMenu}
+            color="primary">
+            Select Vol
+        </NonCapButton > */}
+
+        <FormControl style={{ paddingRight: '5px' }}>
+            <InputLabel>Select Collection</InputLabel>
+            <Select className={styles.inputSelect}
+                native
+                value={store.currentVol}
+                onChange={handleVolChange}>
+                {subArray.map((d, i) => {
+                    return (
+                        <option
+                            key={`SubItem${d}`}
+                            value={i + 1}
+                        >
+                            {d}
+                        </option>
+                    );
+                })}
+                <option value='new' >
+                    Start new volume
+                </option>
+            </Select>
+
+        </FormControl>
+        {/* <Menu
+            anchorEl={anchorVol}
+            keepMounted
+            open={Boolean(anchorVol)}
+            onClose={handleClose}
+        >
+            {subArray.map((d, i) => {
+                return (
+                    <MenuItem
+                        key={`SubItem${d}`}
+                        onClick={() => {
+                            store.setCurrentVol(i + 1);
+                            handleClose();
+                        }}>
+                        {store.currentVol === (i + 1) ? '> ' : ''}{d}
+                    </MenuItem>
+                );
+            })}
+            <MenuItem onClick={() => { sendDialogSignal(true); }}>
+                <AddIcon />Start new volume
+            </MenuItem>
+        </Menu> */}
+
+
+        {/* <Menu
+            anchorEl={anchorDB}
+            keepMounted
+            open={Boolean(anchorDB)}
+            onClose={handleClose}>
+            {
+                Object.keys(DataPreset).map((d) => {
+                    return (
+                        <MenuItem
+                            key={`SelectDB${d}`}
+                            onClick={() => {
+                                store.setDBTag(d);
+                                handleClose();
+                            }}>
+                            {DataPreset[d].name}
+                        </MenuItem>
+                    );
+                })
+            }
+        </Menu> */}
+
+        {/* </ButtonGroup> */}
         <NewVolDialog open={openDialog} sendCloseSignal={sendDialogSignal} />
     </>);
 };
