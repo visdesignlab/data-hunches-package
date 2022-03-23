@@ -9,6 +9,7 @@ import { getDocs, collection, getDoc, doc } from "firebase/firestore/lite";
 import { stateUpdateWrapperUseJSON } from "./Interfaces/StateChecker";
 import { DataPreset, firebaseSetup } from "./Interfaces/Constants";
 import BarChart from "./BarChart";
+import WelcomeDialog from "./WelcomeDialog";
 
 type Props = {
     svgWidth: number;
@@ -101,6 +102,7 @@ const BarChartWithDH: FC<Props> = ({ svgWidth, svgHeight }: Props) => {
                         <Table dataHunchArray={savedDH} />
                     </Grid>
                 </Grid>
+                <WelcomeDialog />
             </div>
         </DataContext.Provider>
     );
