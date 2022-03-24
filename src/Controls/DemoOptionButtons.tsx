@@ -60,7 +60,7 @@ const DemoOptionButtons: FC = () => {
     }, [openDialog, store.dbTag]);
 
     return (<>
-        {DataPreset[store.dbTag].categories ?
+        {DataPreset[store.dbTag].categories.length > 0 ?
             <NonCapButton
                 size='small'
                 variant='outlined'

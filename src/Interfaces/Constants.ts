@@ -25,6 +25,8 @@ export const DefaultForeignObjectWidth = 200;
 
 export const DefaultForeignObjectHeight = 285;
 
+export const WithoutCatControlFOHeight = 260;
+
 export const ControlFOWidth = 190;
 
 export const ControlFOHeight = 300;
@@ -32,7 +34,7 @@ export const ControlFOHeight = 300;
 export const UpDownVoteFOWidth = 150;
 export const UpDownVoteFOHeight = 50;
 
-export const WithoutCatControlFOHeight = 208;
+
 
 export const TransitionDuration = 500;
 
@@ -95,6 +97,52 @@ const TestData = [
     { label: "g", value: 9, categorical: 'C' },
     { label: "h", value: 5, categorical: 'B' }];
 
+const StudentData = [
+    { label: 'UNKNOWN', value: 43 },
+    { label: 'visualization', value: 42 },
+    { label: 'systems', value: 27 },
+    { label: 'theory', value: 24 },
+    { label: 'scicomp', value: 24 },
+    { label: 'db', value: 22 },
+    { label: 'pl', value: 21 },
+    { label: 'vision', value: 20 },
+    { label: 'graphics', value: 17 },
+    { label: 'image analysis', value: 15 },
+    { label: 'arch', value: 14 },
+    { label: 'nlp', value: 14 },
+    { label: 'hpc', value: 13 },
+    { label: 'N/A', value: 10 },
+    { label: 'robotics', value: 9 },
+    { label: 'games', value: 7 },
+    { label: 'ai', value: 7 },
+    { label: 'hci', value: 6 },
+    { label: 'os', value: 5 },
+    { label: 'ml', value: 3 },
+    { label: 'security / privacy', value: 1 }
+];
+
+const GreenhouseGas = [
+    { categorical: 'Meat', label: 'Beef (beef herd)', value: 59.6 },
+    { categorical: 'Meat', label: 'Lamb & Mutton', value: 24.5 },
+    { categorical: 'Diary', label: 'Cheese', value: 21.2 },
+    { categorical: 'Diary', label: 'Beef (dairy herd)', value: 21.1 },
+    { categorical: 'Other', label: 'Dark Chocolate', value: 18.7 },
+    { categorical: 'Other', label: 'Coffee', value: 16.5 },
+    { categorical: 'Seafood', label: 'Shrimps (farmed)', value: 11.8 },
+    { categorical: 'Oil', label: 'Palm Oil', value: 7.6 },
+    { categorical: 'Meat', label: 'Pig Meat', value: 7.2 },
+    { categorical: 'Meat', label: 'Poultry Meat', value: 6.1 },
+    { categorical: 'Oil', label: 'Olive Oil', value: 6 },
+    { categorical: 'Oil', label: 'Soybean Oil', value: 6 },
+    { categorical: 'Seafood', label: 'Fish (farmed)', value: 5.1 },
+    { categorical: 'Other', label: 'Eggs', value: 4.5 },
+    { categorical: 'Other', label: 'Rice', value: 4 },
+    { categorical: 'Oil', label: 'Rapeseed Oil', value: 3.7 },
+    { categorical: 'Oil', label: 'Sunflower Oil', value: 3.5 },
+    { categorical: 'Other', label: 'Tofu', value: 3 },
+    { categorical: 'Diary', label: 'Milk', value: 2.8 },
+];
+
 export const DataPreset: { [key: string]: dataAttribute; } = {
     COVIDData: {
         dbTag: 'COVIDData',
@@ -110,6 +158,20 @@ export const DataPreset: { [key: string]: dataAttribute; } = {
         name: 'DH Test Data',
         explanation: 'This is a test data for data hunch development purposes. Values have no real significance',
         categories: ['A', 'B', 'C', 'D'],
+    },
+    student: {
+        dbTag: 'student',
+        data: StudentData,
+        name: 'Student Area',
+        explanation: 'Graduate student admitted of each area',
+        categories: []
+    },
+    GreenhouseGas: {
+        dbTag: 'GreenhouseGas',
+        data: GreenhouseGas,
+        name: 'Greenhouse gas',
+        explanation: 'Greenhouse gas emissions across the supply chain. They are measured in kilograms of carbon dioxide equivalents (kgCO₂eq) per kilogram of food. Colored by type of food',
+        categories: ['Meat', 'Diary', 'Seafood', 'Oil', 'Other'],
     }
 };
 
@@ -135,3 +197,23 @@ export const DataPreset: { [key: string]: dataAttribute; } = {
 // United Kingdom	17.59
 
 // United States	53.24;
+
+// Beef(beef herd)										59.6;
+// Lamb & Mutton										24.5
+// Cheese										21.2;
+// Beef(dairy herd)										21.1
+// Dark Chocolate										18.7
+// Coffee										16.5;
+// Shrimps(farmed)										11.8
+// Palm Oil										7.6
+// Pig Meat										7.2
+// Poultry Meat										6.1
+// Olive Oil										6
+// Soybean Oil										6;
+// Fish(farmed)										5.1
+// Eggs										4.5
+// Rice										4
+// Rapeseed Oil										3.7
+// Sunflower Oil										3.5
+// Tofu										3
+// Milk										2.8;

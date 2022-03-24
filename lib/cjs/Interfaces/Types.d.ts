@@ -13,6 +13,8 @@ export interface DataHunch {
     reasoning: string;
     id: number;
     confidenceLevel: number;
+    upvotes: number;
+    downvotes: number;
 }
-export declare type InputMode = 'categorical' | 'annotation' | 'none' | 'sketch' | 'rating' | 'data space' | 'model' | 'range' | 'inclusion' | 'exclusion' | 'manipulations';
+export declare type InputMode = 'categorical' | 'annotation' | 'none' | 'sketch' | 'rating' | 'data space' | 'model' | 'range' | 'inclusion' | 'exclusion' | 'direction' | 'manipulations';
 export declare type SelectionType = Selection<any, undefined, HTMLElement, undefined>;

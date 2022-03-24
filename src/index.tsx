@@ -23,6 +23,8 @@ const BarChartWithDH: FC = () => {
     useEffect(() => {
         if (DataPreset[store.dbTag].categories.length > 0) {
             store.setShowCategory(true);
+        } else {
+            store.setShowCategory(false);
         }
     }, [store.dbTag]);
 

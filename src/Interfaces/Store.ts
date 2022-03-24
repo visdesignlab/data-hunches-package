@@ -36,7 +36,7 @@ export class RootStore {
         this.userName = '';
         this.selectedDH = [];
         this.highlightedDH = -1;
-        this.dbTag = 'test2';
+        this.dbTag = 'COVIDData';
         this.nextIndex = 0;
         this.numOfDH = 0;
         this.currentVol = 1;
