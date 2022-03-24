@@ -13,4 +13,5 @@ interface RectProps {
 }
 export declare const NonRoughDHIndicatorRect: import("styled-components").StyledComponent<"rect", any, RectProps, never>;
 export declare const NonCapButton: import("styled-components").StyledComponent<import("@material-ui/core").ExtendButtonBase<import("@material-ui/core").ButtonTypeMap<{}, "button">>, any, {}, never>;
+export declare const ContainerDiv: import("styled-components").StyledComponent<import("@material-ui/core/OverridableComponent").OverridableComponent<import("@material-ui/core").ContainerTypeMap<{}, "div">>, any, {}, never>;
 export {};

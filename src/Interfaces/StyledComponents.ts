@@ -1,4 +1,4 @@
-import { Button, createStyles, makeStyles, Theme, Tooltip, withStyles } from "@material-ui/core";
+import { Button, Container, createStyles, makeStyles, Theme, Tooltip, withStyles } from "@material-ui/core";
 import styled from "styled-components";
 import { SelectionColor, HighlightColor, DataHunchColor } from "./Constants";
 
@@ -15,8 +15,7 @@ export const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         noBulletsList: {
             listStyleType: 'none',
-            padding: '0px',
-            margin: '0px'
+            columns: 2,
         },
         table: {
             '& .MuiDataGrid-columnHeaderTitle': {
@@ -118,4 +117,8 @@ export const NonRoughDHIndicatorRect = styled(`rect`) <RectProps>`
 
 export const NonCapButton = styled(Button)`
     text-transform: none
+`;
+
+export const ContainerDiv = styled(Container)`
+    text-align:start;
 `;

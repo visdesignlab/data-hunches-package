@@ -14,8 +14,7 @@ import { useEffect } from "react";
 import DataHunchIndicator from "./ChartComponents/DataHunch/DataHunchIndicators";
 import { DataHunch } from "./Interfaces/Types";
 import { stateUpdateWrapperUseJSON } from "./Interfaces/StateChecker";
-import { Grid } from "@material-ui/core";
-import { DHIndicatorText, useStyles } from "./Interfaces/StyledComponents";
+import { ContainerDiv, DHIndicatorText, useStyles } from "./Interfaces/StyledComponents";
 import CategoricalIndicator from "./ChartComponents/DataHunch/CategoricalIndicator";
 import ChartLegends from "./ChartComponents/ChartLegends";
 import SketchLayer from "./ChartComponents/SketchLayer";
@@ -28,6 +27,7 @@ import ChartTitle from "./ChartComponents/ChartTitle";
 import SketchyDrawings from "./ChartComponents/DataHunch/SketchyDrawings";
 import StyledTooltip from "./ChartComponents/DataHunch/StyledTooltip";
 import styled from "styled-components";
+import { Container } from "@material-ui/core";
 
 type Props = {
     dataHunchArray: DataHunch[];
@@ -112,84 +112,86 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
         }
     });
 
-    return <div style={{ height: '100%' }}>
-        <ChartSVG
-            ref={svgRef}
-            onClick={() => {
-                if (store.selectingADataPoint) {
-                    store.selectADataPointMode(false);
-                    store.setCurrentSelectedDP(undefined);
-                }
-            }}>
-            {store.showCategory ? <ChartLegends /> : <></>}
-
-
-            <g className='axis' id="band-axis" />
-
-            <g id="rectangles-preview" display={store.needToShowPreview ? undefined : 'none'}>
-                <g className='axis' id="axis-mask" transform={`translate(${margin.left},0)`} />
-            </g>
-
-            <g className='axis' id="vertical-axis" />
-
-            <g id="rectangles" display={(!store.needToShowPreview) ? undefined : 'none'}>
-                {
-                    dataSet.map((d, i) => {
-                        return <BarElement
-                            key={`${i}-barelement`}
-                            dataElement={d}
-                            width={valueScale(d.value) - margin.left}
-                            height={bandScale.bandwidth()}
-                            xPos={margin.left}
-                            yPos={bandScale(d.label) || 0}
-                            fill={store.showCategory ? (categoricalColorScale(d.categorical || 'a') as string) : DefaultBar}
-                        />;
-                    })}
-            </g>
-
-            <g id='data-hunches-container'>
-
-                {sketchArray.map((sketchDP) => {
-                    return <SketchyDrawings dataHunch={sketchDP} key={`sketchy-${sketchDP.id}`}
-                        highlighted={sketchDP.id === store.highlightedDH}
-                        selected={store.selectedDH.includes(sketchDP.id)} />;
-                })}
-
-                {dataSet.map((barDP) => {
-                    if (barDP.dataHunchArray) {
-                        let catDH: DataHunch[] = [];
-                        if (store.showCategory) {
-                            catDH = barDP.dataHunchArray.filter(d => d.type === 'categorical');
-                        }
-                        return (<>
-                            <DataHunchIndicator
-                                dataPoint={barDP}
-                                key={`${barDP.label}-dhindicator`}
-                                dataHunchArray={barDP.dataHunchArray}
-                            />
-                            <CategoricalIndicator
-                                dataHunchArrayString={JSON.stringify(catDH)}
-                                barChartPoint={barDP}
-                                key={`${barDP.label}-catindicator`} />
-                        </>);
-                    } else {
-                        return <></>;
+    return (
+        <div style={{ height: '100%' }}>
+            <ChartSVG
+                ref={svgRef}
+                onClick={() => {
+                    if (store.selectingADataPoint) {
+                        store.selectADataPointMode(false);
+                        store.setCurrentSelectedDP(undefined);
                     }
-                })}
-            </g>
+                }}>
+                {store.showCategory ? <ChartLegends /> : <></>}
 
-            <RangeLayer sendManipulation={sendManipulationToParent} />
 
-            <ManipulationLayer sendManipulation={sendManipulationToParent} />
-            <SketchLayer sendManipulation={sendManipulationToParent} />
 
-            <FormComponent />
 
-            <SpecificControl sendManipulation={sendManipulationToParent} />
+                <g id="rectangles-preview" display={store.needToShowPreview ? undefined : 'none'}>
+                    <g className='axis' id="axis-mask" transform={`translate(${margin.left},0)`} />
+                </g>
 
-        </ChartSVG>
-        <Grid container>
-            <Grid item xs={6}>{
+                <g className='axis' id="band-axis" />
+                <g className='axis' id="vertical-axis" />
+
+                <g id="rectangles" display={(!store.needToShowPreview) ? undefined : 'none'}>
+                    {
+                        dataSet.map((d, i) => {
+                            return <BarElement
+                                key={`${i}-barelement`}
+                                dataElement={d}
+                                width={valueScale(d.value) - margin.left}
+                                height={bandScale.bandwidth()}
+                                xPos={margin.left}
+                                yPos={bandScale(d.label) || 0}
+                                fill={store.showCategory ? (categoricalColorScale(d.categorical || 'a') as string) : DefaultBar}
+                            />;
+                        })}
+                </g>
+
+                <g id='data-hunches-container'>
+
+                    {sketchArray.map((sketchDP) => {
+                        return <SketchyDrawings dataHunch={sketchDP} key={`sketchy-${sketchDP.id}`}
+                            highlighted={sketchDP.id === store.highlightedDH}
+                            selected={store.selectedDH.includes(sketchDP.id)} />;
+                    })}
+
+                    {dataSet.map((barDP) => {
+                        if (barDP.dataHunchArray) {
+                            let catDH: DataHunch[] = [];
+                            if (store.showCategory) {
+                                catDH = barDP.dataHunchArray.filter(d => d.type === 'categorical');
+                            }
+                            return (<>
+                                <DataHunchIndicator
+                                    dataPoint={barDP}
+                                    key={`${barDP.label}-dhindicator`}
+                                    dataHunchArray={barDP.dataHunchArray}
+                                />
+                                <CategoricalIndicator
+                                    dataHunchArrayString={JSON.stringify(catDH)}
+                                    barChartPoint={barDP}
+                                    key={`${barDP.label}-catindicator`} />
+                            </>);
+                        } else {
+                            return <></>;
+                        }
+                    })}
+                </g>
+
+                <RangeLayer sendManipulation={sendManipulationToParent} />
+
+                <ManipulationLayer sendManipulation={sendManipulationToParent} />
+                <SketchLayer sendManipulation={sendManipulationToParent} />
+
+                <FormComponent />
+
+                <SpecificControl sendManipulation={sendManipulationToParent} />
+
+            </ChartSVG>
+
+            <Container >{
                 (store.inputMode === 'sketch' ||
                     store.inputMode === 'direction' ||
                     store.inputMode === 'manipulations' ||
@@ -201,8 +203,8 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
             }
 
                 <ChartTitle />
-            </Grid>
-            <Grid item xs={6} style={{ textAlign: 'start' }}>
+            </Container>
+            <ContainerDiv>
                 <ul className={styles.noBulletsList}>
                     {allChartDHArray.map((d, i) => {
                         return (
@@ -227,10 +229,10 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
                         );
                     })}
                 </ul>
-            </Grid>
-        </Grid>
+            </ContainerDiv>
 
-    </div >;
+        </div >
+    );
 };
 
 export default observer(BarChart);
@@ -240,3 +242,4 @@ const ChartSVG = styled.svg`
   height: 70%;
   width: 100%;
 `;
+

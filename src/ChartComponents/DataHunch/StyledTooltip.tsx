@@ -1,6 +1,7 @@
 import { Theme, Tooltip, withStyles } from "@material-ui/core";
 import { FC, ReactElement } from "react";
 import { generateHunchText } from "../../HelperFunctions/GenerateHunchText";
+import { DarkGray } from "../../Interfaces/Constants";
 import { DataHunch } from "../../Interfaces/Types";
 type Props = {
     dataHunch: DataHunch;
@@ -33,7 +34,7 @@ export default StyledTooltip;
 const LightTooltip = withStyles((theme: Theme) => ({
     tooltip: {
         backgroundColor: theme.palette.common.white,
-        color: '#0c0c0c',
+        color: DarkGray,
         boxShadow: theme.shadows[1],
         fontSize: 20,
         fontFamily: "'Nanum Brush Script', cursive",

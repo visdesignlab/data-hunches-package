@@ -1,4 +1,4 @@
-import { AppBar, ButtonGroup, Menu, MenuItem, Toolbar, Typography } from "@material-ui/core";
+import { AppBar, ButtonGroup, IconButton, Menu, MenuItem, Toolbar, Typography } from "@material-ui/core";
 import { observer } from "mobx-react-lite";
 import { FC, useState } from "react";
 import AccountCircle from '@material-ui/icons/AccountCircle';
@@ -45,13 +45,12 @@ const TopBar: FC = () => {
                 }
 
                 {store.userName ?
-                    <NonCapButton onClick={handleMenu}
+                    <IconButton
+                        onClick={handleMenu}
                         size='small'
-                        variant="outlined"
                         color="primary">
-                        {`Signed in as ${store.userName}`}
                         <AccountCircle />
-                    </NonCapButton> :
+                    </IconButton> :
                     <ButtonGroup
                     >
                         <NonCapButton

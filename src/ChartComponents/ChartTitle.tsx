@@ -1,14 +1,15 @@
-import { Container, Typography } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import { observer } from "mobx-react-lite";
 import { FC, useContext } from "react";
 import { DataPreset, margin, DarkGray } from "../Interfaces/Constants";
 import Store from "../Interfaces/Store";
+import { ContainerDiv } from "../Interfaces/StyledComponents";
 
 const ChartTitle: FC = () => {
 
     const store = useContext(Store);
     return (
-        <Container>
+        <ContainerDiv>
 
             <Typography
                 style={{ fontSize: 'xx-large', color: DarkGray }}
@@ -20,7 +21,7 @@ const ChartTitle: FC = () => {
                 {DataPreset[store.dbTag].explanation}
             </div>
 
-        </Container >
+        </ContainerDiv >
     );
 };
 
