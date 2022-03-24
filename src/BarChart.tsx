@@ -206,12 +206,11 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
             </Container>
             <ContainerDiv>
                 <ul className={styles.noBulletsList}>
-                    {allChartDHArray.map((d, i) => {
+                    {allChartDHArray.map((d) => {
                         return (
                             <StyledTooltip dataHunch={d}
-                                key={`${d.id}-text`}
                                 childrenComponent={
-                                    <li style={{ width: 'fit-content' }}>
+                                    <li style={{ width: 'fit-content' }} key={`${d.id}-text`}>
                                         <DHIndicatorText
                                             isHighlighted={d.id === store.highlightedDH}
                                             isSelected={store.selectedDH.includes(d.id)}

@@ -2,7 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore/lite';
 import { BarChartDataPoint } from './Types';
 
-export const margin = ({ top: 30, right: 150, bottom: 50, left: 100 });
+export const margin = ({ top: 30, right: 150, bottom: 50, left: 90 });
 
 export const LargeNumber = 999;
 
@@ -98,7 +98,7 @@ export const DataPreset: { [key: string]: dataAttribute; } = {
         data: COVIDData,
         name: 'COVID Cases',
         explanation: "New confirmed cases of COVID-19 (7-day smoothed) per 1,000,000 people. Data shows Mar 01, 2022.",
-        categories: ['Europe', 'Oceania', 'North America']
+        categories: ['Europe', 'Oceania', 'North America',]
     },
     test2: {
         dbTag: 'test2',

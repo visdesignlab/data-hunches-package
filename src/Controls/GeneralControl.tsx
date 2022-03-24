@@ -29,7 +29,7 @@ const GeneralControl: FC = () => {
     return (
         < >
             <ButtonGroup color="primary" aria-label="outlined primary button group" disabled={!store.userName} size='small' >
-                <NonCapButton onClick={() => { dhButtonClickHandler('annotation'); }}>Annotations</NonCapButton>
+                {/* <NonCapButton onClick={() => { dhButtonClickHandler('annotation'); }}>Annotations</NonCapButton> */}
                 <NonCapButton onClick={() => { dhButtonClickHandler('data space'); }}>Add New Value (Inclusion)</NonCapButton>
                 <NonCapButton onClick={() => { dhButtonClickHandler('model'); }}>Transform Data</NonCapButton>
                 <NonCapButton onClick={() => { dhButtonClickHandler('sketch'); }}>Add Sketch</NonCapButton>

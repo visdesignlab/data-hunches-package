@@ -195,6 +195,7 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                         dataPoint={dataPoint}
                         highlighted={store.highlightedDH === d.id}
                         selected={store.selectedDH.includes(d.id)}
+                        key={`exclusion-${d.id}`}
                         dataHunch={d}
                         centerX={valueScale(dataPoint.value) - 20 - i * 10}
                         centerY={(bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()}
