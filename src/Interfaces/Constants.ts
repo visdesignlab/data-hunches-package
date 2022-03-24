@@ -2,7 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore/lite';
 import { BarChartDataPoint } from './Types';
 
-export const margin = ({ top: 30, right: 150, bottom: 50, left: 70 });
+export const margin = ({ top: 30, right: 150, bottom: 50, left: 100 });
 
 export const LargeNumber = 999;
 

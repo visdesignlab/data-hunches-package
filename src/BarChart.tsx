@@ -78,12 +78,13 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
         .attr('transform', `translate(0,${margin.top})`)
         .call(yAxis);
 
-    const wrap = textwrap().bounds({ width: 50, height: bandScale.bandwidth() }).method('tspans');
+    const wrap = textwrap().bounds({ width: margin.left - 10, height: bandScale.bandwidth() }).method('tspans');
 
     select('#band-axis')
         .attr("transform", `translate(${margin.left},0)`)
         .call(xAxis)
         .selectAll(".tick text")
+        .attr('font-size', 'small')
         .call(wrap);
 
     useLayoutEffect(() => {

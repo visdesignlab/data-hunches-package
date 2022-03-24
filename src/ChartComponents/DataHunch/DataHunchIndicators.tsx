@@ -92,7 +92,7 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
         if (findDP.length > 0) {
             const dp = findDP[0];
             if (valueScale(dp.value) >= (store.svgWidth - margin.right - margin.left)) {
-                return valueScale(dp.value) + Math.floor(index / 2) * 20;
+                return valueScale(dp.value) + Math.floor(index / 2) * 40;
             }
             return valueScale(dp.value) + Math.floor(index / 2) * 90;
         }
@@ -104,7 +104,7 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
             if (arrayLength <= 2) {
                 return `* ${dataHunchText.slice(0, 15)}${dataHunchText.length > 15 ? '...' : ''}`;
             }
-            return '* ...';
+            return `* ${dataHunchText.slice(0, 3)}...`;
         }
         if (arrayLength <= 2) {
             return `* ${dataHunchText}`;
