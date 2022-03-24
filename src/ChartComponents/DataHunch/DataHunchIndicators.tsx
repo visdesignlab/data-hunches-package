@@ -16,6 +16,7 @@ import { DHIndicatorText } from "../../Interfaces/StyledComponents";
 import SingleOverAxisIndicator from "./SingleOverAxisIndicator";
 import ExclusionIndicator from "./ExclusionIndicator";
 import StyledTooltip from "./StyledTooltip";
+import SketchyDirection from "./SketchyDirection";
 
 type Props = {
     dataHunchArray: DataHunch[],
@@ -37,28 +38,37 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
     const [offVisDH, setOffVisDH] = useState<DataHunch[]>([]);
     const [exDH, setExDH] = useState<DataHunch[]>([]);
     const [aboveAxisDH, setAboveAxisDH] = useState<DataHunch[]>([]);
+    const [directionDH, setDirectionDH] = useState<DataHunch[]>([]);
 
     useEffect(() => {
-        let tempInVis: DataHunch[] = [];
-        let tempOffVis: DataHunch[] = [];
-        let tempExDH: DataHunch[] = [];
-        let tempAboveAxisDH: DataHunch[] = [];
+
+        const tempInVis: DataHunch[] = [];
+        const tempOffVis: DataHunch[] = [];
+        const tempExDH: DataHunch[] = [];
+        const tempDirectionDH: DataHunch[] = [];
+        const tempAboveAxisDH: DataHunch[] = [];
+
         dataHunchArray.forEach((d) => {
-            if (['annotation', 'categorical', 'direction'].includes(d.type)) {
+            if (['annotation', 'categorical'].includes(d.type)) {
                 tempOffVis.push(d);
             } else if (d.type === 'exclusion') {
                 tempExDH.push(d);
             } else if (d.type === 'data space' && parseFloat(d.content) > valueScale.domain()[1]) {
                 tempAboveAxisDH.push(d);
+            } else if (d.type === 'direction') {
+                tempDirectionDH.push(d);
             }
             else {
                 tempInVis.push(d);
             }
         });
+
         stateUpdateWrapperUseJSON(inVisDH, tempInVis, setInVisDH);
         stateUpdateWrapperUseJSON(offVisDH, tempOffVis, setOffVisDH);
         stateUpdateWrapperUseJSON(exDH, tempExDH, setExDH);
         stateUpdateWrapperUseJSON(aboveAxisDH, tempAboveAxisDH, setAboveAxisDH);
+        stateUpdateWrapperUseJSON(directionDH, tempDirectionDH, setDirectionDH);
+
     }, [dataHunchArray]);
 
     const calculateX = (dataHunch: DataHunch, condensed: boolean) => {
@@ -127,6 +137,19 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                         selected={store.selectedDH.includes(d.id)}
                         width={(d.type === 'range' || inVisDH.length > 3) ? 4 : calculateWidth(d)}
                         height={bandScale.bandwidth() / (inVisDH.length > 3 ? 1 : inVisDH.length)} />
+                );
+            })}
+
+            {directionDH.map((d, i) => {
+                return (
+                    <SketchyDirection
+                        key={`sketchy-${d.id}`}
+                        dataHunch={d}
+                        highlighted={d.id === store.highlightedDH}
+                        selected={store.selectedDH.includes(d.id)}
+                        xPos={valueScale(dataPoint.value)}
+                        yPos={(bandScale(dataPoint.label) || 0) + bandScale.bandwidth() / directionDH.length * (i + 0.5)}
+                    />
                 );
             })}
 

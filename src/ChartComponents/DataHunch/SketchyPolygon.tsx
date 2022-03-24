@@ -63,10 +63,11 @@ const SketchyPolygon: FC<Props> = ({ dataHunch, points, fill, opacity, highlight
         }
     }, [highlighted, selected]);
 
-    return (<StyledTooltip dataHunch={dataHunch} childrenComponent={
-        <g ref={dhRef}
-            opacity={opacity}
-        />} />
+    return (<StyledTooltip dataHunch={dataHunch}
+        childrenComponent={
+            <g ref={dhRef}
+                opacity={opacity}
+            />} />
     );
 };
 
