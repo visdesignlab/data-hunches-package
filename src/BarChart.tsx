@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { FC, useContext, useState, useRef } from "react";
 import BarElement from './ChartComponents/BarElement';
 import { makeBandScale, makeCategoricalScale, makeValueScale } from "./HelperFunctions/ScaleGenerator";
-import { DefaultBar, DefaultForeignObjectHeight, DefaultForeignObjectWidth, margin, SelectionColor } from "./Interfaces/Constants";
+import { DefaultBar, DefaultForeignObjectHeight, DefaultForeignObjectWidth, margin, SelectionColor, UpDownVoteFOHeight, UpDownVoteFOWidth } from "./Interfaces/Constants";
 import Store from "./Interfaces/Store";
 import { axisLeft, axisTop } from "d3-axis";
 import { select } from "d3-selection";
@@ -28,11 +28,14 @@ import SketchyDrawings from "./ChartComponents/DataHunch/SketchyDrawings";
 import StyledTooltip from "./ChartComponents/DataHunch/StyledTooltip";
 import styled from "styled-components";
 import { Container } from "@material-ui/core";
+import UpvotesDownvotes, { toVoteDH } from "./ChartComponents/DataHunch/UpvotesDownvotes";
+
 
 type Props = {
     dataHunchArray: DataHunch[];
+    retrieveData: () => void;
 };
-const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
+const BarChart: FC<Props> = ({ dataHunchArray, retrieveData }: Props) => {
 
     const store = useContext(Store);
     const styles = useStyles();
@@ -40,9 +43,12 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
 
     const [manipulationResult, setManipulationResult] = useState('');
 
+
     const sendManipulationToParent = (manipulationResult: string) => {
         setManipulationResult(manipulationResult);
     };
+
+
 
     useEffect(() => {
         if (!(store.inputMode === 'sketch' ||
@@ -113,7 +119,7 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
     });
 
     return (
-        <div style={{ height: '100%' }}>
+        <div style={{ height: '100%' }} id='app-div'>
             <ChartSVG
                 ref={svgRef}
                 onClick={() => {
@@ -122,10 +128,8 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
                         store.setCurrentSelectedDP(undefined);
                     }
                 }}>
+
                 {store.showCategory ? <ChartLegends /> : <></>}
-
-
-
 
                 <g id="rectangles-preview" display={store.needToShowPreview ? undefined : 'none'}>
                     <g className='axis' id="axis-mask" transform={`translate(${margin.left},0)`} />
@@ -189,6 +193,17 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
 
                 <SpecificControl sendManipulation={sendManipulationToParent} />
 
+                <foreignObject
+                    display='none'
+                    id="upvote-downvote-FO"
+                    width={UpDownVoteFOWidth}
+                    height={UpDownVoteFOHeight}
+                    className={styles.foreignObjectContainer}>
+                    <UpvotesDownvotes
+                        retrieveData={retrieveData}
+                        idAssignment='' />
+                </foreignObject>
+
             </ChartSVG>
 
             <Container >{
@@ -215,6 +230,10 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
                                             isHighlighted={d.id === store.highlightedDH}
                                             isSelected={store.selectedDH.includes(d.id)}
                                             onClick={() => { store.setSelectedDH([d.id]); }}
+                                            onContextMenu={(e) => {
+                                                toVoteDH(e, store.svgWidth, store.svgHeight, false);
+                                                store.setVotingDH(d);
+                                            }}
                                             onMouseOver={() => { store.setHighlightedDH(d.id); }}
                                             onMouseOut={() => { store.setHighlightedDH(-1); }}
 
@@ -229,6 +248,9 @@ const BarChart: FC<Props> = ({ dataHunchArray }: Props) => {
                     })}
                 </ul>
             </ContainerDiv>
+            <UpvotesDownvotes
+                retrieveData={retrieveData}
+                idAssignment="upvote-downvote" />
 
         </div >
     );

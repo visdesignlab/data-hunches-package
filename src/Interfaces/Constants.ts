@@ -29,6 +29,9 @@ export const ControlFOWidth = 190;
 
 export const ControlFOHeight = 300;
 
+export const UpDownVoteFOWidth = 150;
+export const UpDownVoteFOHeight = 50;
+
 export const WithoutCatControlFOHeight = 208;
 
 export const TransitionDuration = 500;

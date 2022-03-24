@@ -52,7 +52,9 @@ const RatingForm: FC = () => {
                 reasoning: reasonInput,
                 id: store.nextIndex,
                 // rating shouldn't have a confidence level?
-                confidenceLevel: 5
+                confidenceLevel: 5,
+                upvotes: 0,
+                downvotes: 0,
             }
             }
         />

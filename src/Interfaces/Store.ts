@@ -22,6 +22,7 @@ export class RootStore {
     needToShowPreview: boolean;
     currentVol: number;
     numOfDH: number;
+    votingDH: DataHunch | undefined;
 
     constructor() {
         this.showDataHunches = true;
@@ -39,6 +40,7 @@ export class RootStore {
         this.nextIndex = 0;
         this.numOfDH = 0;
         this.currentVol = 1;
+        this.votingDH = undefined;
         makeAutoObservable(this);
     }
 
@@ -72,6 +74,10 @@ export class RootStore {
 
     setCurrentVol(input: number) {
         this.currentVol = input;
+    }
+
+    setVotingDH(input: DataHunch | undefined) {
+        this.votingDH = input;
     }
 
     async submitDH(dataHunchToSubmit: DataHunch) {

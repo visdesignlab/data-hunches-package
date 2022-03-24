@@ -17,6 +17,7 @@ import SingleOverAxisIndicator from "./SingleOverAxisIndicator";
 import ExclusionIndicator from "./ExclusionIndicator";
 import StyledTooltip from "./StyledTooltip";
 import SketchyDirection from "./SketchyDirection";
+import { toVoteDH } from "./UpvotesDownvotes";
 
 type Props = {
     dataHunchArray: DataHunch[],
@@ -202,6 +203,10 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                             isSelected={store.selectedDH.includes(d.id)}
                             onClick={() => { store.setSelectedDH([d.id]); }}
                             onMouseOver={() => { store.setHighlightedDH(d.id); }}
+                            onContextMenu={(e) => {
+                                toVoteDH(e, store.svgWidth, store.svgHeight, true);
+                                store.setVotingDH(d);
+                            }}
                             onMouseOut={() => { store.setHighlightedDH(-1); }}>
                             {calculateText(d.content, findXPos(d, i, offVisDH.length), offVisDH.length)}
                         </DHIndicatorText>}

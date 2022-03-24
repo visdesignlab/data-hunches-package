@@ -147,7 +147,9 @@ const DataSpaceForm: FC<Props> = ({ isInc }: Props) => {
                 content: makeDHContent(),
                 reasoning: reasonInput,
                 id: store.nextIndex,
-                confidenceLevel: confidenceInput
+                confidenceLevel: confidenceInput,
+                upvotes: 0,
+                downvotes: 0
             }} />
     </Container>;
 };

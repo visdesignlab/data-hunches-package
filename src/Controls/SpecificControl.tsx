@@ -26,7 +26,8 @@ const SpecificControl: FC<SendManiProps> = ({ sendManipulation }: SendManiProps)
         <foreignObject id='specific-control'
             // display={store.selectingADataPoint ? undefined : 'none'}
             display='none'
-            width={ControlFOWidth} height={store.showCategory ? ControlFOHeight : WithoutCatControlFOHeight}>
+            width={ControlFOWidth}
+            height={store.showCategory ? ControlFOHeight : WithoutCatControlFOHeight}>
             <Container className={styles.specificControlContainer} >
                 <ButtonGroup
                     orientation="vertical"

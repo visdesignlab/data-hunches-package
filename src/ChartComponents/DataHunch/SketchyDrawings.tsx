@@ -7,6 +7,7 @@ import * as rough from 'roughjs/bin/rough';
 import { DataHunchColor, DefaultSketchyOptions, HighlightColor, SelectionColor } from "../../Interfaces/Constants";
 import { line } from "d3-shape";
 import StyledTooltip from "./StyledTooltip";
+import { toVoteDH } from "./UpvotesDownvotes";
 
 type Props = {
     dataHunch: DataHunch;
@@ -57,6 +58,10 @@ const SketchyDrawings: FC<Props> = ({ dataHunch, highlighted, selected }: Props)
                     onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
                     onMouseOut={() => {
                         store.setHighlightedDH(-1);
+                    }}
+                    onContextMenu={(e) => {
+                        toVoteDH(e, store.svgWidth, store.svgHeight, true);
+                        store.setVotingDH(dataHunch);
                     }}
                     onClick={() => { store.setSelectedDH([dataHunch.id]); }}
                     cursor='pointer' />} />

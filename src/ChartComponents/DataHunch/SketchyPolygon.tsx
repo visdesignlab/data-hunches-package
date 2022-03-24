@@ -6,6 +6,7 @@ import { DataHunch } from "../../Interfaces/Types";
 import * as rough from 'roughjs/bin/rough';
 import { HighlightColor, SelectionColor } from "../../Interfaces/Constants";
 import StyledTooltip from "./StyledTooltip";
+import { toVoteDH } from "./UpvotesDownvotes";
 
 type Props = {
     dataHunch: DataHunch;
@@ -67,6 +68,10 @@ const SketchyPolygon: FC<Props> = ({ dataHunch, points, fill, opacity, highlight
         childrenComponent={
             <g ref={dhRef}
                 opacity={opacity}
+                onContextMenu={(e) => {
+                    toVoteDH(e, store.svgWidth, store.svgHeight, true);
+                    store.setVotingDH(dataHunch);
+                }}
             />} />
     );
 };

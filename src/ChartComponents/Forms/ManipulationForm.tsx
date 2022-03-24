@@ -37,7 +37,9 @@ const ManipulationForm: FC<Props> = ({ manipulationOutput, type }: Props) => {
                     content: manipulationOutput,
                     reasoning: reasonInput,
                     id: store.nextIndex,
-                    confidenceLevel: confidenceInput
+                    confidenceLevel: confidenceInput,
+                    upvotes: 0,
+                    downvotes: 0
                 }} />
         </Container>
     );

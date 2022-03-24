@@ -45,8 +45,7 @@ const BarChartWithDH: FC = () => {
 
     }, [store.currentVol]);
 
-    useEffect(() => {
-        // Retrieve saved DH from DB
+    const retrieveData = () => {
         getDocs(collection(firebaseSetup, store.dbTag, `sub${store.currentVol}`, 'dhs'))
             .then(async result => {
                 const tempDHArray: DataHunch[] = [];
@@ -78,6 +77,11 @@ const BarChartWithDH: FC = () => {
                 setSavedDH(tempDHArray);
                 stateUpdateWrapperUseJSON(improvedDataSet, copyOfImpDataSet, setImprovedDataSet);
             });
+    };
+
+    useEffect(() => {
+        // Retrieve saved DH from DB
+        retrieveData();
     }, [store.numOfDH, store.currentVol, store.dbTag]);
 
     return (
@@ -88,6 +92,7 @@ const BarChartWithDH: FC = () => {
                     <Grid item xs={12} lg={6} >
                         <BarChart
                             dataHunchArray={savedDH}
+                            retrieveData={retrieveData}
                         />
                     </Grid>
                     <Grid item xs={12} lg={6}>

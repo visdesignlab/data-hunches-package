@@ -9,6 +9,7 @@ import { BarChartDataPoint, DataHunch } from "../../Interfaces/Types";
 import { select } from "d3-selection";
 import { DataHunchColor, DefaultSketchyOptions, HighlightColor, SelectionColor } from "../../Interfaces/Constants";
 import StyledTooltip from "./StyledTooltip";
+import { toVoteDH } from "./UpvotesDownvotes";
 
 type Props = {
     dataPoint: BarChartDataPoint;
@@ -59,6 +60,10 @@ const ExclusionIndicator: FC<Props> = ({ dataHunch, dataPoint, centerX, centerY,
                 onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
                 onMouseOut={() => {
                     store.setHighlightedDH(-1);
+                }}
+                onContextMenu={(e) => {
+                    toVoteDH(e, store.svgWidth, store.svgHeight, true);
+                    store.setVotingDH(dataHunch);
                 }}
                 onClick={() => { store.setSelectedDH([dataHunch.id]); }}
                 cursor='pointer' />}

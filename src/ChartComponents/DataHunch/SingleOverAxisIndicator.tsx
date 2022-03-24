@@ -6,6 +6,7 @@ import Store from "../../Interfaces/Store";
 import { DataHunch } from "../../Interfaces/Types";
 import * as rough from 'roughjs/bin/rough';
 import StyledTooltip from "./StyledTooltip";
+import { toVoteDH } from "./UpvotesDownvotes";
 
 type Props = {
     curvePoints: string;
@@ -71,6 +72,10 @@ const SingleOverAxisIndicator: FC<Props> = ({ textX, textY, dataHunch, curvePoin
         <StyledTooltip
             childrenComponent={<g cursor="pointer"
                 onClick={() => { store.setSelectedDH([dataHunch.id]); }}
+                onContextMenu={(e) => {
+                    toVoteDH(e, store.svgWidth, store.svgHeight, true);
+                    store.setVotingDH(dataHunch);
+                }}
                 onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
                 onMouseOut={() => { store.setHighlightedDH(-1); }}>
                 <g ref={curveRef} />

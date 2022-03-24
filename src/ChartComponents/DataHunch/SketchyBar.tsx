@@ -7,6 +7,7 @@ import { SelectionColor, DefaultSketchyOptions, HighlightColor, DataHunchColor }
 import Store from "../../Interfaces/Store";
 import { DataHunch } from "../../Interfaces/Types";
 import StyledTooltip from "./StyledTooltip";
+import { toVoteDH } from "./UpvotesDownvotes";
 
 type Props = {
     xPos: number;
@@ -102,6 +103,10 @@ const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch, highlight
         <StyledTooltip dataHunch={dataHunch} childrenComponent={
             <g display={store.needToShowPreview ? 'none' : undefined}
                 ref={dhRef}
+                onContextMenu={(e) => {
+                    toVoteDH(e, store.svgWidth, store.svgHeight, true);
+                    store.setVotingDH(dataHunch);
+                }}
             />} />
     );
 };

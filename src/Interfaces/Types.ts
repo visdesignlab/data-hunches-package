@@ -15,6 +15,8 @@ export interface DataHunch {
     reasoning: string;
     id: number;
     confidenceLevel: number;
+    upvotes: number;
+    downvotes: number;
 }
 
 // export type AnnotationType =

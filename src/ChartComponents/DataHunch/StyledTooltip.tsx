@@ -24,6 +24,12 @@ const StyledTooltip: FC<Props> = ({ dataHunch, childrenComponent }: Props) => {
                 <div>
                     Author:{dataHunch.user}
                 </div>
+                <div>
+                    Upvotes: <span style={{ textDecoration: 'underline' }}>{dataHunch.upvotes}</span>
+                </div>
+                <div>
+                    Downvotes: <span style={{ textDecoration: 'underline' }}>{dataHunch.downvotes}</span>
+                </div>
 
             </div>
         } />);

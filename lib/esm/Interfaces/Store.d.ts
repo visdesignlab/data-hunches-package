@@ -16,6 +16,7 @@ export declare class RootStore {
     needToShowPreview: boolean;
     currentVol: number;
     numOfDH: number;
+    votingDH: DataHunch | undefined;
     constructor();
     setUserName(input: string): void;
     setSelectedDH(input: number[]): void;
@@ -25,6 +26,7 @@ export declare class RootStore {
     setNextIndex(input: number): void;
     setTotalDH(input: number): void;
     setCurrentVol(input: number): void;
+    setVotingDH(input: DataHunch | undefined): void;
     submitDH(dataHunchToSubmit: DataHunch): Promise<void>;
     setWidth(newWidth: number): void;
     setHeight(newHeight: number): void;

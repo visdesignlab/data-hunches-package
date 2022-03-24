@@ -18,6 +18,8 @@ export declare const DefaultForeignObjectWidth = 200;
 export declare const DefaultForeignObjectHeight = 285;
 export declare const ControlFOWidth = 190;
 export declare const ControlFOHeight = 300;
+export declare const UpDownVoteFOWidth = 150;
+export declare const UpDownVoteFOHeight = 50;
 export declare const WithoutCatControlFOHeight = 208;
 export declare const TransitionDuration = 500;
 export declare const ConfidenceInput: string[];

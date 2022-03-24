@@ -4,7 +4,6 @@ import { observer } from "mobx-react-lite";
 import { useContext } from "react";
 import { FC } from "react";
 import { DefaultForeignObjectHeight, DefaultForeignObjectWidth, } from "../Interfaces/Constants";
-
 import Store from "../Interfaces/Store";
 import { NonCapButton, } from "../Interfaces/StyledComponents";
 import { InputMode } from "../Interfaces/Types";
