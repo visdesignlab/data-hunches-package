@@ -127,6 +127,9 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData }: Props) => {
                         store.selectADataPointMode(false);
                         store.setCurrentSelectedDP(undefined);
                     }
+                    if (store.votingDH) {
+                        store.setVotingDH(undefined);
+                    }
                 }}>
 
                 {store.showCategory ? <ChartLegends /> : <></>}

@@ -73,16 +73,16 @@ type dataAttribute = {
 
 
 const COVIDData = [
-    { categorical: 'Europe', label: "Austria", value: 2978.887 },
-    { categorical: 'Oceania', label: "Australia", value: 872.619 },
-    { categorical: 'North America', label: 'Canada', value: 159.527 },
-    { categorical: 'Europe', label: 'France', value: 807.867 },
-    { categorical: 'Europe', label: 'Germany', value: 1614.237 },
-    { categorical: 'Oceania', label: 'New Zealand', value: 2886.32 },
-    { categorical: 'Europe', label: 'Norway', value: 2301.186 },
-    { categorical: 'Europe', label: 'Sweden', value: 236.456 },
-    { categorical: 'Europe', label: 'United Kingdom', value: 611.56 },
-    { categorical: 'North America', label: 'United States', value: 186.2 },
+    { categorical: '30-60', label: "Austria", value: 2978.887 },
+    { categorical: '30-60', label: "Australia", value: 872.619 },
+    { categorical: 'Above 60', label: 'Canada', value: 159.527 },
+    { categorical: 'Above 60', label: 'France', value: 807.867 },
+    { categorical: 'Above 60', label: 'Germany', value: 1614.237 },
+    { categorical: '30-60', label: 'New Zealand', value: 2886.32 },
+    { categorical: 'Below 30', label: 'Norway', value: 2301.186 },
+    { categorical: 'Below 30', label: 'Sweden', value: 236.456 },
+    { categorical: 'Below 30', label: 'United Kingdom', value: 611.56 },
+    { categorical: '30-60', label: 'United States', value: 186.2 },
 ];
 
 const TestData = [
@@ -100,8 +100,9 @@ export const DataPreset: { [key: string]: dataAttribute; } = {
         dbTag: 'COVIDData',
         data: COVIDData,
         name: 'COVID Cases',
-        explanation: "New confirmed cases of COVID-19 (7-day smoothed) per 1,000,000 people. Data shows Mar 01, 2022.",
-        categories: ['Europe', 'Oceania', 'North America',]
+        explanation: "New confirmed cases of COVID-19 (7-day smoothed) per 1,000,000 people, colored by Stringency Index (0-100). Higher score indicates a stricter response (i.e. 100 = strictest response). If policies vary at the subnational level, the index is shown as the response level of the strictest sub-region.. Data shows Mar 01, 2022. Data Source: OurWorldInData",
+        categories: ['Below 30', '30-60', 'Above 60']
+
     },
     test2: {
         dbTag: 'test2',
@@ -111,3 +112,26 @@ export const DataPreset: { [key: string]: dataAttribute; } = {
         categories: ['A', 'B', 'C', 'D'],
     }
 };
+
+
+// Stringent Index:
+
+// Australia	51.39
+
+// Austria	57.41
+
+// Canada	68.98
+
+// France	69.44
+
+// Germany	84.26
+
+// New Zealand	58.33
+
+// Norway	13.89
+
+// Sweden	19.44
+
+// United Kingdom	17.59
+
+// United States	53.24;
