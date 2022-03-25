@@ -7,9 +7,10 @@ import { Grid } from "@material-ui/core";
 import Table from "./TableComponents/Table";
 import { getDocs, collection, getDoc, doc } from "firebase/firestore/lite";
 import { stateUpdateWrapperUseJSON } from "./Interfaces/StateChecker";
-import { DataPreset, firebaseSetup } from "./Interfaces/Constants";
+import { firebaseSetup } from "./Interfaces/Constants";
 import BarChart from "./BarChart";
 import WelcomeDialog from "./WelcomeDialog";
+import { DataPreset } from "./Interfaces/Datasets";
 
 
 export const DataContext = createContext<BarChartDataPoint[]>([]);

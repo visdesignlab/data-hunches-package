@@ -119,7 +119,12 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData }: Props) => {
     });
 
     return (
-        <div style={{ height: '100%' }} id='app-div'>
+        <div style={{ height: '100%' }} id='app-div' onClick={() => {
+
+            if (store.votingDH) {
+                store.setVotingDH(undefined);
+            }
+        }}>
             <ChartSVG
                 ref={svgRef}
                 onClick={() => {
@@ -127,9 +132,9 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData }: Props) => {
                         store.selectADataPointMode(false);
                         store.setCurrentSelectedDP(undefined);
                     }
-                    if (store.votingDH) {
-                        store.setVotingDH(undefined);
-                    }
+                    // if (store.votingDH) {
+                    //     store.setVotingDH(undefined);
+                    // }
                 }}>
 
                 {store.showCategory ? <ChartLegends /> : <></>}
@@ -192,24 +197,14 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData }: Props) => {
                 <ManipulationLayer sendManipulation={sendManipulationToParent} />
                 <SketchLayer sendManipulation={sendManipulationToParent} />
 
-                <FormComponent />
+
 
                 <SpecificControl sendManipulation={sendManipulationToParent} />
 
-                <foreignObject
-                    display='none'
-                    id="upvote-downvote-FO"
-                    width={UpDownVoteFOWidth}
-                    height={UpDownVoteFOHeight}
-                    className={styles.foreignObjectContainer}>
-                    <UpvotesDownvotes
-                        retrieveData={retrieveData}
-                        idAssignment='' />
-                </foreignObject>
-
             </ChartSVG>
 
-            <Container >{
+            <Container >
+                {/* {
                 (store.inputMode === 'sketch' ||
                     store.inputMode === 'direction' ||
                     store.inputMode === 'manipulations' ||
@@ -218,7 +213,7 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData }: Props) => {
                         <ManipulationForm manipulationOutput={manipulationResult} type={store.inputMode} />
                     </div> :
                     <></>
-            }
+            } */}
 
                 <ChartTitle />
             </Container>
@@ -234,7 +229,7 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData }: Props) => {
                                             isSelected={store.selectedDH.includes(d.id)}
                                             onClick={() => { store.setSelectedDH([d.id]); }}
                                             onContextMenu={(e) => {
-                                                toVoteDH(e, store.svgWidth, store.svgHeight, false);
+                                                toVoteDH(e, store.svgWidth, store.svgHeight);
                                                 store.setVotingDH(d);
                                             }}
                                             onMouseOver={() => { store.setHighlightedDH(d.id); }}
@@ -252,9 +247,8 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData }: Props) => {
                 </ul>
             </ContainerDiv>
             <UpvotesDownvotes
-                retrieveData={retrieveData}
-                idAssignment="upvote-downvote" />
-
+                retrieveData={retrieveData} />
+            <FormComponent />
         </div >
     );
 };
@@ -263,7 +257,7 @@ export default observer(BarChart);
 
 
 const ChartSVG = styled.svg`
-  height: 70%;
+  height: 90%;
   width: 100%;
 `;
 

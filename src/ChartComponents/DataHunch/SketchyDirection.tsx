@@ -57,7 +57,7 @@ const SketchyDirection: FC<Props> = ({ dataHunch, xPos, yPos, highlighted, selec
                 ref={dhRef}
                 cursor='pointer'
                 onContextMenu={(e) => {
-                    toVoteDH(e, store.svgWidth, store.svgHeight, true);
+                    toVoteDH(e, store.svgWidth, store.svgHeight);
                     store.setVotingDH(dataHunch);
                 }}
                 onClick={() => { store.setSelectedDH([dataHunch.id]); }}

@@ -78,6 +78,9 @@ export class RootStore {
 
     setVotingDH(input: DataHunch | undefined) {
         this.votingDH = input;
+        if (this.selectedDP) {
+            this.selectedDP = undefined;
+        }
     }
 
     async submitDH(dataHunchToSubmit: DataHunch) {
@@ -110,6 +113,9 @@ export class RootStore {
 
     setInputMode(input: InputMode) {
         this.inputMode = input;
+        if (this.votingDH) {
+            this.votingDH = undefined;
+        }
     }
 
     selectADataPointMode(input: boolean) {
@@ -123,6 +129,9 @@ export class RootStore {
 
     setCurrentSelectedDP(input: string | undefined) {
         this.selectedDP = input;
+        if (this.votingDH) {
+            this.votingDH = undefined;
+        }
     }
 }
 const Store = createContext(new RootStore());

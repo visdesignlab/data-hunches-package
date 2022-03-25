@@ -204,7 +204,7 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                             onClick={() => { store.setSelectedDH([d.id]); }}
                             onMouseOver={() => { store.setHighlightedDH(d.id); }}
                             onContextMenu={(e) => {
-                                toVoteDH(e, store.svgWidth, store.svgHeight, true);
+                                toVoteDH(e, store.svgWidth, store.svgHeight);
                                 store.setVotingDH(d);
                             }}
                             onMouseOut={() => { store.setHighlightedDH(-1); }}>

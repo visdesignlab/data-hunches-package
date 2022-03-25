@@ -2,11 +2,12 @@ import { Button, ButtonGroup, FormControl, FormHelperText, InputLabel, Menu, Men
 import { collection, doc, getDoc, setDoc } from "firebase/firestore/lite";
 import { observer } from "mobx-react-lite";
 import { FC, useContext, useEffect, useState } from "react";
-import { DataPreset, firebaseSetup } from "../Interfaces/Constants";
+import { firebaseSetup } from "../Interfaces/Constants";
 import { stateUpdateWrapperUseJSON } from "../Interfaces/StateChecker";
 import Store from "../Interfaces/Store";
 import NewVolDialog from "./NewVolDialog";
 import { NonCapButton, useStyles } from "../Interfaces/StyledComponents";
+import { DataPreset } from "../Interfaces/Datasets";
 
 const DemoOptionButtons: FC = () => {
     const store = useContext(Store);

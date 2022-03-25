@@ -73,7 +73,7 @@ const SingleOverAxisIndicator: FC<Props> = ({ textX, textY, dataHunch, curvePoin
             childrenComponent={<g cursor="pointer"
                 onClick={() => { store.setSelectedDH([dataHunch.id]); }}
                 onContextMenu={(e) => {
-                    toVoteDH(e, store.svgWidth, store.svgHeight, true);
+                    toVoteDH(e, store.svgWidth, store.svgHeight);
                     store.setVotingDH(dataHunch);
                 }}
                 onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}

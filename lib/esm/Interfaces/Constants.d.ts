@@ -1,4 +1,3 @@
-import { BarChartDataPoint } from './Types';
 export declare const margin: {
     top: number;
     right: number;
@@ -35,14 +34,3 @@ export declare const DefaultSketchyOptions: {
     fill: string;
     stroke: string;
 };
-declare type dataAttribute = {
-    data: BarChartDataPoint[];
-    categories: string[];
-    name: string;
-    dbTag: string;
-    explanation: string;
-};
-export declare const DataPreset: {
-    [key: string]: dataAttribute;
-};
-export {};

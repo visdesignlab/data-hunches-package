@@ -104,7 +104,7 @@ const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch, highlight
             <g display={store.needToShowPreview ? 'none' : undefined}
                 ref={dhRef}
                 onContextMenu={(e) => {
-                    toVoteDH(e, store.svgWidth, store.svgHeight, true);
+                    toVoteDH(e, store.svgWidth, store.svgHeight);
                     store.setVotingDH(dataHunch);
                 }}
             />} />

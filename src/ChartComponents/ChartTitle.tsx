@@ -2,7 +2,8 @@ import { Typography, Link } from "@material-ui/core";
 import { select } from "d3-selection";
 import { observer } from "mobx-react-lite";
 import { FC, useContext } from "react";
-import { DataPreset, margin, DarkGray, DefaultForeignObjectHeight, DefaultForeignObjectWidth } from "../Interfaces/Constants";
+import { margin, DarkGray, DefaultForeignObjectHeight, DefaultForeignObjectWidth } from "../Interfaces/Constants";
+import { DataPreset } from "../Interfaces/Datasets";
 import Store from "../Interfaces/Store";
 import { ContainerDiv } from "../Interfaces/StyledComponents";
 

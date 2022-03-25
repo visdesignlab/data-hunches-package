@@ -2,7 +2,8 @@ import { Container, FormControlLabel, Radio, RadioGroup, TextField } from "@mate
 import { observer } from "mobx-react-lite";
 import { FC, useState, useContext, useEffect } from "react";
 import { DataContext } from "../..";
-import { CategoricalColor, DataPreset } from "../../Interfaces/Constants";
+import { CategoricalColor } from "../../Interfaces/Constants";
+import { DataPreset } from "../../Interfaces/Datasets";
 import Store from "../../Interfaces/Store";
 import { useStyles } from "../../Interfaces/StyledComponents";
 import ReasonConfidenceInput from "./ReasonConfidenceInput";

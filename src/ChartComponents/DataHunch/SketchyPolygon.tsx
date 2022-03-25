@@ -69,7 +69,7 @@ const SketchyPolygon: FC<Props> = ({ dataHunch, points, fill, opacity, highlight
             <g ref={dhRef}
                 opacity={opacity}
                 onContextMenu={(e) => {
-                    toVoteDH(e, store.svgWidth, store.svgHeight, true);
+                    toVoteDH(e, store.svgWidth, store.svgHeight);
                     store.setVotingDH(dataHunch);
                 }}
             />} />

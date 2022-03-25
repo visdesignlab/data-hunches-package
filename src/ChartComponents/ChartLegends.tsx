@@ -2,10 +2,11 @@ import { observer } from "mobx-react-lite";
 import { FC, useContext, useLayoutEffect, useRef } from "react";
 import { DataContext } from "..";
 import { makeCategoricalScale } from "../HelperFunctions/ScaleGenerator";
-import { DataPreset, IndicatorSize, margin } from "../Interfaces/Constants";
+import { IndicatorSize, margin } from "../Interfaces/Constants";
 import Store from "../Interfaces/Store";
 import { textwrap } from 'd3-textwrap';
 import { select } from "d3-selection";
+import { DataPreset } from "../Interfaces/Datasets";
 
 const ChartLegends: FC = () => {
     const dataSet = useContext(DataContext);

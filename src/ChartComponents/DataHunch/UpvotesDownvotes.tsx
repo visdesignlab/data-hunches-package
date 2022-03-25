@@ -1,7 +1,7 @@
 import { Container, ButtonGroup, IconButton } from "@material-ui/core";
 import Store from "../../Interfaces/Store";
 import { updateDoc, doc, collection } from "firebase/firestore/lite";
-import { FC, useContext } from "react";
+import { FC, useContext, useLayoutEffect } from "react";
 import { firebaseSetup, UpDownVoteFOHeight, UpDownVoteFOWidth } from "../../Interfaces/Constants";
 import { useStyles } from "../../Interfaces/StyledComponents";
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
@@ -11,10 +11,9 @@ import { pointer, select } from "d3-selection";
 
 type Props = {
     retrieveData: () => void;
-    idAssignment: string;
 };
 
-const UpvotesDownvotes: FC<Props> = ({ retrieveData, idAssignment }: Props) => {
+const UpvotesDownvotes: FC<Props> = ({ retrieveData, }: Props) => {
     const store = useContext(Store);
 
 
@@ -31,23 +30,28 @@ const UpvotesDownvotes: FC<Props> = ({ retrieveData, idAssignment }: Props) => {
             await updateDoc(doc(collection(firebaseSetup, store.dbTag, `sub${store.currentVol}`, `dhs`), store.votingDH.id.toString()), updateResult);
 
             retrieveData();
+            store.setVotingDH(undefined);
         }
-        store.setVotingDH(undefined);
 
-        select('#upvote-downvote-FO')
-            .attr('display', 'none');
-        select('#upvote-downvote')
-            .style('display', 'none');
+
+
     };
+
+    useLayoutEffect(() => {
+        if (!store.votingDH) {
+            select('#upvote-downvote')
+                .style('display', 'none');
+        }
+    }, [store.votingDH]);
 
 
 
     return (
-        <Container id={idAssignment} style={{
+        <Container id='upvote-downvote' style={{
             textAlign: 'start',
             zIndex: 1000,
             position: 'absolute',
-            display: idAssignment ? 'none' : undefined,
+            display: 'none',
             width: UpDownVoteFOWidth,
             backgroundColor: 'rgb(238, 238, 238, 0.8)'
         }}>
@@ -64,33 +68,21 @@ const UpvotesDownvotes: FC<Props> = ({ retrieveData, idAssignment }: Props) => {
 };
 export default observer(UpvotesDownvotes);
 
-export const toVoteDH = (e: any, svgWidth: number, svgHeight: number, isFO: boolean) => {
+export const toVoteDH = (e: any, svgWidth: number, svgHeight: number,) => {
     e.preventDefault();
     let xLoc, yLoc;
 
-    select('#upvote-downvote-FO')
-        .attr('display', 'none');
     select('#upvote-downvote')
         .style('display', 'none');
 
-    if (isFO) {
-        xLoc = (pointer(e)[0] + UpDownVoteFOWidth) > svgWidth ? (pointer(e)[0] - UpDownVoteFOWidth) : pointer(e)[0];
-        yLoc = (pointer(e)[1] + UpDownVoteFOHeight) > svgHeight ? (pointer(e)[1] - UpDownVoteFOHeight) : pointer(e)[1];
-    } else {
-        xLoc = pointer(e, select('#app-div').node())[0];
-        yLoc = pointer(e, select('#app-div').node())[1];
 
-    }
-    if (isFO) {
-        select('#upvote-downvote-FO')
-            .attr('display', null)
-            .attr('x', xLoc)
-            .attr('y', yLoc);
-    } else {
-        select('#upvote-downvote')
-            .style('display', null)
-            .style('left', `${xLoc}px`)
-            .style('top', `${yLoc}px`);
-    }
+    xLoc = pointer(e, select('#app-div').node())[0];
+    yLoc = pointer(e, select('#app-div').node())[1];
+
+    select('#upvote-downvote')
+        .style('display', null)
+        .style('left', `${xLoc}px`)
+        .style('top', `${yLoc}px`);
+
 
 };

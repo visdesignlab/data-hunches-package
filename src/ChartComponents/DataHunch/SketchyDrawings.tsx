@@ -60,7 +60,7 @@ const SketchyDrawings: FC<Props> = ({ dataHunch, highlighted, selected }: Props)
                         store.setHighlightedDH(-1);
                     }}
                     onContextMenu={(e) => {
-                        toVoteDH(e, store.svgWidth, store.svgHeight, true);
+                        toVoteDH(e, store.svgWidth, store.svgHeight);
                         store.setVotingDH(dataHunch);
                     }}
                     onClick={() => { store.setSelectedDH([dataHunch.id]); }}
