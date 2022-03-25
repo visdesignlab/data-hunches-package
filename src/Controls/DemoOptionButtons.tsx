@@ -75,7 +75,7 @@ const DemoOptionButtons: FC = () => {
             <></>
         }
 
-        <FormControl style={{ marginRight: '5px', marginLeft: '5px' }}>
+        <FormControl style={{ marginRight: '5px', marginLeft: '10px' }}>
             <InputLabel>Select Data</InputLabel>
             <Select className={styles.inputSelect}
                 native
