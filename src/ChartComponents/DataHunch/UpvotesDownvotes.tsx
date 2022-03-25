@@ -23,9 +23,9 @@ const UpvotesDownvotes: FC<Props> = ({ retrieveData, idAssignment }: Props) => {
         if (store.votingDH) {
             let updateResult;
             if (isUpvote) {
-                updateResult = { upvotes: (store.votingDH.upvotes + 1).toString() };
+                updateResult = { upvotes: (parseInt(store.votingDH.upvotes as any) + 1).toString() };
             } else {
-                updateResult = { downvotes: (store.votingDH.downvotes + 1).toString() };
+                updateResult = { downvotes: (parseInt(store.votingDH.downvotes as any) + 1).toString() };
             }
 
             await updateDoc(doc(collection(firebaseSetup, store.dbTag, `sub${store.currentVol}`, `dhs`), store.votingDH.id.toString()), updateResult);
