@@ -72,13 +72,13 @@ const SpecificControl: FC<SendManiProps> = ({ sendManipulation }: SendManiProps)
                         clickHandler('direction');
                         sendManipulation('higher');
                     }}>
-                        Value should be higher.
+                        Value should be higher
                     </ContextButton>
                     <ContextButton onClick={() => {
                         clickHandler('direction');
                         sendManipulation('lower');
                     }}>
-                        Value should be lower.
+                        Value should be lower
                     </ContextButton>
                 </ButtonGroup>
             </Container>

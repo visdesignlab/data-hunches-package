@@ -203,8 +203,8 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData }: Props) => {
 
             </ChartSVG>
 
-            <Container >
-                {/* {
+
+            {/* {
                 (store.inputMode === 'sketch' ||
                     store.inputMode === 'direction' ||
                     store.inputMode === 'manipulations' ||
@@ -215,8 +215,8 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData }: Props) => {
                     <></>
             } */}
 
-                <ChartTitle />
-            </Container>
+            <ChartTitle />
+
             <ContainerDiv>
                 <ul className={styles.noBulletsList}>
                     {allChartDHArray.map((d) => {

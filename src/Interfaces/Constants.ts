@@ -11,7 +11,7 @@ export const IndicatorSpace = 10;
 
 export const DarkGray = '#5d5d5d';
 
-export const LightGray = '#eeeeee';
+export const LightGray = '#c8c8c8';
 
 export const SelectionColor = '#e29609';
 

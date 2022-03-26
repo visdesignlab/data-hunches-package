@@ -28,12 +28,12 @@ const SketchyDirection: FC<Props> = ({ dataHunch, xPos, yPos, highlighted, selec
             const drawingG = dhRef.current as any;
             const rc = rough.default.svg(drawingG);
 
-            const sketchyLine = rc.line(xPos, yPos, dataHunch.content === 'higher' ? xPos + 10 : xPos - 10, yPos, DefaultSketchyOptions);
+            const sketchyLine = rc.line(xPos, yPos, dataHunch.content === 'higher' ? xPos + 14 : xPos - 14, yPos, DefaultSketchyOptions);
             drawingG.appendChild(sketchyLine);
             const sketchyArrow = rc.polygon([
-                [dataHunch.content === 'higher' ? xPos + 10 : xPos - 10, yPos - 5],
-                [dataHunch.content === 'higher' ? xPos + 10 : xPos - 10, yPos + 5],
-                [dataHunch.content === 'higher' ? xPos + 15 : xPos - 15, yPos]
+                [dataHunch.content === 'higher' ? xPos + 14 : xPos - 14, yPos - 7],
+                [dataHunch.content === 'higher' ? xPos + 14 : xPos - 14, yPos + 7],
+                [dataHunch.content === 'higher' ? xPos + 21 : xPos - 21, yPos]
             ], { ...DefaultSketchyOptions, fillStyle: 'solid' });
             drawingG.appendChild(sketchyArrow);
         }

@@ -6,11 +6,11 @@ import { useEffect } from "react";
 import { FC } from "react";
 import { DataContext } from "../..";
 import { makeValueScale, makeBandScale } from "../../HelperFunctions/ScaleGenerator";
-import { IndicatorSize, margin } from "../../Interfaces/Constants";
+import { IndicatorSize, LightGray, margin } from "../../Interfaces/Constants";
 import { stateUpdateWrapperUseJSON } from "../../Interfaces/StateChecker";
 import Store from "../../Interfaces/Store";
 import 'roughjs';
-import { BarChartDataPoint, DataHunch } from "../../Interfaces/Types";
+import { BarChartDataPoint, DataHunch, InputMode } from "../../Interfaces/Types";
 import SketchyBar from "./SketchyBar";
 import { DHIndicatorText } from "../../Interfaces/StyledComponents";
 import SingleOverAxisIndicator from "./SingleOverAxisIndicator";
@@ -50,7 +50,7 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
         const tempAboveAxisDH: DataHunch[] = [];
 
         dataHunchArray.forEach((d) => {
-            if (['annotation', 'categorical'].includes(d.type)) {
+            if (['annotation', 'categorical', 'rating'].includes(d.type)) {
                 tempOffVis.push(d);
             } else if (d.type === 'exclusion') {
                 tempExDH.push(d);
@@ -110,7 +110,14 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
         return 0;
     };
 
-    const calculateText = (dataHunchText: string, placement: number, arrayLength: number) => {
+    const calculateText = (dataHunchText: string, placement: number, arrayLength: number, type: InputMode) => {
+        if (type === 'rating') {
+            const starAmount = parseInt(dataHunchText);
+            return (<tspan>
+                * <tspan fontSize='medium'>{'★'.repeat(starAmount)}</tspan>
+                <tspan fontSize='medium' fill={LightGray} stroke={LightGray}>{'★'.repeat(5 - starAmount)}</tspan>
+            </tspan >);
+        }
         if (placement >= (store.svgWidth - margin.right - margin.left)) {
             if (arrayLength <= 2) {
                 return `* ${dataHunchText.slice(0, 15)}${dataHunchText.length > 15 ? '...' : ''}`;
@@ -208,7 +215,7 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                                 store.setVotingDH(d);
                             }}
                             onMouseOut={() => { store.setHighlightedDH(-1); }}>
-                            {calculateText(d.content, findXPos(d, i, offVisDH.length), offVisDH.length)}
+                            {calculateText(d.content, findXPos(d, i, offVisDH.length), offVisDH.length, d.type)}
                         </DHIndicatorText>}
                         dataHunch={d}
                         key={`${d.id}-text`}

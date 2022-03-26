@@ -24,11 +24,11 @@ const RatingForm: FC = () => {
 
     return (<Container className={styles.foreignObjectContainer}>
         <RadioGroup name="Rating" onChange={handleRadioChange}>
-            <FormControlLabel value="1star" control={<Radio size="small" className={styles.radioStyle} />} label="★" />
-            <FormControlLabel value="2star" control={<Radio size="small" className={styles.radioStyle} />} label="★★" />
-            <FormControlLabel value="3star" control={<Radio size="small" className={styles.radioStyle} />} label="★★★" />
-            <FormControlLabel value="4star" control={<Radio size="small" className={styles.radioStyle} />} label="★★★★" />
-            <FormControlLabel value="5star" control={<Radio size="small" className={styles.radioStyle} />} label="★★★★★" />
+            <FormControlLabel value="1" control={<Radio size="small" className={styles.radioStyle} />} label="★" />
+            <FormControlLabel value="2" control={<Radio size="small" className={styles.radioStyle} />} label="★★" />
+            <FormControlLabel value="3" control={<Radio size="small" className={styles.radioStyle} />} label="★★★" />
+            <FormControlLabel value="4" control={<Radio size="small" className={styles.radioStyle} />} label="★★★★" />
+            <FormControlLabel value="5" control={<Radio size="small" className={styles.radioStyle} />} label="★★★★★" />
         </RadioGroup>
 
         <TextField
@@ -45,7 +45,7 @@ const RatingForm: FC = () => {
         <SubmitCancelButtons disableSubmit={
             !ratingValue || reasonInput.length === 0}
             dhToSubmit={{
-                type: 'annotation',
+                type: 'rating',
                 user: store.userName,
                 label: `${store.selectedDP === undefined ? 'all chart' : store.selectedDP}`,
                 content: ratingValue,
