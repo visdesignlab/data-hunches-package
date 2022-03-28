@@ -193,10 +193,10 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData }: Props) => {
                         }
                     })}
                 </g>
+                {store.inputMode === 'range' ? <RangeLayer sendManipulation={sendManipulationToParent} /> : <></>}
+                {store.inputMode === 'manipulations' ? <ManipulationLayer sendManipulation={sendManipulationToParent} /> : <></>}
+                {store.inputMode === 'sketch' ? <SketchLayer sendManipulation={sendManipulationToParent} /> : <></>}
 
-                <RangeLayer sendManipulation={sendManipulationToParent} />
-                <ManipulationLayer sendManipulation={sendManipulationToParent} />
-                <SketchLayer sendManipulation={sendManipulationToParent} />
             </ChartSVG>
 
 

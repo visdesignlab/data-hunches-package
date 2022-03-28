@@ -51,7 +51,7 @@ const BarElement: FC<Props> = ({ width, height, xPos, yPos, fill, dataElement }:
                 .style('top', `${yLoc}px`);
             select('#form-component')
                 .style('left', `${xLoc}px`)
-                .style('top', `${yLoc}px`);
+                .style('top', `${yLoc + height}px`);
             // .attr('x', formXLoc)
             // .attr('y', formYLoc);
 

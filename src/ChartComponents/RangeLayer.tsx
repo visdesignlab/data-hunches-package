@@ -1,6 +1,6 @@
 import { pointer, select } from "d3-selection";
 import { observer } from "mobx-react-lite";
-import { FC, useContext, useRef, useState } from "react";
+import { FC, useContext, useLayoutEffect, useRef, useState } from "react";
 import { DataContext } from "..";
 import { makeValueScale, makeBandScale } from "../HelperFunctions/ScaleGenerator";
 import { SelectionColor, DefaultSketchyOptions, LightGray, margin } from "../Interfaces/Constants";
@@ -93,9 +93,35 @@ const RangeLayer: FC<SendManiProps> = ({ sendManipulation }: SendManiProps) => {
         timer0 = now();
     };
 
+    useLayoutEffect(() => {
+        if (resultRef.current) {
+
+            select(resultRef.current).selectAll('*').remove();
+            const drawingG = resultRef.current as any;
+
+            const yPos = bandScale(store.selectedDP || '') || 0;
+            const height = bandScale.bandwidth();
+
+            const rc = rough.default.svg(drawingG);
+
+            const sketchyRec = rc.rectangle(0.5 * store.svgWidth, yPos, 4, height, sketchyOption);
+
+
+            const rangePoly = rc.polygon([
+                [0.25 * store.svgWidth, yPos + 0.5 * height],
+                [0.5 * store.svgWidth, yPos + 0.5 * height - 4],
+                [0.75 * store.svgWidth, yPos + 0.5 * height],
+                [0.5 * store.svgWidth, yPos + 0.5 * height + 4]
+            ], sketchyOption);
+
+            drawingG.appendChild(sketchyRec);
+            drawingG.appendChild(rangePoly);
+        }
+
+    }, []);
+
     return (
-        <g
-            display={store.inputMode === 'range' ? undefined : 'none'}>
+        <g >
 
             <g id='result-rect' ref={resultRef} />
 

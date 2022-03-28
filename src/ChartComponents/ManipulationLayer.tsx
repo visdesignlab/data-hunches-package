@@ -1,6 +1,6 @@
 import { pointer, select } from "d3-selection";
 import { observer } from "mobx-react-lite";
-import { FC, useContext, useRef, useState } from "react";
+import { FC, useContext, useLayoutEffect, useRef, useState } from "react";
 import { DataContext } from "..";
 import { makeValueScale, makeBandScale } from "../HelperFunctions/ScaleGenerator";
 import { SelectionColor, DefaultSketchyOptions, LightGray, margin } from "../Interfaces/Constants";
@@ -81,9 +81,20 @@ const ManipulationLayer: FC<SendManiProps> = ({ sendManipulation }: SendManiProp
         timer0 = now();
     };
 
+    useLayoutEffect(() => {
+        if (resultRef.current) {
+            select(resultRef.current).selectAll('*').remove();
+            const drawingG = resultRef.current as any;
+            const rc = rough.default.svg(drawingG);
+
+            const sketchyRec = rc.rectangle(margin.left, bandScale(store.selectedDP || '') || 0, 0.5 * store.svgWidth - margin.left, bandScale.bandwidth(), sketchyOption);
+            drawingG.appendChild(sketchyRec);
+        }
+
+    }, []);
+
     return (
-        <g
-            display={store.inputMode === 'manipulations' ? undefined : 'none'}>
+        <g >
 
             <g id='result-rect' ref={resultRef} />
 

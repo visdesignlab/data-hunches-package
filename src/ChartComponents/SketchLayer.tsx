@@ -66,7 +66,7 @@ const SketchLayer: FC<SendManiProps> = ({ sendManipulation }: SendManiProps) => 
     }, [rectRef]);
 
     return (
-        <g id='dragging-layer' display={store.inputMode === 'sketch' ? undefined : 'none'}>
+        <g id='dragging-layer'>
             <rect
                 ref={rectRef}
                 x={0}
