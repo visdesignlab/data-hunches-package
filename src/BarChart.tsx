@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { FC, useContext, useState, useRef } from "react";
 import BarElement from './ChartComponents/BarElement';
 import { makeBandScale, makeCategoricalScale, makeValueScale } from "./HelperFunctions/ScaleGenerator";
-import { DefaultBar, DefaultForeignObjectHeight, DefaultForeignObjectWidth, margin, SelectionColor, UpDownVoteFOHeight, UpDownVoteFOWidth } from "./Interfaces/Constants";
+import { DefaultBar, DefaultForeignObjectHeight, DefaultForeignObjectWidth, margin, MaximumHeight, MaximumWidth, SelectionColor, UpDownVoteFOHeight, UpDownVoteFOWidth } from "./Interfaces/Constants";
 import Store from "./Interfaces/Store";
 import { axisLeft, axisTop } from "d3-axis";
 import { select } from "d3-selection";
@@ -29,13 +29,15 @@ import StyledTooltip from "./ChartComponents/DataHunch/StyledTooltip";
 import styled from "styled-components";
 import { Container } from "@material-ui/core";
 import UpvotesDownvotes, { toVoteDH } from "./ChartComponents/DataHunch/UpvotesDownvotes";
+import { DataPreset } from "./Interfaces/Datasets";
 
 
 type Props = {
     dataHunchArray: DataHunch[];
     retrieveData: () => void;
+    showTable: boolean;
 };
-const BarChart: FC<Props> = ({ dataHunchArray, retrieveData }: Props) => {
+const BarChart: FC<Props> = ({ dataHunchArray, retrieveData, showTable }: Props) => {
 
     const store = useContext(Store);
     const styles = useStyles();
@@ -74,7 +76,7 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData }: Props) => {
 
     const valueScale = makeValueScale(dataSet, store.svgWidth);
     const bandScale = makeBandScale(dataSet, store.svgHeight);
-    const categoricalColorScale = makeCategoricalScale(dataSet);
+    const categoricalColorScale = makeCategoricalScale(DataPreset[store.dbTag].categories);
 
     const yAxis: any = axisTop(valueScale).tickFormat(format('.2s'));
     const xAxis: any = axisLeft(bandScale);
@@ -104,19 +106,22 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData }: Props) => {
     const svgRef = useRef(null);
 
     useLayoutEffect(() => {
-
         if (svgRef.current) {
-            store.setHeight((svgRef.current as any).clientHeight);
-            store.setWidth((svgRef.current as any).clientWidth);
+            resizing();
         }
-    }, [svgRef]);
+    }, [svgRef, showTable]);
 
     window.addEventListener("resize", () => {
         if (svgRef.current) {
-            store.setHeight((svgRef.current as any).clientHeight);
-            store.setWidth((svgRef.current as any).clientWidth);
+            resizing();
         }
     });
+
+    const resizing = () => {
+
+        store.setWidth((svgRef.current as any).clientWidth);
+        store.setHeight((svgRef.current as any).clientHeight);
+    };
 
     return (
         <div style={{ height: '100%' }} onClick={() => {
@@ -173,21 +178,13 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData }: Props) => {
 
                     {dataSet.map((barDP) => {
                         if (barDP.dataHunchArray) {
-                            let catDH: DataHunch[] = [];
-                            if (store.showCategory) {
-                                catDH = barDP.dataHunchArray.filter(d => d.type === 'categorical');
-                            }
-                            return (<>
-                                <DataHunchIndicator
-                                    dataPoint={barDP}
-                                    key={`${barDP.label}-dhindicator`}
-                                    dataHunchArray={barDP.dataHunchArray}
-                                />
-                                <CategoricalIndicator
-                                    dataHunchArrayString={JSON.stringify(catDH)}
-                                    barChartPoint={barDP}
-                                    key={`${barDP.label}-catindicator`} />
-                            </>);
+
+                            return <DataHunchIndicator
+                                dataPoint={barDP}
+                                key={`${barDP.label}-dhindicator`}
+                                dataHunchArray={barDP.dataHunchArray}
+                            />;
+
                         } else {
                             return <></>;
                         }
@@ -258,5 +255,7 @@ export default observer(BarChart);
 const ChartSVG = styled.svg`
   height: 70%;
   width: 100%;
+  max-width:1000px;
+  max-height:800px
 `;
 

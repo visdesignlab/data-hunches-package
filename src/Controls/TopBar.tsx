@@ -7,10 +7,10 @@ import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import { useContext } from "react";
 import Store from "../Interfaces/Store";
 import GeneralControl from "./GeneralControl";
-import DemoOptionButtons from "./DemoOptionButtons";
+import DemoOptionButtons, { TopBarProps } from "./DemoOptionButtons";
 
 
-const TopBar: FC = () => {
+const TopBar: FC<TopBarProps> = ({ showTable, makeShowTable }: TopBarProps) => {
     const styles = useStyles();
     const store = useContext(Store);
 
@@ -41,7 +41,7 @@ const TopBar: FC = () => {
 
                 {/* Only show vol on logged in*/}
                 {store.userName ?
-                    <DemoOptionButtons /> : <></>
+                    <DemoOptionButtons showTable={showTable} makeShowTable={makeShowTable} /> : <></>
                 }
 
                 {store.userName ?

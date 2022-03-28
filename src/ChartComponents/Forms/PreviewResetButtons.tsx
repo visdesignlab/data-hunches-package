@@ -6,6 +6,7 @@ import 'd3-transition';
 import Store from "../../Interfaces/Store";
 import { handlePreviewOnClick, handleResetOnClick } from "../../HelperFunctions/PreviewReset";
 import { NonCapButton } from "../../Interfaces/StyledComponents";
+import { DataPreset } from "../../Interfaces/Datasets";
 
 type Props = {
     labelToPreview: string | undefined;
@@ -22,13 +23,13 @@ const PreviewResetButtons: FC<Props> = ({ labelToPreview, valueToPreview, disabl
     const previewHandler = () => {
         store.setNeedToShowPreview(true);
 
-        handlePreviewOnClick(dataSet, labelToPreview, valueToPreview, store.svgHeight, store.svgWidth, store.showCategory, modelInput);
+        handlePreviewOnClick(dataSet, labelToPreview, valueToPreview, store.svgHeight, store.svgWidth, store.showCategory, modelInput, DataPreset[store.dbTag].categories);
 
     };
 
     const resetHandler = () => {
         store.setNeedToShowPreview(false);
-        handleResetOnClick(dataSet, store.svgHeight, store.svgWidth, store.showCategory, store.selectedDP);
+        handleResetOnClick(dataSet, store.svgHeight, store.svgWidth, store.showCategory, store.selectedDP, DataPreset[store.dbTag].categories);
     };
 
     return (<ButtonGroup>

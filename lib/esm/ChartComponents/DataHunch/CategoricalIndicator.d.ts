@@ -1,8 +1,13 @@
 /// <reference types="react" />
-import { BarChartDataPoint } from "../../Interfaces/Types";
+import { DataHunch } from "../../Interfaces/Types";
 declare type Props = {
-    dataHunchArrayString: string;
-    barChartPoint: BarChartDataPoint;
+    xPos: number;
+    yPos: number;
+    width: number;
+    height: number;
+    dataHunch: DataHunch;
+    highlighted: boolean;
+    selected: boolean;
 };
 declare const _default: import("react").FunctionComponent<Props>;
 export default _default;

@@ -6,6 +6,9 @@ export const margin = ({ top: 30, right: 150, bottom: 50, left: 90 });
 
 export const LargeNumber = 999;
 
+export const MaximumWidth = 800;
+export const MaximumHeight = 700;
+
 export const IndicatorSize = 6;
 export const IndicatorSpace = 10;
 
@@ -57,7 +60,9 @@ export const firebaseSetup = getFirestore(initializeApp(FirebaseSetupConstants))
 export const DefaultSketchyOptions = {
     fillStyle: 'zigzag',
     roughness: 1.5,
+    // The angle of fill
     hachureAngle: 50,
+    //gap for fill, higher make the stroke wider from each other
     hachureGap: 8,
     fillWeight: 1,
     strokeWidth: 2,

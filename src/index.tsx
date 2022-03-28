@@ -19,6 +19,12 @@ const BarChartWithDH: FC = () => {
 
     const store = useContext(Store);
 
+    const [showTable, setShowTable] = useState(false);
+
+    const makeShowTable = (input: boolean) => {
+        setShowTable(input);
+    };
+
     const [improvedDataSet, setImprovedDataSet] = useState<BarChartDataPoint[]>([]);
 
     useEffect(() => {
@@ -90,18 +96,20 @@ const BarChartWithDH: FC = () => {
     return (
         <DataContext.Provider value={improvedDataSet}>
             <div style={{ height: `calc(100vh - 64px)`, width: '100vw' }} id='app-div' >
-                <TopBar />
-                {/* <Grid container spacing={1}>
-                    <Grid item xs={12} lg={12} > */}
-                <BarChart
-                    dataHunchArray={savedDH}
-                    retrieveData={retrieveData}
-                />
-                {/* </Grid> */}
-                {/* <Grid item xs={12} lg={6}>
+                <TopBar showTable={showTable} makeShowTable={makeShowTable} />
+                <Grid container style={{ height: `calc(100vh - 64px)`, width: '100vw' }} spacing={1}>
+                    <Grid item xs={showTable ? 6 : 12} lg={showTable ? 6 : 12} >
+                        <BarChart
+                            dataHunchArray={savedDH}
+                            retrieveData={retrieveData}
+                            showTable={showTable}
+                        />
+                    </Grid>
+                    {showTable ? <Grid item xs={6} lg={6}>
                         <Table dataHunchArray={savedDH} />
-                    </Grid> */}
-                {/* </Grid> */}
+                    </Grid> : <></>}
+
+                </Grid>
                 <WelcomeDialog />
             </div>
         </DataContext.Provider>

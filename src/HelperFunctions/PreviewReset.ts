@@ -6,12 +6,12 @@ import { margin, SelectionColor, TransitionDuration } from "../Interfaces/Consta
 import { BarChartDataPoint } from "../Interfaces/Types";
 import { makeValueScale, makeBandScale, makeCategoricalScale, getRectFill } from "./ScaleGenerator";
 
-export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPreview: string | undefined, valueToPreview: number | undefined, svgHeight: number, SVGWidth: number, doesContainCategory: boolean, modelInput: string | undefined) => {
+export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPreview: string | undefined, valueToPreview: number | undefined, svgHeight: number, SVGWidth: number, doesContainCategory: boolean, modelInput: string | undefined, categories: string[]) => {
 
 
     const valueScale = makeValueScale(ogDataSet, SVGWidth);
     const bandScale = makeBandScale(ogDataSet, svgHeight);
-    const categoricalScale = makeCategoricalScale(ogDataSet);
+    const categoricalScale = makeCategoricalScale(categories);
 
 
     // bind the data with all the rectangles first
@@ -123,10 +123,10 @@ export const handlePreviewOnClick = (ogDataSet: BarChartDataPoint[], labelToPrev
     select('#band-axis').transition().duration(TransitionDuration).call(axisLeft(newBandScale) as any);
 };
 
-export const handleResetOnClick = (ogDataSet: BarChartDataPoint[], svgHeight: number, SVGWidth: number, doesContainCategory: boolean, selectedDP: string | undefined) => {
+export const handleResetOnClick = (ogDataSet: BarChartDataPoint[], svgHeight: number, SVGWidth: number, doesContainCategory: boolean, selectedDP: string | undefined, categories: string[]) => {
     const valueScale = makeValueScale(ogDataSet, SVGWidth);
     const bandScale = makeBandScale(ogDataSet, svgHeight);
-    const categoricalScale = makeCategoricalScale(ogDataSet);
+    const categoricalScale = makeCategoricalScale(categories);
 
 
     select('#axis-mask')

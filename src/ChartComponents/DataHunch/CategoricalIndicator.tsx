@@ -1,161 +1,99 @@
-import { Delaunay } from "d3-delaunay";
+import { select } from "d3-selection";
 import { observer } from "mobx-react-lite";
-import { FC, useCallback, useContext, useEffect, useLayoutEffect, useState } from "react";
-import { DataContext } from "../..";
-import { makeValueScale, makeBandScale, makeCategoricalScale } from "../../HelperFunctions/ScaleGenerator";
-import { margin } from "../../Interfaces/Constants";
-import { stateUpdateWrapperUseJSON } from "../../Interfaces/StateChecker";
+import { FC, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { makeCategoricalScale } from "../../HelperFunctions/ScaleGenerator";
+import { DataPreset } from "../../Interfaces/Datasets";
+import * as rough from 'roughjs/bin/rough';
 import Store from "../../Interfaces/Store";
 import { BarChartDataPoint, DataHunch } from "../../Interfaces/Types";
-import SketchyPolygon from "./SketchyPolygon";
+import StyledTooltip from "./StyledTooltip";
+import { toVoteDH } from "./UpvotesDownvotes";
+import { HighlightColor, SelectionColor } from "../../Interfaces/Constants";
 
 type Props = {
-    dataHunchArrayString: string;
-    barChartPoint: BarChartDataPoint;
+    xPos: number;
+    yPos: number;
+    width: number;
+    height: number;
+    dataHunch: DataHunch;
+    highlighted: boolean;
+    selected: boolean;
 };
 
-const CategoricalIndicator: FC<Props> = ({ dataHunchArrayString, barChartPoint }: Props) => {
+const CategoricalIndicator: FC<Props> = ({ dataHunch, xPos, yPos, width, height, highlighted, selected }: Props) => {
 
-    const dataSet = useContext(DataContext);
     const store = useContext(Store);
+    const dhRef = useRef(null);
 
+    const categoricalScale = makeCategoricalScale(DataPreset[store.dbTag].categories);
 
-    const valueScale = makeValueScale(dataSet, store.svgWidth);
-    const bandScale = makeBandScale(dataSet, store.svgHeight);
-
-    const categoricalColorScale = makeCategoricalScale(dataSet);
-
-    const [polygonPoints, setPolygonPoints] = useState<Delaunay.Triangle[]>([]);
-
-    const [dataHunchArray, setDataHunchArray] = useState<DataHunch[]>([]);
-
-    useEffect(() => {
-        const tempDataHunchArray = JSON.parse(dataHunchArrayString);
-        stateUpdateWrapperUseJSON(dataHunchArray, tempDataHunchArray, setDataHunchArray);
-    }, [dataHunchArrayString]);
-
-    //seperate this part out so random points stay the same
     useLayoutEffect(() => {
-        if (dataHunchArray.length > 0) {
-            const height = bandScale.bandwidth();
-            const width = valueScale(barChartPoint.value) - margin.left;
+        if (dhRef.current !== null) {
 
-            const borderWidth = 2;
+            select(dhRef.current).selectAll('*').remove();
+            const drawingG = dhRef.current as any;
+            const rc = rough.default.svg(drawingG);
+            const sketchyDH = rc.rectangle(xPos, yPos, width, height, {
+                fillStyle: 'zigzag',
+                fill: categoricalScale(dataHunch.content) as string,
+                stroke: 'white',
+                fillWeight: 10,
+                hachureAngle: 20,
+                hachureGap: 18,
+                roughness: 3,
+                strokeWidth: 2
+            });
+            drawingG.appendChild(sketchyDH);
 
-            //generate random points:
-            const randomPoints = [
-                [margin.left + borderWidth, (bandScale(barChartPoint.label) || 0) + borderWidth],
-                [margin.left + width - borderWidth, (bandScale(barChartPoint.label) || 0) + borderWidth],
-                [margin.left + borderWidth, (bandScale(barChartPoint.label) || 0) + height - borderWidth],
-                [margin.left + width - borderWidth, (bandScale(barChartPoint.label) || 0) + height - borderWidth]
-            ];
-
-            const xDirBoxes = width / 4;
-            const yDirBoxes = height / 3;
-
-            for (let xDir = 1; xDir <= 3; xDir++) {
-                for (let yDir = 1; yDir <= 2; yDir++) {
-
-                    const randomX = getRandomArbitrary(
-                        margin.left + xDirBoxes * xDir - borderWidth, margin.left + xDirBoxes * xDir + borderWidth
-                    );
-
-                    const randomY = getRandomArbitrary(
-                        (bandScale(barChartPoint.label) || 0) + yDirBoxes * yDir - borderWidth, (bandScale(barChartPoint.label) || 0) + yDirBoxes * yDir + borderWidth
-                    );
-
-                    randomPoints.push([randomX, randomY]);
-                }
-            }
-
-            // add points along the edge
-
-            for (let xDir = 1; xDir <= 4; xDir++) {
-                randomPoints.push([
-                    getRandomArbitrary(
-                        margin.left + xDirBoxes * (xDir - 0.5) - borderWidth, margin.left + xDirBoxes * (xDir - 0.5) + borderWidth
-                    ), (bandScale(barChartPoint.label) || 0) + borderWidth
-                ], [getRandomArbitrary(
-                    margin.left + xDirBoxes * (xDir - 0.5) - borderWidth, margin.left + xDirBoxes * (xDir - 0.5) + borderWidth
-                ), (bandScale(barChartPoint.label) || 0) + height - borderWidth]);
-            }
-
-            for (let yDir = 1; yDir <= 2; yDir++) {
-                randomPoints.push([
-                    margin.left + borderWidth, getRandomArbitrary(
-                        (bandScale(barChartPoint.label) || 0) + yDirBoxes * (yDir - 0.5) - borderWidth, (bandScale(barChartPoint.label) || 0) + yDirBoxes * (yDir - 0.5) + borderWidth
-                    )
-                ], [margin.left + width - borderWidth,
-                getRandomArbitrary(
-                    (bandScale(barChartPoint.label) || 0) + yDirBoxes * yDir - borderWidth, (bandScale(barChartPoint.label) || 0) + yDirBoxes * yDir + borderWidth
-                )
-                ]);
-            }
-
-            const delaunay = Delaunay.from(randomPoints);
-
-            const iterator = delaunay.trianglePolygons();
-
-            stateUpdateWrapperUseJSON(polygonPoints, Array.from(iterator), setPolygonPoints);
+            select(dhRef.current).selectAll(`path[stroke='white']`).attr('opacity', 0);
         }
-    }, [dataHunchArray, store.svgWidth, store.svgHeight]);
+    }, [xPos, yPos, width, height, dataHunch]);
 
-    // Random
-    // const chooseFill = () => {
-    //     const randomNumber = Math.round(Math.random() * 100);
-    //     if (randomNumber >= 60) {
-    //         return ['none', 0];
-    //     }
-    //     else {
-    //         const representing = randomNumber % dataHunchArray.length;
-    //         return [categoricalColorScale(dataHunchArray[representing].content) as string, 0.5 + 0.1 * dataHunchArray[representing].confidenceLevel];
-    //     }
-    // };
-
-    const chooseFill = (index: number) => {
-        if (index < dataHunchArray.length) {
-
-            return [categoricalColorScale(dataHunchArray[index].content) as string, .75 + 0.05 * dataHunchArray[index].confidenceLevel] as [string, number];
+    useLayoutEffect(() => {
+        if (dhRef.current !== null) {
+            if (highlighted) {
+                select(dhRef.current).selectAll(`path[stroke='white'],path[stroke='${SelectionColor}']`)
+                    .attr('stroke', HighlightColor)
+                    .attr('opacity', 1);
+            } else if (selected) {
+                select(dhRef.current).selectAll(`path[stroke='white'],path[stroke='${HighlightColor}']`)
+                    .attr('stroke', SelectionColor)
+                    .attr('opacity', 1);
+            } else {
+                select(dhRef.current)
+                    .selectAll(`path[stroke='${HighlightColor}'],path[stroke='${SelectionColor}']`)
+                    .attr('stroke', 'white')
+                    .attr('opacity', 0);
+            }
         }
-        return ['none', 1] as [string, number];
-    };
+    }, [highlighted, selected]);
 
-    const makePointArray = (input: Delaunay.Triangle) => {
-        let output = '';
-        input.forEach((d) => {
-            output += d.toString();
-            output += ' ';
-        });
-        return output;
-    };
-
-    return (dataHunchArray.length > 0 ?
-        <g display={store.needToShowPreview ? 'none' : undefined} >
-            {polygonPoints.map((d: Delaunay.Triangle, i) => {
-                if (i < dataHunchArray.length) {
-                    return <SketchyPolygon
-                        dataHunch={dataHunchArray[i]}
-                        key={`polygon-${i}`}
-                        highlighted={dataHunchArray[i].id === store.highlightedDH}
-                        selected={store.selectedDH.includes(dataHunchArray[i].id)}
-                        points={d as [number, number][]}
-                        opacity={chooseFill(i)[1]}
-                        fill={chooseFill(i)[0].toString()} />;
-                } else {
-                    return <polygon
-                        key={`polygon-${i}`}
-                        points={makePointArray(d)}
-                        fill={chooseFill(i)[0].toString()}
-                        strokeOpacity={1}
-                        opacity={chooseFill(i)[1]}
-                        strokeWidth={0.5}
-                        stroke={'white'} />;
-                }
-            })}
-        </g> : <></>);
+    return (<StyledTooltip
+        dataHunch={dataHunch}
+        childrenComponent={
+            <g display={store.needToShowPreview ? 'none' : undefined}>
+                <g ref={dhRef} />
+                <rect
+                    x={xPos}
+                    y={yPos}
+                    width={width}
+                    height={height}
+                    opacity={0}
+                    fill='white'
+                    cursor='pointer'
+                    onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
+                    onMouseOut={
+                        () => { store.setHighlightedDH(-1); }
+                    }
+                    onClick={
+                        () => { store.setSelectedDH([dataHunch.id]); }
+                    }
+                    onContextMenu={(e) => {
+                        toVoteDH(e, store.svgWidth, store.svgHeight);
+                        store.setVotingDH(dataHunch);
+                    }}
+                />
+            </g>} />);
 };
-export default observer(CategoricalIndicator);
 
-function getRandomArbitrary(min: number, max: number) {
-    return Math.random() * (max - min) + min;
-}
+export default observer(CategoricalIndicator);

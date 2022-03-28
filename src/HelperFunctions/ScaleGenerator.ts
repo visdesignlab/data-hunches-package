@@ -14,9 +14,9 @@ export const makeBandScale = (newInputData: BarChartDataPoint[], height: number)
     return scaleBand().domain(newInputData.map(d => d.label)).range([margin.top, height - margin.bottom]).paddingInner(0.1).paddingOuter(0.1);
 };
 
-export const makeCategoricalScale = (newInputData: BarChartDataPoint[]) => {
+export const makeCategoricalScale = (categories: string[]) => {
     return scaleOrdinal()
-        .domain(newInputData.map(d => d.categorical || 'a'))
+        .domain(categories)
         .range(CategoricalColor);
 };
 

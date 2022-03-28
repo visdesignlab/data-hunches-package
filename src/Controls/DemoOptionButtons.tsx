@@ -9,7 +9,11 @@ import NewVolDialog from "./NewVolDialog";
 import { NonCapButton, useStyles } from "../Interfaces/StyledComponents";
 import { DataPreset } from "../Interfaces/Datasets";
 
-const DemoOptionButtons: FC = () => {
+export type TopBarProps = {
+    showTable: boolean;
+    makeShowTable: (input: boolean) => void;
+};
+const DemoOptionButtons: FC<TopBarProps> = ({ showTable, makeShowTable }: TopBarProps) => {
     const store = useContext(Store);
 
     const styles = useStyles();
@@ -74,6 +78,15 @@ const DemoOptionButtons: FC = () => {
             </NonCapButton> :
             <></>
         }
+        <NonCapButton
+            size='small'
+            variant='outlined'
+            color={store.showCategory ? 'primary' : 'default'}
+            onClick={() => {
+                makeShowTable(!showTable);
+            }}>
+            {showTable ? 'Hide Table' : 'Show Table'}
+        </NonCapButton>
 
         <FormControl style={{ marginRight: '5px', marginLeft: '10px' }}>
             <InputLabel>Select Data</InputLabel>

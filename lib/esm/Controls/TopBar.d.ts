@@ -1,3 +1,4 @@
 /// <reference types="react" />
-declare const _default: import("react").FunctionComponent<{}>;
+import { TopBarProps } from "./DemoOptionButtons";
+declare const _default: import("react").FunctionComponent<TopBarProps>;
 export default _default;

@@ -7,6 +7,7 @@ import { FC } from "react";
 import { DataContext } from "../..";
 import { makeValueScale, makeBandScale, makeCategoricalScale, getRectFill } from "../../HelperFunctions/ScaleGenerator";
 import { margin } from "../../Interfaces/Constants";
+import { DataPreset } from "../../Interfaces/Datasets";
 import Store from "../../Interfaces/Store";
 import { useStyles } from "../../Interfaces/StyledComponents";
 import PreviewResetButtons from "./PreviewResetButtons";
@@ -48,7 +49,7 @@ const DataSpaceForm: FC<Props> = ({ isInc }: Props) => {
 
         const verticalScale = makeValueScale(data, store.svgHeight);
         const bandScale = makeBandScale(data, store.svgWidth);
-        const categoricalScale = makeCategoricalScale(data);
+        const categoricalScale = makeCategoricalScale(DataPreset[store.dbTag].categories);
 
         select('#axis-mask')
             .selectAll('*')

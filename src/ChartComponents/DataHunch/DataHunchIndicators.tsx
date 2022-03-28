@@ -18,6 +18,8 @@ import ExclusionIndicator from "./ExclusionIndicator";
 import StyledTooltip from "./StyledTooltip";
 import SketchyDirection from "./SketchyDirection";
 import { toVoteDH } from "./UpvotesDownvotes";
+import CategoricalIndicator from "./CategoricalIndicator";
+import { DataPreset } from "../../Interfaces/Datasets";
 
 type Props = {
     dataHunchArray: DataHunch[],
@@ -29,17 +31,30 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
     const store = useContext(Store);
     const dataSet = useContext(DataContext);
 
-    //   const caseScale = useCallback(() => {
-    // return CaseScaleGenerator(caseMax);
-    // }, [caseMax]);
     const valueScale = makeValueScale(dataSet, store.svgWidth);
     const bandScale = makeBandScale(dataSet, store.svgHeight);
 
-    const [inVisDH, setInVisDH] = useState<DataHunch[]>([]);
-    const [offVisDH, setOffVisDH] = useState<DataHunch[]>([]);
-    const [exDH, setExDH] = useState<DataHunch[]>([]);
-    const [aboveAxisDH, setAboveAxisDH] = useState<DataHunch[]>([]);
-    const [directionDH, setDirectionDH] = useState<DataHunch[]>([]);
+    // const [inVisDH, setInVisDH] = useState<DataHunch[]>([]);
+    // const [offVisDH, setOffVisDH] = useState<DataHunch[]>([]);
+    // const [exDH, setExDH] = useState<DataHunch[]>([]);
+    // const [aboveAxisDH, setAboveAxisDH] = useState<DataHunch[]>([]);
+    // const [directionDH, setDirectionDH] = useState<DataHunch[]>([]);
+
+    const [dataHunchDictionary, setDataHunchDictionary] = useState<{
+        dataSpace: DataHunch[],
+        offVis: DataHunch[],
+        exclude: DataHunch[],
+        aboveAxis: DataHunch[],
+        direction: DataHunch[],
+        cat: DataHunch[];
+    }>({
+        dataSpace: [],
+        offVis: [],
+        exclude: [],
+        aboveAxis: [],
+        direction: [],
+        cat: [],
+    });
 
     useEffect(() => {
 
@@ -48,27 +63,46 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
         const tempExDH: DataHunch[] = [];
         const tempDirectionDH: DataHunch[] = [];
         const tempAboveAxisDH: DataHunch[] = [];
+        const tempCatDH: DataHunch[] = [];
 
         dataHunchArray.forEach((d) => {
-            if (['annotation', 'categorical', 'rating'].includes(d.type)) {
-                tempOffVis.push(d);
-            } else if (d.type === 'exclusion') {
-                tempExDH.push(d);
-            } else if (d.type === 'data space' && parseFloat(d.content) > valueScale.domain()[1]) {
-                tempAboveAxisDH.push(d);
-            } else if (d.type === 'direction') {
-                tempDirectionDH.push(d);
+            switch (d.type) {
+                case 'exclusion':
+                    tempExDH.push(d);
+                    break;
+                case 'data space':
+                    if (parseFloat(d.content) > valueScale.domain()[1]) {
+                        tempAboveAxisDH.push(d);
+                    } else {
+                        tempInVis.push(d);
+                    }
+                    break;
+                case 'direction':
+                    tempDirectionDH.push(d);
+                    break;
+                case 'annotation':
+                case 'rating':
+                    tempOffVis.push(d);
+                    break;
+                case 'categorical':
+                    tempCatDH.push(d);
+                    break;
+                default:
+                    tempInVis.push(d);
             }
-            else {
-                tempInVis.push(d);
-            }
+
         });
 
-        stateUpdateWrapperUseJSON(inVisDH, tempInVis, setInVisDH);
-        stateUpdateWrapperUseJSON(offVisDH, tempOffVis, setOffVisDH);
-        stateUpdateWrapperUseJSON(exDH, tempExDH, setExDH);
-        stateUpdateWrapperUseJSON(aboveAxisDH, tempAboveAxisDH, setAboveAxisDH);
-        stateUpdateWrapperUseJSON(directionDH, tempDirectionDH, setDirectionDH);
+        const assemble = {
+            dataSpace: tempInVis,
+            offVis: tempOffVis,
+            exclude: tempExDH,
+            aboveAxis: tempAboveAxisDH,
+            direction: tempDirectionDH,
+            cat: tempCatDH,
+        };
+
+        stateUpdateWrapperUseJSON(dataHunchDictionary, assemble, setDataHunchDictionary);
 
     }, [dataHunchArray]);
 
@@ -130,25 +164,41 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
         return `* ${dataHunchText.slice(0, 10)}${dataHunchText.length > 10 ? '...' : ''}`;
     };
 
+    const calculateCurvePoints = (startingPoint: number, i: number) => {
+        return [
+            [startingPoint, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()],
+            [startingPoint + (i + 1) * 16, (bandScale(dataPoint.label) || 0)],
+            [startingPoint + (i + 1) * 32, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()]];
+    };
+
+    const calculateArrowPoints = (startingPoint: number, i: number) => {
+        return [
+            [startingPoint + (i + 1) * 32 - 2, (bandScale(dataPoint.label) || 0) - 5 + 0.5 * bandScale.bandwidth()],
+            [startingPoint + (i + 1) * 32 - 2, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth() + 5],
+            [startingPoint + (i + 1) * 32 + 8, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()]];
+    };
+
     return (
         <g >
-            {inVisDH.map((d, i) => {
+
+            {dataHunchDictionary.dataSpace.map((d, i) => {
+                const arrayLength = dataHunchDictionary.dataSpace.length;
                 return (
                     <SketchyBar
                         valueScaleDomain={JSON.stringify(valueScale.domain())}
                         valueScaleRange={JSON.stringify(valueScale.range())}
                         dataHunch={d}
-                        xPos={calculateX(d, d.type === 'range' || inVisDH.length > 3)}
+                        xPos={calculateX(d, d.type === 'range' || arrayLength > 3)}
                         key={`${d.id}-dhindicatorSketchy`}
-                        yPos={(bandScale(d.label) || 0) + (inVisDH.length > 3 ? 0 : (bandScale.bandwidth() / inVisDH.length * i))}
+                        yPos={(bandScale(d.label) || 0) + (arrayLength > 3 ? 0 : (bandScale.bandwidth() / arrayLength * i))}
                         highlighted={d.id === store.highlightedDH}
                         selected={store.selectedDH.includes(d.id)}
-                        width={(d.type === 'range' || inVisDH.length > 3) ? 4 : calculateWidth(d)}
-                        height={bandScale.bandwidth() / (inVisDH.length > 3 ? 1 : inVisDH.length)} />
+                        width={(d.type === 'range' || arrayLength > 3) ? 4 : calculateWidth(d)}
+                        height={bandScale.bandwidth() / (arrayLength > 3 ? 1 : arrayLength)} />
                 );
             })}
 
-            {directionDH.map((d, i) => {
+            {dataHunchDictionary.direction.map((d, i) => {
                 return (
                     <SketchyDirection
                         key={`sketchy-${d.id}`}
@@ -156,12 +206,12 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                         highlighted={d.id === store.highlightedDH}
                         selected={store.selectedDH.includes(d.id)}
                         xPos={valueScale(dataPoint.value)}
-                        yPos={(bandScale(dataPoint.label) || 0) + bandScale.bandwidth() / directionDH.length * (i + 0.5)}
+                        yPos={(bandScale(dataPoint.label) || 0) + bandScale.bandwidth() / dataHunchDictionary.direction.length * (i + 0.5)}
                     />
                 );
             })}
 
-            {aboveAxisDH.length > 0 ?
+            {dataHunchDictionary.aboveAxis.length > 0 ?
                 <g>
                     <text
                         x={valueScale(dataPoint.value) + 15}
@@ -172,20 +222,17 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                     >
                         {dataPoint.value}
                     </text>
-                    {aboveAxisDH.map((dataHunch, i) => {
+                    {dataHunchDictionary.aboveAxis.map((dataHunch, i) => {
                         const startingPoint = valueScale(dataPoint.value);
                         return (<SingleOverAxisIndicator
                             dataHunch={dataHunch}
                             highlighted={store.highlightedDH === dataHunch.id}
                             selected={store.selectedDH.includes(dataHunch.id)}
-                            curvePoints={JSON.stringify([
-                                [startingPoint, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()],
-                                [startingPoint + (i + 1) * 16, (bandScale(dataPoint.label) || 0)],
-                                [startingPoint + (i + 1) * 32, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()]])}
-                            arrowPoints={JSON.stringify([
-                                [startingPoint + (i + 1) * 32 - 2, (bandScale(dataPoint.label) || 0) - 5 + 0.5 * bandScale.bandwidth()],
-                                [startingPoint + (i + 1) * 32 - 2, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth() + 5],
-                                [startingPoint + (i + 1) * 32 + 8, (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()]])}
+
+                            curvePoints={JSON.stringify(calculateCurvePoints(valueScale(dataPoint.value), i))}
+
+                            arrowPoints={JSON.stringify(calculateArrowPoints(valueScale(dataPoint.value), i))}
+
                             rotateX={startingPoint + (i + 1) * 32 - 2}
                             rotateY={(bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth()}
                             key={`overaxis${dataHunch.id}`}
@@ -198,11 +245,12 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                 <></>}
 
 
-            {offVisDH.map((d, i) => {
+            {dataHunchDictionary.offVis.map((d, i) => {
+                const arrayLength = dataHunchDictionary.offVis.length;
                 return (
                     <StyledTooltip
                         childrenComponent={<DHIndicatorText
-                            x={findXPos(d, i, offVisDH.length)}
+                            x={findXPos(d, i, arrayLength)}
                             y={(bandScale(d.label) || 0) + 0.5 * bandScale.bandwidth() + (2 * IndicatorSize) * (i % 2 === 0 ? -1 : 1)}
                             fontSize='larger'
                             needBold={false}
@@ -215,7 +263,7 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                                 store.setVotingDH(d);
                             }}
                             onMouseOut={() => { store.setHighlightedDH(-1); }}>
-                            {calculateText(d.content, findXPos(d, i, offVisDH.length), offVisDH.length, d.type)}
+                            {calculateText(d.content, findXPos(d, i, arrayLength), arrayLength, d.type)}
                         </DHIndicatorText>}
                         dataHunch={d}
                         key={`${d.id}-text`}
@@ -224,7 +272,7 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
             })
             }
 
-            {exDH.map((d, i) => {
+            {dataHunchDictionary.exclude.map((d, i) => {
                 return (
                     <ExclusionIndicator
                         dataPoint={dataPoint}
@@ -238,6 +286,23 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                     />
                 );
             })
+            }
+
+            {
+                dataHunchDictionary.cat.map((d, i) => {
+                    const catWidth = (valueScale(dataPoint.value) - margin.left - 40) / DataPreset[store.dbTag].categories.length;
+                    return (
+                        <CategoricalIndicator
+                            highlighted={store.highlightedDH === d.id}
+                            selected={store.selectedDH.includes(d.id)}
+                            key={`cat-${d.id}`}
+                            xPos={valueScale(dataPoint.value) - 40 - (i + 1) * catWidth}
+                            yPos={(bandScale(dataPoint.label) || 0) + 3}
+                            width={catWidth}
+                            height={bandScale.bandwidth() - 6}
+                            dataHunch={d} />
+                    );
+                })
             }
         </g >
     );

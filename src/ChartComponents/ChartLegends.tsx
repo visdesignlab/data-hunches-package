@@ -14,7 +14,7 @@ const ChartLegends: FC = () => {
 
     const legendRef = useRef(null);
 
-    const categoricalColorScale = makeCategoricalScale(dataSet);
+    const categoricalColorScale = makeCategoricalScale(DataPreset[store.dbTag].categories);
 
 
     const wrap = textwrap().bounds({ width: 80, height: (IndicatorSize + 2) * 5 }).method('tspans');

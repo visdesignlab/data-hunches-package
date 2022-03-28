@@ -10,6 +10,7 @@ import { useStyles } from "../Interfaces/StyledComponents";
 import { stateUpdateWrapperUseJSON } from "../Interfaces/StateChecker";
 import { collection, deleteDoc, doc } from "firebase/firestore/lite";
 import { firebaseSetup } from "../Interfaces/Constants";
+import { DataPreset } from "../Interfaces/Datasets";
 
 export type DHProps = {
     dataHunchArray: DataHunch[];
@@ -62,7 +63,7 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
         } else if (dataHunch.type === 'model') {
             setNeedReset(true);
             store.setNeedToShowPreview(true);
-            handlePreviewOnClick(dataSet, undefined, undefined, store.svgHeight, store.svgWidth, store.showCategory, dataHunch.content);
+            handlePreviewOnClick(dataSet, undefined, undefined, store.svgHeight, store.svgWidth, store.showCategory, dataHunch.content, DataPreset[store.dbTag].categories);
         }
         // else if (dataHunch.type === 'sketch') {
         //     setNeedReset(true);
@@ -76,7 +77,7 @@ const Table: FC<DHProps> = ({ dataHunchArray }: DHProps) => {
         store.setHighlightedDH(-1);
         if (needReset) {
             store.setNeedToShowPreview(false);
-            handleResetOnClick(dataSet, store.svgHeight, store.svgWidth, store.showCategory, store.selectedDP);
+            handleResetOnClick(dataSet, store.svgHeight, store.svgWidth, store.showCategory, store.selectedDP, DataPreset[store.dbTag].categories);
         }
     };
 
