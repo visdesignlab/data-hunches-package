@@ -79,6 +79,7 @@ const DemoOptionButtons: FC<TopBarProps> = ({ showTable, makeShowTable }: TopBar
             <></>
         }
         <NonCapButton
+            style={{ marginRight: '5px', marginLeft: '5px' }}
             size='small'
             variant='outlined'
             color={store.showCategory ? 'primary' : 'default'}
@@ -88,7 +89,7 @@ const DemoOptionButtons: FC<TopBarProps> = ({ showTable, makeShowTable }: TopBar
             {showTable ? 'Hide Table' : 'Show Table'}
         </NonCapButton>
 
-        <FormControl style={{ marginRight: '5px', marginLeft: '10px' }}>
+        <FormControl style={{ marginRight: '5px', marginLeft: '5px' }}>
             <InputLabel>Select Data</InputLabel>
             <Select className={styles.inputSelect}
                 native

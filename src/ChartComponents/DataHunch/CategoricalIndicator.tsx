@@ -18,9 +18,10 @@ type Props = {
     dataHunch: DataHunch;
     highlighted: boolean;
     selected: boolean;
+    fillColor: string;
 };
 
-const CategoricalIndicator: FC<Props> = ({ dataHunch, xPos, yPos, width, height, highlighted, selected }: Props) => {
+const CategoricalIndicator: FC<Props> = ({ dataHunch, xPos, yPos, width, height, highlighted, selected, fillColor }: Props) => {
 
     const store = useContext(Store);
     const dhRef = useRef(null);
@@ -35,7 +36,7 @@ const CategoricalIndicator: FC<Props> = ({ dataHunch, xPos, yPos, width, height,
             const rc = rough.default.svg(drawingG);
             const sketchyDH = rc.rectangle(xPos, yPos, width, height, {
                 fillStyle: 'zigzag',
-                fill: categoricalScale(dataHunch.content) as string,
+                fill: fillColor,
                 stroke: 'white',
                 fillWeight: 10,
                 hachureAngle: 20,
@@ -47,7 +48,7 @@ const CategoricalIndicator: FC<Props> = ({ dataHunch, xPos, yPos, width, height,
 
             select(dhRef.current).selectAll(`path[stroke='white']`).attr('opacity', 0);
         }
-    }, [xPos, yPos, width, height, dataHunch]);
+    }, [xPos, yPos, width, height, fillColor]);
 
     useLayoutEffect(() => {
         if (dhRef.current !== null) {

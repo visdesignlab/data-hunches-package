@@ -5,7 +5,7 @@ import { useContext } from "react";
 import { useEffect } from "react";
 import { FC } from "react";
 import { DataContext } from "../..";
-import { makeValueScale, makeBandScale } from "../../HelperFunctions/ScaleGenerator";
+import { makeValueScale, makeBandScale, makeCategoricalScale } from "../../HelperFunctions/ScaleGenerator";
 import { IndicatorSize, LightGray, margin } from "../../Interfaces/Constants";
 import { stateUpdateWrapperUseJSON } from "../../Interfaces/StateChecker";
 import Store from "../../Interfaces/Store";
@@ -33,6 +33,7 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
 
     const valueScale = makeValueScale(dataSet, store.svgWidth);
     const bandScale = makeBandScale(dataSet, store.svgHeight);
+    const categoricalScale = makeCategoricalScale(DataPreset[store.dbTag].categories);
 
     // const [inVisDH, setInVisDH] = useState<DataHunch[]>([]);
     // const [offVisDH, setOffVisDH] = useState<DataHunch[]>([]);
@@ -288,21 +289,21 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
             })
             }
 
-            {
-                dataHunchDictionary.cat.map((d, i) => {
-                    const catWidth = (valueScale(dataPoint.value) - margin.left - 40) / DataPreset[store.dbTag].categories.length;
-                    return (
-                        <CategoricalIndicator
-                            highlighted={store.highlightedDH === d.id}
-                            selected={store.selectedDH.includes(d.id)}
-                            key={`cat-${d.id}`}
-                            xPos={valueScale(dataPoint.value) - 40 - (i + 1) * catWidth}
-                            yPos={(bandScale(dataPoint.label) || 0) + 3}
-                            width={catWidth}
-                            height={bandScale.bandwidth() - 6}
-                            dataHunch={d} />
-                    );
-                })
+            {store.showCategory ? dataHunchDictionary.cat.map((d, i) => {
+                const catWidth = (valueScale(dataPoint.value) - margin.left - 40) / DataPreset[store.dbTag].categories.length;
+                return (
+                    <CategoricalIndicator
+                        highlighted={store.highlightedDH === d.id}
+                        selected={store.selectedDH.includes(d.id)}
+                        key={`cat-${d.id}`}
+                        xPos={valueScale(dataPoint.value) - 40 - (i + 1) * catWidth}
+                        yPos={(bandScale(dataPoint.label) || 0) + 3}
+                        width={catWidth}
+                        height={bandScale.bandwidth() - 6}
+                        fillColor={categoricalScale(d.content) as string}
+                        dataHunch={d} />
+                );
+            }) : <></>
             }
         </g >
     );
