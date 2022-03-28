@@ -9,6 +9,8 @@ type Props = {
 };
 const StyledTooltip: FC<Props> = ({ dataHunch, childrenComponent }: Props) => {
     return (<LightTooltip
+        enterDelay={200}
+        leaveDelay={200}
         children={childrenComponent}
         title={
             <div>

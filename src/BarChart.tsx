@@ -119,23 +119,25 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData }: Props) => {
     });
 
     return (
-        <div style={{ height: '100%' }} id='app-div' onClick={() => {
+        <div style={{ height: '100%' }} onClick={() => {
 
             if (store.votingDH) {
                 store.setVotingDH(undefined);
             }
+            if (store.selectingADataPoint) {
+                store.selectADataPointMode(false);
+                store.setCurrentSelectedDP(undefined);
+            }
         }}>
             <ChartSVG
                 ref={svgRef}
-                onClick={() => {
-                    if (store.selectingADataPoint) {
-                        store.selectADataPointMode(false);
-                        store.setCurrentSelectedDP(undefined);
-                    }
-                    // if (store.votingDH) {
-                    //     store.setVotingDH(undefined);
-                    // }
-                }}>
+            // onClick={() => {
+
+            //     // if (store.votingDH) {
+            //     //     store.setVotingDH(undefined);
+            //     // }
+            // }}
+            >
 
                 {store.showCategory ? <ChartLegends /> : <></>}
 
@@ -193,14 +195,8 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData }: Props) => {
                 </g>
 
                 <RangeLayer sendManipulation={sendManipulationToParent} />
-
                 <ManipulationLayer sendManipulation={sendManipulationToParent} />
                 <SketchLayer sendManipulation={sendManipulationToParent} />
-
-
-
-                <SpecificControl sendManipulation={sendManipulationToParent} />
-
             </ChartSVG>
 
 
@@ -248,7 +244,10 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData }: Props) => {
             </ContainerDiv>
             <UpvotesDownvotes
                 retrieveData={retrieveData} />
+
             <FormComponent />
+
+            <SpecificControl sendManipulation={sendManipulationToParent} />
         </div >
     );
 };
@@ -257,7 +256,7 @@ export default observer(BarChart);
 
 
 const ChartSVG = styled.svg`
-  height: 90%;
+  height: 70%;
   width: 100%;
 `;
 

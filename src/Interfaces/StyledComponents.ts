@@ -59,6 +59,10 @@ export const useStyles = makeStyles((theme: Theme) =>
         specificControlContainer: {
             backgroundColor: 'rgb(238, 238, 238, 0.8)',
             padding: '0px !important',
+            textAlign: 'start',
+            zIndex: 1000,
+            position: 'absolute',
+            width: 'auto'
         },
         radioStyle: {
             marginTop: -7,

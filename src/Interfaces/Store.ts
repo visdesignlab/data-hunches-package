@@ -123,7 +123,7 @@ export class RootStore {
         // if it is false, hiding elemtns
         if (!input) {
             select('#specific-control')
-                .attr('display', 'none');
+                .style('display', 'none');
         }
     }
 

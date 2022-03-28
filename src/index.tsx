@@ -89,19 +89,19 @@ const BarChartWithDH: FC = () => {
 
     return (
         <DataContext.Provider value={improvedDataSet}>
-            <div>
+            <div style={{ height: `calc(100vh - 64px)`, width: '100vw' }} id='app-div' >
                 <TopBar />
-                <Grid container spacing={1}>
-                    <Grid item xs={12} lg={6} >
-                        <BarChart
-                            dataHunchArray={savedDH}
-                            retrieveData={retrieveData}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={6}>
+                {/* <Grid container spacing={1}>
+                    <Grid item xs={12} lg={12} > */}
+                <BarChart
+                    dataHunchArray={savedDH}
+                    retrieveData={retrieveData}
+                />
+                {/* </Grid> */}
+                {/* <Grid item xs={12} lg={6}>
                         <Table dataHunchArray={savedDH} />
-                    </Grid>
-                </Grid>
+                    </Grid> */}
+                {/* </Grid> */}
                 <WelcomeDialog />
             </div>
         </DataContext.Provider>

@@ -34,20 +34,26 @@ const BarElement: FC<Props> = ({ width, height, xPos, yPos, fill, dataElement }:
         if (store.userName && store.inputMode === 'none') {
             store.selectADataPointMode(true);
             store.setCurrentSelectedDP(dataElement.label);
-            const xLoc = (pointer(e)[0] + ControlFOWidth) > store.svgWidth ? (pointer(e)[0] - ControlFOWidth) : pointer(e)[0];
-            const yLoc = (pointer(e)[1] + ControlFOHeight) > store.svgHeight ? (pointer(e)[1] - ControlFOHeight) : pointer(e)[1];
+            // const xLoc = (pointer(e)[0] + ControlFOWidth) > store.svgWidth ? (pointer(e)[0] - ControlFOWidth) : pointer(e)[0];
+            // const yLoc = (pointer(e)[1] + ControlFOHeight) > store.svgHeight ? (pointer(e)[1] - ControlFOHeight) : pointer(e)[1];
 
-            const formXLoc = (pointer(e)[0] + DefaultForeignObjectWidth) > store.svgWidth ? (pointer(e)[0] - DefaultForeignObjectWidth) : pointer(e)[0];
+            // const formXLoc = (pointer(e)[0] + DefaultForeignObjectWidth) > store.svgWidth ? (pointer(e)[0] - DefaultForeignObjectWidth) : pointer(e)[0];
 
-            const formYLoc = (pointer(e)[1] + DefaultForeignObjectHeight) > store.svgHeight ? (pointer(e)[1] - DefaultForeignObjectHeight) : pointer(e)[1];
+            // const formYLoc = (pointer(e)[1] + DefaultForeignObjectHeight) > store.svgHeight ? (pointer(e)[1] - DefaultForeignObjectHeight) : pointer(e)[1];
+
+            const xLoc = pointer(e, select('#app-div').node())[0];
+            const yLoc = pointer(e, select('#app-div').node())[1];
+
 
             select('#specific-control')
-                .attr('display', null)
-                .attr('x', xLoc)
-                .attr('y', yLoc);
+                .style('display', null)
+                .style('left', `${xLoc}px`)
+                .style('top', `${yLoc}px`);
             select('#form-component')
-                .attr('x', formXLoc)
-                .attr('y', formYLoc);
+                .style('left', `${xLoc}px`)
+                .style('top', `${yLoc}px`);
+            // .attr('x', formXLoc)
+            // .attr('y', formYLoc);
 
         }
     };

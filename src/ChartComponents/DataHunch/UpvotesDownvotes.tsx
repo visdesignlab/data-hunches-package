@@ -1,11 +1,12 @@
 import { Container, ButtonGroup, IconButton } from "@material-ui/core";
 import Store from "../../Interfaces/Store";
-import { updateDoc, doc, collection } from "firebase/firestore/lite";
+import { updateDoc, deleteDoc, doc, collection } from "firebase/firestore/lite";
 import { FC, useContext, useLayoutEffect } from "react";
 import { firebaseSetup, UpDownVoteFOHeight, UpDownVoteFOWidth } from "../../Interfaces/Constants";
 import { useStyles } from "../../Interfaces/StyledComponents";
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import { observer } from "mobx-react-lite";
 import { pointer, select } from "d3-selection";
 
@@ -45,6 +46,15 @@ const UpvotesDownvotes: FC<Props> = ({ retrieveData, }: Props) => {
     }, [store.votingDH]);
 
 
+    const deleteDH = (e: any) => {
+        //https://firebase.google.com/docs/firestore/manage-data/delete-data
+        if (store.votingDH) {
+            deleteDoc(doc(firebaseSetup, store.dbTag, `sub${store.currentVol}`, 'dhs', store.votingDH?.id.toString())).then(output => {
+                store.setTotalDH(store.numOfDH - 1);
+            }).catch(error => { console.log(error); });
+        }
+
+    };
 
     return (
         <Container id='upvote-downvote' style={{
@@ -52,7 +62,7 @@ const UpvotesDownvotes: FC<Props> = ({ retrieveData, }: Props) => {
             zIndex: 1000,
             position: 'absolute',
             display: 'none',
-            width: UpDownVoteFOWidth,
+            width: 'auto',
             backgroundColor: 'rgb(238, 238, 238, 0.8)'
         }}>
             <ButtonGroup>
@@ -62,6 +72,11 @@ const UpvotesDownvotes: FC<Props> = ({ retrieveData, }: Props) => {
                 <IconButton onClick={() => { onClickVote(false); }}>
                     <ThumbDownIcon />
                 </IconButton>
+                {store.votingDH ? ((store.votingDH.user === store.userName || store.votingDH.user === 'Guest') ?
+                    <IconButton onClick={deleteDH}>
+                        <DeleteForeverIcon />
+                    </IconButton> : <></>)
+                    : <></>}
             </ButtonGroup>
         </Container>
     );

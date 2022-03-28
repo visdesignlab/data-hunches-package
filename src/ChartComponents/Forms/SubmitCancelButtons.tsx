@@ -25,9 +25,11 @@ const SubmitCancelButtons: FC<Props> = ({ dhToSubmit, disableSubmit }: Props) =>
         store.setInputMode('none');
         store.setCurrentSelectedDP(undefined);
         store.setNeedToShowPreview(false);
+
+
     };
 
-    return <ButtonGroup>
+    return <ButtonGroup style={{ display: 'block' }}>
         <NonCapButton size='small'
             onClick={submitClickHandler}
             disabled={disableSubmit} >

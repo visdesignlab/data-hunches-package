@@ -23,66 +23,68 @@ const SpecificControl: FC<SendManiProps> = ({ sendManipulation }: SendManiProps)
 
 
     return (
-        <foreignObject id='specific-control'
-            // display={store.selectingADataPoint ? undefined : 'none'}
-            display='none'
-            width={ControlFOWidth}
-            height={store.showCategory ? ControlFOHeight : WithoutCatControlFOHeight}>
-            <Container className={styles.specificControlContainer} >
-                <ButtonGroup
-                    orientation="vertical"
-                    color="primary"
-                    aria-label="vertical outlined primary button group"
-                >
-                    <ContextButton onClick={() => {
-                        clickHandler('manipulations');
-                    }}>
-                        Change Size (Manipulation)
-                    </ContextButton>
-                    <ContextButton onClick={() => {
-                        clickHandler('range');
-                    }}>
-                        Specify Range
-                    </ContextButton>
-                    {store.showCategory ? <ContextButton onClick={() => {
-                        clickHandler('categorical');
-                    }}>
-                        Categorical
-                    </ContextButton> : <></>}
+        // <foreignObject
+        //     // display={store.selectingADataPoint ? undefined : 'none'}
+        //     display='none'
+        //     width={ControlFOWidth}
+        //     height={store.showCategory ? ControlFOHeight : WithoutCatControlFOHeight}>
+        <Container
+            id='specific-control'
+            style={{ display: 'none' }}
+            className={styles.specificControlContainer} >
+            <ButtonGroup
+                orientation="vertical"
+                color="primary"
+                aria-label="vertical outlined primary button group"
+            >
+                <ContextButton onClick={() => {
+                    clickHandler('manipulations');
+                }}>
+                    Change Size (Manipulation)
+                </ContextButton>
+                <ContextButton onClick={() => {
+                    clickHandler('range');
+                }}>
+                    Specify Range
+                </ContextButton>
+                {store.showCategory ? <ContextButton onClick={() => {
+                    clickHandler('categorical');
+                }}>
+                    Categorical
+                </ContextButton> : <></>}
 
-                    <ContextButton onClick={() => {
-                        clickHandler('exclusion');
-                    }}>
-                        Remove (Exclusion)
-                    </ContextButton>
-                    <ContextButton onClick={() => {
-                        clickHandler('data space');
-                    }}>
-                        Change Value (Data Space)
-                    </ContextButton>
-                    <ContextButton onClick={() => { clickHandler('annotation'); }}>
-                        Annotation
-                    </ContextButton>
-                    <ContextButton onClick={() => {
-                        clickHandler('rating');
-                    }}>
-                        Rating
-                    </ContextButton>
-                    <ContextButton onClick={() => {
-                        clickHandler('direction');
-                        sendManipulation('higher');
-                    }}>
-                        Value should be higher
-                    </ContextButton>
-                    <ContextButton onClick={() => {
-                        clickHandler('direction');
-                        sendManipulation('lower');
-                    }}>
-                        Value should be lower
-                    </ContextButton>
-                </ButtonGroup>
-            </Container>
-        </foreignObject>
+                <ContextButton onClick={() => {
+                    clickHandler('exclusion');
+                }}>
+                    Remove (Exclusion)
+                </ContextButton>
+                <ContextButton onClick={() => {
+                    clickHandler('data space');
+                }}>
+                    Change Value (Data Space)
+                </ContextButton>
+                <ContextButton onClick={() => { clickHandler('annotation'); }}>
+                    Annotation
+                </ContextButton>
+                <ContextButton onClick={() => {
+                    clickHandler('rating');
+                }}>
+                    Rating
+                </ContextButton>
+                <ContextButton onClick={() => {
+                    clickHandler('direction');
+                    sendManipulation('higher');
+                }}>
+                    Value should be higher
+                </ContextButton>
+                <ContextButton onClick={() => {
+                    clickHandler('direction');
+                    sendManipulation('lower');
+                }}>
+                    Value should be lower
+                </ContextButton>
+            </ButtonGroup>
+        </Container>
     );
 };
 

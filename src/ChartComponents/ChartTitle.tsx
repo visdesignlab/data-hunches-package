@@ -12,8 +12,8 @@ const ChartTitle: FC = () => {
     const store = useContext(Store);
     const placeFormLowerRightCorner = () => {
         select('#form-component')
-            .attr('x', store.svgWidth - DefaultForeignObjectWidth)
-            .attr('y', store.svgHeight - DefaultForeignObjectHeight);
+            .style('left', `${store.svgWidth - DefaultForeignObjectWidth}px`)
+            .style('top', `${store.svgHeight - DefaultForeignObjectHeight}px`);
         store.setCurrentSelectedDP(undefined);
     };
     return (
