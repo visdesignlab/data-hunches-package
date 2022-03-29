@@ -77,7 +77,7 @@ const TopBar: FC<TopBarProps> = ({ showTable, makeShowTable }: TopBarProps) => {
                             onSuccess={responseGoogle}
                             onFailure={() => { console.log('failed'); }}
                             cookiePolicy={'single_host_origin'}
-                            isSignedIn={true}
+                            isSignedIn={false}
                         />
                     </ButtonGroup>}
             </div>
@@ -104,7 +104,7 @@ const TopBar: FC<TopBarProps> = ({ showTable, makeShowTable }: TopBarProps) => {
                     onSuccess={responseGoogle}
                     onFailure={() => { console.log('failed'); }}
                     cookiePolicy={'single_host_origin'}
-                    isSignedIn={true}
+                    isSignedIn={false}
                 />
                 <GoogleLogout
                     clientId="565250402151-jseb9mfqk3tumg1q6vcgklmovro4h9b4.apps.googleusercontent.com"

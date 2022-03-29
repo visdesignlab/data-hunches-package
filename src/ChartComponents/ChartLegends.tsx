@@ -17,7 +17,7 @@ const ChartLegends: FC = () => {
     const categoricalColorScale = makeCategoricalScale(DataPreset[store.dbTag].categories);
 
 
-    const wrap = textwrap().bounds({ width: 80, height: (IndicatorSize + 2) * 5 }).method('tspans');
+    const wrap = textwrap().bounds({ width: 100, height: (IndicatorSize + 2) * 5 }).method('tspans');
 
     useLayoutEffect(() => {
         if (legendRef.current !== null) {
@@ -32,12 +32,12 @@ const ChartLegends: FC = () => {
                 <g key={`${cat}-legend`}>
                     <circle
                         fill={categoricalColorScale(cat) as string}
-                        cx={store.svgWidth - IndicatorSize * 2 - 80}
+                        cx={store.svgWidth - IndicatorSize * 2 - 100}
                         cy={IndicatorSize + 2 + (IndicatorSize + 2) * i * 4}
                         r={IndicatorSize}
                     />
                     <text
-                        x={store.svgWidth - 80}
+                        x={store.svgWidth - 100}
                         y={IndicatorSize + 2 + (IndicatorSize + 2) * i * 4}
                         alignmentBaseline='central'
                         textAnchor='start'

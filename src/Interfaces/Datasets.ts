@@ -1,16 +1,16 @@
 import { BarChartDataPoint } from "./Types";
 
 const COVIDData = [
-    { categorical: 'Medium', label: "Austria", value: 2978.887 },
-    { categorical: 'Medium', label: "Australia", value: 872.619 },
-    { categorical: 'High', label: 'Canada', value: 159.527 },
-    { categorical: 'High', label: 'France', value: 807.867 },
-    { categorical: 'High', label: 'Germany', value: 1614.237 },
-    { categorical: 'Medium', label: 'New Zealand', value: 2886.32 },
-    { categorical: 'Low', label: 'Norway', value: 2301.186 },
-    { categorical: 'Low', label: 'Sweden', value: 236.456 },
-    { categorical: 'Low', label: 'United Kingdom', value: 611.56 },
-    { categorical: 'Medium', label: 'United States', value: 186.2 },
+    { categorical: 'Semi-Strict Policies', label: "Austria", value: 2978.887 },
+    { categorical: 'Semi-Strict Policies', label: "Australia", value: 872.619 },
+    { categorical: 'Strict Policies', label: 'Canada', value: 159.527 },
+    { categorical: 'Strict Policies', label: 'France', value: 807.867 },
+    { categorical: 'Strict Policies', label: 'Germany', value: 1614.237 },
+    { categorical: 'Semi-Strict Policies', label: 'New Zealand', value: 2886.32 },
+    { categorical: 'Relaxed Policies', label: 'Norway', value: 2301.186 },
+    { categorical: 'Relaxed Policies', label: 'Sweden', value: 236.456 },
+    { categorical: 'Relaxed Policies', label: 'United Kingdom', value: 611.56 },
+    { categorical: 'Semi-Strict Policies', label: 'United States', value: 186.2 },
 ];
 
 const TestData = [
@@ -64,14 +64,14 @@ const GreenhouseGas = [
     { categorical: 'Other', label: 'Eggs', value: 4.5 },
     { categorical: 'Other', label: 'Rice', value: 4 },
     { categorical: 'Other', label: 'Rapeseed Oil', value: 3.7 },
-    { categorical: 'Other', label: 'Sunflower Oil', value: 3.5 },
+    { categorical: 'Other', label: 'SunfRelaxed Policieser Oil', value: 3.5 },
     { categorical: 'Other', label: 'Tofu', value: 3 },
     { categorical: 'Dairy', label: 'Milk', value: 2.8 },
 ];
 
 type dataAttribute = {
     data: BarChartDataPoint[];
-    // Only fewer than 4 categories allowed
+    // Only fewer than 4 categories alRelaxed Policiesed
     categories: string[];
     name: string,
     dbTag: string,
@@ -83,8 +83,8 @@ export const DataPreset: { [key: string]: dataAttribute; } = {
         dbTag: 'COVIDData',
         data: COVIDData,
         name: 'COVID Cases',
-        explanation: "New confirmed cases of COVID-19 (7-day smoothed) per 1,000,000 people, colored by stringency of country's response as of March 01, 2022. High stringency indicates a stricter response. If policies vary at the subnational level, the result is shown as the response level of the strictest sub-region. Data shows Mar 01, 2022. Data Source: OurWorldInData",
-        categories: ['Low', 'Medium', 'High']
+        explanation: "New confirmed cases of COVID-19 (7-day smoothed) per 1,000,000 people, colored by stringency of country's response as of March 01, 2022. Strict Policies stringency indicates a stricter response. If policies vary at the subnational level, the result is shown as the response level of the strictest sub-region. Data shows Mar 01, 2022. Data Source: OurWorldInData",
+        categories: ['Relaxed Policies', 'Semi-Strict Policies', 'Strict Policies']
 
     },
     test2: {

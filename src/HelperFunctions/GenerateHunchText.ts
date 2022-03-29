@@ -18,6 +18,8 @@ export const generateHunchText = (type: InputMode, content: string, label: strin
             return `All values should move as ${content}`;
         case 'sketch':
             return 'A sketch';
+        case 'rating':
+            return `${content} Starts`;
         default: {
             return content;
         }

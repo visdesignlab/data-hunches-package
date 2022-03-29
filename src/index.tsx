@@ -98,14 +98,14 @@ const BarChartWithDH: FC = () => {
             <div style={{ height: `calc(100vh - 64px)`, width: '100vw' }} id='app-div' >
                 <TopBar showTable={showTable} makeShowTable={makeShowTable} />
                 <Grid container style={{ height: `calc(100vh - 64px)`, width: '100vw' }} spacing={1}>
-                    <Grid item xs={showTable ? 6 : 12} lg={showTable ? 6 : 12} >
+                    <Grid item xs={showTable ? 8 : 12}  >
                         <BarChart
                             dataHunchArray={savedDH}
                             retrieveData={retrieveData}
                             showTable={showTable}
                         />
                     </Grid>
-                    {showTable ? <Grid item xs={6} lg={6}>
+                    {showTable ? <Grid item xs={4} >
                         <Table dataHunchArray={savedDH} />
                     </Grid> : <></>}
 
