@@ -5,7 +5,7 @@ import { makeBandScale, makeCategoricalScale, makeValueScale } from "./HelperFun
 import { DefaultBar, DefaultForeignObjectHeight, DefaultForeignObjectWidth, margin, MaximumHeight, MaximumWidth, SelectionColor, UpDownVoteFOHeight, UpDownVoteFOWidth } from "./Interfaces/Constants";
 import Store from "./Interfaces/Store";
 import { axisLeft, axisTop } from "d3-axis";
-import { select } from "d3-selection";
+import { pointer, select } from "d3-selection";
 import FormComponent from "./ChartComponents/FormComponent";
 import SpecificControl from "./Controls/SpecificControl";
 import { DataContext } from ".";
@@ -93,6 +93,34 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData, showTable }: Props)
         .call(xAxis)
         .selectAll(".tick text")
         .attr('font-size', 'small')
+        .on('contextmenu', (e, d: any) => {
+            e.preventDefault();
+            if (store.userName && store.inputMode === 'none') {
+                store.selectADataPointMode(true);
+                store.setCurrentSelectedDP(d);
+                // const xLoc = (pointer(e)[0] + ControlFOWidth) > store.svgWidth ? (pointer(e)[0] - ControlFOWidth) : pointer(e)[0];
+                // const yLoc = (pointer(e)[1] + ControlFOHeight) > store.svgHeight ? (pointer(e)[1] - ControlFOHeight) : pointer(e)[1];
+
+                // const formXLoc = (pointer(e)[0] + DefaultForeignObjectWidth) > store.svgWidth ? (pointer(e)[0] - DefaultForeignObjectWidth) : pointer(e)[0];
+
+                // const formYLoc = (pointer(e)[1] + DefaultForeignObjectHeight) > store.svgHeight ? (pointer(e)[1] - DefaultForeignObjectHeight) : pointer(e)[1];
+
+                const xLoc = pointer(e, select('#app-div').node())[0];
+                const yLoc = pointer(e, select('#app-div').node())[1];
+
+
+                select('#specific-control')
+                    .style('display', null)
+                    .style('left', `${xLoc}px`)
+                    .style('top', `${yLoc}px`);
+                select('#form-component')
+                    .style('left', `${xLoc}px`)
+                    .style('top', `${yLoc + bandScale.bandwidth()}px`);
+                // .attr('x', formXLoc)
+                // .attr('y', formYLoc);
+
+            }
+        })
         .call(wrap);
 
     useLayoutEffect(() => {
@@ -242,7 +270,7 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData, showTable }: Props)
             <UpvotesDownvotes
                 retrieveData={retrieveData} />
 
-            <FormComponent />
+            <FormComponent manipulationOutput={manipulationResult} />
 
             <SpecificControl sendManipulation={sendManipulationToParent} />
         </div >

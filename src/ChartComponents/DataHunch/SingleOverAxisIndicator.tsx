@@ -7,6 +7,7 @@ import { DataHunch } from "../../Interfaces/Types";
 import * as rough from 'roughjs/bin/rough';
 import StyledTooltip from "./StyledTooltip";
 import { toVoteDH } from "./UpvotesDownvotes";
+import { format } from "d3-format";
 
 type Props = {
     curvePoints: string;
@@ -84,12 +85,12 @@ const SingleOverAxisIndicator: FC<Props> = ({ textX, textY, dataHunch, curvePoin
                     textAnchor="start"
                     alignmentBaseline="hanging"
                     fill={highlighted ? HighlightColor : (selected ? SelectionColor : DataHunchColor)}
-                    x={textX}
+                    x={textX - 4}
                     y={textY}
                     fontFamily="'Nanum Brush Script', cursive"
                     fontWeight="bold"
                 >
-                    {dataHunch.content}
+                    {format('.2s')(parseInt(dataHunch.content))}
                 </text>
             </g>}
             dataHunch={dataHunch}

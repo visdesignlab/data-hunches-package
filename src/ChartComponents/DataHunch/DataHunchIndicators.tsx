@@ -215,13 +215,13 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
             {dataHunchDictionary.aboveAxis.length > 0 ?
                 <g>
                     <text
-                        x={valueScale(dataPoint.value) + 15}
+                        x={valueScale(dataPoint.value) + 13}
                         y={(bandScale(dataPoint.label) || 0) + 0.6 * bandScale.bandwidth()}
                         textAnchor="middle"
-                        fontSize="medium"
+                        fontSize="small"
                         alignmentBaseline="middle"
                     >
-                        {dataPoint.value}
+                        {dataPoint.value.toFixed(0)}
                     </text>
                     {dataHunchDictionary.aboveAxis.map((dataHunch, i) => {
                         const startingPoint = valueScale(dataPoint.value);

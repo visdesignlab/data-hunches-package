@@ -25,7 +25,7 @@ const NewVolDialog: FC<Props> = ({ open, sendCloseSignal }: Props) => {
                 subs: numberOfSubs + 1
             });
 
-            await setDoc(doc(collection(firebaseSetup, store.dbTag), `sub${numberOfSubs + 1}`), { name: volName });
+            await setDoc(doc(collection(firebaseSetup, store.dbTag), `sub${numberOfSubs + 1}`), { name: volName, nextIndex: 0 });
 
             sendCloseSignal(false);
             store.setCurrentVol(numberOfSubs + 1);

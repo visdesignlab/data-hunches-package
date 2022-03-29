@@ -19,6 +19,8 @@ const SketchyDrawings: FC<Props> = ({ dataHunch, highlighted, selected }: Props)
     const store = useContext(Store);
     const dhRef = useRef(null);
 
+
+
     useLayoutEffect(() => {
         if (dhRef.current !== null) {
             select(dhRef.current).select('*').remove();
@@ -26,7 +28,9 @@ const SketchyDrawings: FC<Props> = ({ dataHunch, highlighted, selected }: Props)
             const drawingG = dhRef.current as any;
             const rc = rough.default.svg(drawingG);
 
-            const decodeSketch = JSON.parse(dataHunch.content) as [number, number][][];
+            const decodeSketch = JSON.parse(dataHunch.content).sketch as [number, number][][];
+            const originalWidth = JSON.parse(dataHunch.content).width as number;
+            const originalHeight = JSON.parse(dataHunch.content).height as number;
 
             decodeSketch.forEach((path) => {
                 const sketchyPath = rc.path(line()(path) || '', {
@@ -55,6 +59,7 @@ const SketchyDrawings: FC<Props> = ({ dataHunch, highlighted, selected }: Props)
         <StyledTooltip dataHunch={dataHunch}
             childrenComponent={
                 <g ref={dhRef}
+                    transform={`scale ( ${store.svgWidth / JSON.parse(dataHunch.content).width},${store.svgHeight / JSON.parse(dataHunch.content).height})`}
                     onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
                     onMouseOut={() => {
                         store.setHighlightedDH(-1);

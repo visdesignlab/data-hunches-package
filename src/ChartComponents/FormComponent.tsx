@@ -10,8 +10,10 @@ import DataSpaceForm from "./Forms/DataSpaceForm";
 import ManipulationForm from "./Forms/ManipulationForm";
 import ModelInputForm from "./Forms/ModelInputForm";
 import RatingForm from "./Forms/RatingForm";
-
-const FormComponent: FC = () => {
+type Props = {
+    manipulationOutput: string;
+};
+const FormComponent: FC<Props> = ({ manipulationOutput }: Props) => {
 
     const store = useContext(Store);
 
@@ -29,8 +31,10 @@ const FormComponent: FC = () => {
                 return <DataSpaceForm isInc={store.inputMode === 'inclusion'} />;
             case 'annotation':
                 return <AnnotationForm />;
+            case 'none':
+                return <></>;
             default:
-                return <ManipulationForm manipulationOutput={store.selectedDP ? store.selectedDP : ''} type='exclusion' />;
+                return <ManipulationForm manipulationOutput={store.inputMode === 'exclusion' ? (store.selectedDP || '') : manipulationOutput} type={store.inputMode} />;
         }
     };
 

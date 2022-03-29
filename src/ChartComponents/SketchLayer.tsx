@@ -40,7 +40,7 @@ const SketchLayer: FC<SendManiProps> = ({ sendManipulation }: SendManiProps) => 
             .attr('d', d => generatePath(d))
             .attr('stroke', 'black')
             .attr('fill', 'none');
-        sendManipulation(JSON.stringify(sketchResult));
+        sendManipulation(JSON.stringify({ width: store.svgWidth, height: store.svgHeight, sketch: sketchResult }));
     };
 
     const generatePath = (points: [number, number][]) => {
