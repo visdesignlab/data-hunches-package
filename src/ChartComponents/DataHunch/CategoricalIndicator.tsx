@@ -27,7 +27,7 @@ const CategoricalIndicator: FC<Props> = ({ dataHunch, xPos, yPos, width, height,
     const store = useContext(Store);
     const dhRef = useRef(null);
 
-    const categoricalScale = makeCategoricalScale(DataPreset[store.dbTag].categories);
+
 
     useLayoutEffect(() => {
         if (dhRef.current !== null) {
@@ -76,6 +76,7 @@ const CategoricalIndicator: FC<Props> = ({ dataHunch, xPos, yPos, width, height,
         dataHunch={dataHunch}
         childrenComponent={
             <g display={store.needToShowPreview ? 'none' : undefined}>
+                {dataHunch.upvotes + dataHunch.downvotes > 0 ? <ShowUpvotesDownvotes xPos={xPos + width} yPos={yPos} dataHunch={dataHunch} /> : <></>}
                 <g ref={dhRef} />
                 <rect
                     x={xPos}
@@ -97,7 +98,8 @@ const CategoricalIndicator: FC<Props> = ({ dataHunch, xPos, yPos, width, height,
                         store.setVotingDH(dataHunch);
                     }}
                 />
-                {/* <ShowUpvotesDownvotes xPos={xPos + width} yPos={yPos} dataHunch={dataHunch} /> */}
+
+
             </g>} />);
 };
 

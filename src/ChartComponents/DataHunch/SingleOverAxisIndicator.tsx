@@ -8,6 +8,7 @@ import * as rough from 'roughjs/bin/rough';
 import StyledTooltip from "./StyledTooltip";
 import { toVoteDH } from "./UpvotesDownvotes";
 import { format } from "d3-format";
+import ShowUpvotesDownvotes from "./ShowUpvotesDownvotes";
 
 type Props = {
     curvePoints: string;
@@ -71,28 +72,33 @@ const SingleOverAxisIndicator: FC<Props> = ({ textX, textY, dataHunch, curvePoin
 
     return (
         <StyledTooltip
-            childrenComponent={<g cursor="pointer"
-                onClick={() => { store.setSelectedDH([dataHunch.id]); }}
-                onContextMenu={(e) => {
-                    toVoteDH(e, store.svgWidth, store.svgHeight);
-                    store.setVotingDH(dataHunch);
-                }}
-                onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
-                onMouseOut={() => { store.setHighlightedDH(-1); }}>
-                <g ref={curveRef} />
-                <g ref={arrowRef} transform={`rotate(45,${rotateX},${rotateY})`} />
-                <text
-                    textAnchor="start"
-                    alignmentBaseline="hanging"
-                    fill={highlighted ? HighlightColor : (selected ? SelectionColor : DataHunchColor)}
-                    x={textX - 4}
-                    y={textY}
-                    fontFamily="'Nanum Brush Script', cursive"
-                    fontWeight="bold"
-                >
-                    {format('.2s')(parseInt(dataHunch.content))}
-                </text>
-            </g>}
+            childrenComponent={
+                <g>
+                    {dataHunch.upvotes + dataHunch.downvotes > 0 ? <ShowUpvotesDownvotes xPos={JSON.parse(curvePoints)[1][0] - 20} yPos={JSON.parse(curvePoints)[1][1] - 20} dataHunch={dataHunch} /> : <></>}
+                    <g cursor="pointer"
+                        onClick={() => { store.setSelectedDH([dataHunch.id]); }}
+                        onContextMenu={(e) => {
+                            toVoteDH(e, store.svgWidth, store.svgHeight);
+                            store.setVotingDH(dataHunch);
+                        }}
+                        onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
+                        onMouseOut={() => { store.setHighlightedDH(-1); }}>
+                        <g ref={curveRef} />
+                        <g ref={arrowRef} transform={`rotate(45,${rotateX},${rotateY})`} />
+                        <text
+                            textAnchor="start"
+                            alignmentBaseline="hanging"
+                            fill={highlighted ? HighlightColor : (selected ? SelectionColor : DataHunchColor)}
+                            x={textX - 4}
+                            y={textY}
+                            fontFamily="'Nanum Brush Script', cursive"
+                            fontWeight="bold"
+                        >
+                            {format('.2s')(parseInt(dataHunch.content))}
+                        </text>
+                    </g>
+
+                </g>}
             dataHunch={dataHunch}
         />
 

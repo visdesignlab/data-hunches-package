@@ -6,7 +6,7 @@ export const margin = ({ top: 30, right: 150, bottom: 50, left: 90 });
 
 export const LargeNumber = 999;
 
-export const MaximumWidth = 900;
+export const MaximumWidth = 1000;
 export const MaximumHeight = 700;
 
 export const IndicatorSize = 6;

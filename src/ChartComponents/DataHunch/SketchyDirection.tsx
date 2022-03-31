@@ -7,6 +7,7 @@ import StyledTooltip from "./StyledTooltip";
 import { select } from "d3-selection";
 import { HighlightColor, SelectionColor, DataHunchColor, DefaultSketchyOptions } from "../../Interfaces/Constants";
 import { toVoteDH } from "./UpvotesDownvotes";
+import ShowUpvotesDownvotes from "./ShowUpvotesDownvotes";
 
 type Props = {
     xPos: number;
@@ -53,17 +54,22 @@ const SketchyDirection: FC<Props> = ({ dataHunch, xPos, yPos, highlighted, selec
 
     return (
         <StyledTooltip dataHunch={dataHunch} childrenComponent={
-            <g display={store.needToShowPreview ? 'none' : undefined}
-                ref={dhRef}
-                cursor='pointer'
-                onContextMenu={(e) => {
-                    toVoteDH(e, store.svgWidth, store.svgHeight);
-                    store.setVotingDH(dataHunch);
-                }}
-                onClick={() => { store.setSelectedDH([dataHunch.id]); }}
-                onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
-                onMouseOut={() => { store.setHighlightedDH(-1); }}
-            />} />
+            <g display={store.needToShowPreview ? 'none' : undefined}>
+                {dataHunch.upvotes + dataHunch.downvotes > 0 ? <ShowUpvotesDownvotes xPos={xPos + 16} yPos={yPos - 7} dataHunch={dataHunch} /> : <></>}
+
+                <g
+                    ref={dhRef}
+                    cursor='pointer'
+                    onContextMenu={(e) => {
+                        toVoteDH(e, store.svgWidth, store.svgHeight);
+                        store.setVotingDH(dataHunch);
+                    }}
+                    onClick={() => { store.setSelectedDH([dataHunch.id]); }}
+                    onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
+                    onMouseOut={() => { store.setHighlightedDH(-1); }}
+                />
+
+            </g>} />
     );
 };
 

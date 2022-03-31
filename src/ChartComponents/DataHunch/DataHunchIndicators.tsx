@@ -20,6 +20,8 @@ import SketchyDirection from "./SketchyDirection";
 import { toVoteDH } from "./UpvotesDownvotes";
 import CategoricalIndicator from "./CategoricalIndicator";
 import { DataPreset } from "../../Interfaces/Datasets";
+import ShowUpvotesDownvotes from "./ShowUpvotesDownvotes";
+import styled from "styled-components";
 
 type Props = {
     dataHunchArray: DataHunch[],
@@ -135,9 +137,9 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
 
     const findXPos = (dataHunch: DataHunch, index: number, arrayLength: number) => {
         if (valueScale(dataPoint.value) >= (store.svgWidth - margin.right - margin.left)) {
-            return valueScale(dataPoint.value) + 10 + Math.floor((bandScale.bandwidth() < 40) ? index : (index / 2)) * 40;
+            return valueScale(dataPoint.value) + 10 + Math.floor((bandScale.bandwidth() < 40) ? index : (index / 2)) * 65;
         }
-        return valueScale(dataPoint.value) + 10 + Math.floor((bandScale.bandwidth() < 40) ? index : (index / 2)) * 90;
+        return valueScale(dataPoint.value) + 10 + Math.floor((bandScale.bandwidth() < 40) ? index : (index / 2)) * 115;
     };
 
     const findYPos = (index: number) => {
@@ -249,22 +251,28 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                 const arrayLength = dataHunchDictionary.offVis.length;
                 return (
                     <StyledTooltip
-                        childrenComponent={<DHIndicatorText
-                            x={findXPos(d, i, arrayLength)}
-                            y={findYPos(i)}
-                            fontSize='larger'
-                            needBold={false}
-                            isHighlighted={d.id === store.highlightedDH}
-                            isSelected={store.selectedDH.includes(d.id)}
-                            onClick={() => { store.setSelectedDH([d.id]); }}
-                            onMouseOver={() => { store.setHighlightedDH(d.id); }}
-                            onContextMenu={(e) => {
-                                toVoteDH(e, store.svgWidth, store.svgHeight);
-                                store.setVotingDH(d);
-                            }}
-                            onMouseOut={() => { store.setHighlightedDH(-1); }}>
-                            {calculateText(d.content, findXPos(d, i, arrayLength), arrayLength, d.type)}
-                        </DHIndicatorText>}
+                        childrenComponent={
+                            <g>
+                                <DHIndicatorText
+                                    x={findXPos(d, i, arrayLength)}
+                                    y={findYPos(i)}
+                                    fontSize='larger'
+                                    needBold={false}
+                                    isHighlighted={d.id === store.highlightedDH}
+                                    isSelected={store.selectedDH.includes(d.id)}
+                                    onClick={() => { store.setSelectedDH([d.id]); }}
+                                    onMouseOver={() => { store.setHighlightedDH(d.id); }}
+                                    onContextMenu={(e) => {
+                                        toVoteDH(e, store.svgWidth, store.svgHeight);
+                                        store.setVotingDH(d);
+                                    }}
+                                    onMouseOut={() => { store.setHighlightedDH(-1); }}>
+                                    {calculateText(d.content, findXPos(d, i, arrayLength), arrayLength, d.type)}
+                                    {d.upvotes > 0 ? <><tspan className="fa-solid" fontSize='small'> &#xf164;</tspan>{d.upvotes}</> : ''}
+                                    {d.downvotes > 0 ? <><tspan className="fa-solid" fontSize='small'> &#xf165;</tspan>{d.downvotes}</> : ''}
+                                </DHIndicatorText>
+
+                            </g>}
                         dataHunch={d}
                         key={`${d.id}-text`}
                     />

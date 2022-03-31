@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { FC, useContext, useState, useRef } from "react";
 import BarElement from './ChartComponents/BarElement';
 import { makeBandScale, makeCategoricalScale, makeValueScale } from "./HelperFunctions/ScaleGenerator";
-import { DefaultBar, DefaultForeignObjectHeight, DefaultForeignObjectWidth, margin, MaximumHeight, MaximumWidth, SelectionColor, UpDownVoteFOHeight, UpDownVoteFOWidth } from "./Interfaces/Constants";
+import { DataHunchColor, DefaultBar, DefaultForeignObjectHeight, DefaultForeignObjectWidth, margin, MaximumHeight, MaximumWidth, SelectionColor, UpDownVoteFOHeight, UpDownVoteFOWidth } from "./Interfaces/Constants";
 import Store from "./Interfaces/Store";
 import { axisLeft, axisTop } from "d3-axis";
 import { pointer, select } from "d3-selection";
@@ -264,6 +264,12 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData, showTable }: Props)
                                             style={{ textOverflow: 'ellipsis' }}
                                         >
                                             *{d.type === 'sketch' ? 'sketch' : d.content}
+                                            {d.upvotes > 0 ?
+                                                <> <i className="fa-solid fa-thumbs-up"></i>{d.upvotes}</>
+                                                : <></>}
+                                            {d.downvotes > 0 ?
+                                                <> <i className="fa-solid fa-thumbs-down"></i>{d.downvotes}</>
+                                                : <></>}
                                         </DHIndicatorText>
                                     </li>} />
                         );

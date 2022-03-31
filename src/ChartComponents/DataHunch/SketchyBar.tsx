@@ -6,6 +6,7 @@ import * as rough from 'roughjs/bin/rough';
 import { SelectionColor, DefaultSketchyOptions, HighlightColor, DataHunchColor } from "../../Interfaces/Constants";
 import Store from "../../Interfaces/Store";
 import { DataHunch } from "../../Interfaces/Types";
+import ShowUpvotesDownvotes from "./ShowUpvotesDownvotes";
 import StyledTooltip from "./StyledTooltip";
 import { toVoteDH } from "./UpvotesDownvotes";
 
@@ -78,6 +79,7 @@ const SketchyBar: FC<Props> = ({ xPos, yPos, width, height, dataHunch, highlight
     return (
         <StyledTooltip dataHunch={dataHunch} childrenComponent={
             <g display={store.needToShowPreview ? 'none' : undefined}>
+                {dataHunch.upvotes + dataHunch.downvotes > 0 ? <ShowUpvotesDownvotes xPos={xPos + width + (dataHunch.type === 'range' ? JSON.parse('[' + dataHunch.content + ']')[1] + 30 : 0)} yPos={yPos} dataHunch={dataHunch} /> : <></>}
                 <g ref={dhRef} />
                 <g>
                     <rect

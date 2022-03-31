@@ -10,6 +10,7 @@ import { select } from "d3-selection";
 import { DataHunchColor, DefaultSketchyOptions, HighlightColor, SelectionColor } from "../../Interfaces/Constants";
 import StyledTooltip from "./StyledTooltip";
 import { toVoteDH } from "./UpvotesDownvotes";
+import ShowUpvotesDownvotes from "./ShowUpvotesDownvotes";
 
 type Props = {
     dataPoint: BarChartDataPoint;
@@ -56,17 +57,21 @@ const ExclusionIndicator: FC<Props> = ({ dataHunch, dataPoint, centerX, centerY,
     return (
         <StyledTooltip
             dataHunch={dataHunch}
-            childrenComponent={<g ref={dhRef}
-                onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
-                onMouseOut={() => {
-                    store.setHighlightedDH(-1);
-                }}
-                onContextMenu={(e) => {
-                    toVoteDH(e, store.svgWidth, store.svgHeight);
-                    store.setVotingDH(dataHunch);
-                }}
-                onClick={() => { store.setSelectedDH([dataHunch.id]); }}
-                cursor='pointer' />}
+            childrenComponent={
+                <g>
+                    {dataHunch.upvotes + dataHunch.downvotes > 0 ? <ShowUpvotesDownvotes xPos={centerX + 20} yPos={centerY - 20} dataHunch={dataHunch} /> : <></>}<g ref={dhRef}
+                        onMouseOver={() => { store.setHighlightedDH(dataHunch.id); }}
+                        onMouseOut={() => {
+                            store.setHighlightedDH(-1);
+                        }}
+                        onContextMenu={(e) => {
+                            toVoteDH(e, store.svgWidth, store.svgHeight);
+                            store.setVotingDH(dataHunch);
+                        }}
+                        onClick={() => { store.setSelectedDH([dataHunch.id]); }}
+                        cursor='pointer' />
+
+                </g>}
         />
     );
 };
