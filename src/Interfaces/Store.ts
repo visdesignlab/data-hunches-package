@@ -5,6 +5,7 @@ import { collection, setDoc, doc, updateDoc } from 'firebase/firestore/lite';
 
 import { DataHunch, InputMode } from "./Types";
 import { firebaseSetup } from "./Constants";
+import { DataPreset } from "./Datasets";
 
 export class RootStore {
     showDataHunches: boolean;
@@ -25,6 +26,10 @@ export class RootStore {
     votingDH: DataHunch | undefined;
 
     constructor() {
+        const URLInput = new URL(window.location.href);
+        const dataSetTag = URLInput.searchParams.get("data") || '';
+        const volTag = parseInt(URLInput.searchParams.get("vol") || '') || 1;
+
         this.showDataHunches = true;
         this.showCategory = false;
         this.svgHeight = 500;
@@ -36,10 +41,10 @@ export class RootStore {
         this.userName = '';
         this.selectedDH = [];
         this.highlightedDH = -1;
-        this.dbTag = 'COVIDData';
+        this.dbTag = DataPreset[dataSetTag] ? dataSetTag : 'COVIDData';
         this.nextIndex = 0;
         this.numOfDH = 0;
-        this.currentVol = 1;
+        this.currentVol = volTag;
         this.votingDH = undefined;
         makeAutoObservable(this);
     }

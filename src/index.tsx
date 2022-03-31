@@ -7,7 +7,7 @@ import { Grid } from "@material-ui/core";
 import Table from "./TableComponents/Table";
 import { getDocs, collection, getDoc, doc } from "firebase/firestore/lite";
 import { stateUpdateWrapperUseJSON } from "./Interfaces/StateChecker";
-import { firebaseSetup } from "./Interfaces/Constants";
+import { firebaseSetup, LargeNumber } from "./Interfaces/Constants";
 import BarChart from "./BarChart";
 import WelcomeDialog from "./WelcomeDialog";
 import { DataPreset } from "./Interfaces/Datasets";
@@ -39,16 +39,21 @@ const BarChartWithDH: FC = () => {
 
     useEffect(() => {
         //first time retrieve DH from DB
-        getDoc(doc(firebaseSetup, store.dbTag, `sub${store.currentVol}`)).then((dhNextIndex) => {
-            if (dhNextIndex.exists()) {
-                store.setNextIndex(dhNextIndex.data().nextIndex);
-            } else {
-                store.setNextIndex(0);
-            }
-        });
+
 
         getDocs(collection(firebaseSetup, store.dbTag, `sub${store.currentVol}`, 'dhs')).then((dhResult) => {
             store.setTotalDH(dhResult.size);
+        });
+
+        getDoc(doc(firebaseSetup, store.dbTag, `sub${store.currentVol}`)).then((dhNextIndex) => {
+            if (dhNextIndex.exists() && dhNextIndex.data().nextIndex >= (store.numOfDH - 1)) {
+                store.setNextIndex(parseInt(dhNextIndex.data().nextIndex));
+            } else if (store.numOfDH === 0) {
+                store.setNextIndex(0);
+            } else {
+                store.setNextIndex(LargeNumber);
+            }
+
         });
 
 

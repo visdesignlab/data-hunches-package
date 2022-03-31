@@ -25,25 +25,25 @@ const TestData = [
 
 const StudentData = [
     { label: 'UNKNOWN', value: 43, categorical: 'Other' },
-    { label: 'Visualization', value: 42, categorical: 'Data & Visualizations' },
+    { label: 'Visualization', value: 42, categorical: 'Data & Visualization' },
     { label: 'Systems', value: 27, categorical: 'Computer Systems' },
     { label: 'Theory', value: 24, categorical: 'Theoretical CS' },
-    { label: 'Scientific Computing', value: 24, categorical: 'Data & Visualizations' },
-    { label: 'Data Base', value: 22, categorical: 'Data & Visualizations' },
+    { label: 'Scientific Computing', value: 24, categorical: 'Data & Visualization' },
+    { label: 'Database', value: 22, categorical: 'Data & Visualization' },
     { label: 'Programming Languages', value: 21, categorical: 'Theoretical CS' },
-    { label: 'Vision', value: 20, categorical: 'Data & Visualizations' },
-    { label: 'Graphics', value: 17, categorical: 'Data & Visualizations' },
-    { label: 'Image Analysis', value: 15, categorical: 'Data & Visualizations' },
+    { label: 'Vision', value: 20, categorical: 'Data & Visualization' },
+    { label: 'Graphics', value: 17, categorical: 'Data & Visualization' },
+    { label: 'Image Analysis', value: 15, categorical: 'Data & Visualization' },
     { label: 'Architecture', value: 14, categorical: 'Computer Systems' },
     { label: 'NLP', value: 14, categorical: 'Computer Systems' },
-    { label: 'HPC', value: 13, categorical: 'Data & Visualizations' },
+    { label: 'HPC', value: 13, categorical: 'Data & Visualization' },
     { label: 'N/A', value: 10, categorical: 'Other' },
     { label: 'Robotics', value: 9, categorical: 'Other' },
     { label: 'Games', value: 7, categorical: 'Other' },
-    { label: 'A.I', value: 7, categorical: 'Computer Systems' },
-    { label: 'HCI', value: 6, categorical: 'Data & Visualizations' },
+    { label: 'AI', value: 7, categorical: 'Computer Systems' },
+    { label: 'HCI', value: 6, categorical: 'Data & Visualization' },
     { label: 'Operating Systems', value: 5, categorical: 'Computer Systems' },
-    { label: 'Machine Learning', value: 3, categorical: 'Data & Visualizations' },
+    { label: 'Machine Learning', value: 3, categorical: 'Data & Visualization' },
     { label: 'Security / Privacy', value: 1, categorical: 'Computer Systems' }
 ];
 
@@ -99,7 +99,7 @@ export const DataPreset: { [key: string]: dataAttribute; } = {
         data: StudentData,
         name: 'Student Area',
         explanation: 'Graduate student admitted of each area',
-        categories: ['Data & Visualizations', 'Computer Systems', 'Theoretical CS', 'Other']
+        categories: ['Data & Visualization', 'Computer Systems', 'Theoretical CS', 'Other']
     },
     GreenhouseGas: {
         dbTag: 'GreenhouseGas',

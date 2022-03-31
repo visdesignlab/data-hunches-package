@@ -32,6 +32,7 @@ import UpvotesDownvotes, { toVoteDH } from "./ChartComponents/DataHunch/UpvotesD
 import { DataPreset } from "./Interfaces/Datasets";
 
 
+
 type Props = {
     dataHunchArray: DataHunch[];
     retrieveData: () => void;
@@ -255,7 +256,6 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData, showTable }: Props)
                                             }}
                                             onMouseOver={() => { store.setHighlightedDH(d.id); }}
                                             onMouseOut={() => { store.setHighlightedDH(-1); }}
-
                                             fontSize='larger'
                                             needBold={true}
                                             style={{ textOverflow: 'ellipsis' }}
@@ -273,6 +273,8 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData, showTable }: Props)
             <FormComponent manipulationOutput={manipulationResult} />
 
             <SpecificControl sendManipulation={sendManipulationToParent} />
+
+
         </div >
     );
 };
@@ -283,7 +285,7 @@ export default observer(BarChart);
 const ChartSVG = styled.svg`
   height: 70%;
   width: 100%;
-  max-width:1000px;
-  max-height:800px
+  max-width:${MaximumWidth}px;
+  max-height:${MaximumHeight}px
 `;
 

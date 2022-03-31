@@ -9,6 +9,7 @@ import { BarChartDataPoint, DataHunch } from "../../Interfaces/Types";
 import StyledTooltip from "./StyledTooltip";
 import { toVoteDH } from "./UpvotesDownvotes";
 import { HighlightColor, SelectionColor } from "../../Interfaces/Constants";
+import ShowUpvotesDownvotes from "./ShowUpvotesDownvotes";
 
 type Props = {
     xPos: number;
@@ -69,6 +70,8 @@ const CategoricalIndicator: FC<Props> = ({ dataHunch, xPos, yPos, width, height,
         }
     }, [highlighted, selected]);
 
+
+
     return (<StyledTooltip
         dataHunch={dataHunch}
         childrenComponent={
@@ -94,6 +97,7 @@ const CategoricalIndicator: FC<Props> = ({ dataHunch, xPos, yPos, width, height,
                         store.setVotingDH(dataHunch);
                     }}
                 />
+                {/* <ShowUpvotesDownvotes xPos={xPos + width} yPos={yPos} dataHunch={dataHunch} /> */}
             </g>} />);
 };
 
