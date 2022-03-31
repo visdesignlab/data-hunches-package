@@ -5,7 +5,7 @@ export declare const margin: {
     left: number;
 };
 export declare const LargeNumber = 999;
-export declare const MaximumWidth = 800;
+export declare const MaximumWidth = 1000;
 export declare const MaximumHeight = 700;
 export declare const IndicatorSize = 6;
 export declare const IndicatorSpace = 10;

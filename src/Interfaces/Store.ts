@@ -62,6 +62,7 @@ export class RootStore {
 
     setDBTag(input: string) {
         this.dbTag = input;
+        this.currentVol = 1;
     }
 
     setNextIndex(input: number) {

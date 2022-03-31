@@ -134,15 +134,14 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
     };
 
     const findXPos = (dataHunch: DataHunch, index: number, arrayLength: number) => {
-        const findDP = dataSet.filter(d => d.label === dataHunch.label);
-        if (findDP.length > 0) {
-            const dp = findDP[0];
-            if (valueScale(dp.value) >= (store.svgWidth - margin.right - margin.left)) {
-                return valueScale(dp.value) + 10 + Math.floor(index / 2) * 40;
-            }
-            return valueScale(dp.value) + 10 + Math.floor(index / 2) * 90;
+        if (valueScale(dataPoint.value) >= (store.svgWidth - margin.right - margin.left)) {
+            return valueScale(dataPoint.value) + 10 + Math.floor((bandScale.bandwidth() < 40) ? index : (index / 2)) * 40;
         }
-        return 0;
+        return valueScale(dataPoint.value) + 10 + Math.floor((bandScale.bandwidth() < 40) ? index : (index / 2)) * 90;
+    };
+
+    const findYPos = (index: number) => {
+        return (bandScale(dataPoint.label) || 0) + 0.5 * bandScale.bandwidth() + (bandScale.bandwidth() < 40 ? 0 : (2 * IndicatorSize) * (index % 2 === 0 ? -1 : 1));
     };
 
     const calculateText = (dataHunchText: string, placement: number, arrayLength: number, type: InputMode) => {
@@ -159,7 +158,7 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
             }
             return `* ${dataHunchText.slice(0, 3)}...`;
         }
-        if (arrayLength <= 2) {
+        if ((arrayLength <= 2 && bandScale.bandwidth() > 40) || arrayLength === 1) {
             return `* ${dataHunchText}`;
         }
         return `* ${dataHunchText.slice(0, 10)}${dataHunchText.length > 10 ? '...' : ''}`;
@@ -252,7 +251,7 @@ const DataHunchIndicator: FC<Props> = ({ dataHunchArray, dataPoint }: Props) => 
                     <StyledTooltip
                         childrenComponent={<DHIndicatorText
                             x={findXPos(d, i, arrayLength)}
-                            y={(bandScale(d.label) || 0) + 0.5 * bandScale.bandwidth() + (2 * IndicatorSize) * (i % 2 === 0 ? -1 : 1)}
+                            y={findYPos(i)}
                             fontSize='larger'
                             needBold={false}
                             isHighlighted={d.id === store.highlightedDH}
