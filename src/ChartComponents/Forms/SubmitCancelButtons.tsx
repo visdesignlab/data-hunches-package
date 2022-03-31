@@ -1,4 +1,5 @@
 import { Button, ButtonGroup } from "@material-ui/core";
+import { select } from "d3-selection";
 import { observer } from "mobx-react-lite";
 import { useContext } from "react";
 import { FC } from "react";
@@ -18,6 +19,8 @@ const SubmitCancelButtons: FC<Props> = ({ dhToSubmit, disableSubmit }: Props) =>
         store.setInputMode('none');
         store.setCurrentSelectedDP(undefined);
         store.setNeedToShowPreview(false);
+
+        select('#categorical-preview').selectAll('*').remove();
     };
 
     const submitClickHandler = () => {
@@ -26,6 +29,7 @@ const SubmitCancelButtons: FC<Props> = ({ dhToSubmit, disableSubmit }: Props) =>
         store.setCurrentSelectedDP(undefined);
         store.setNeedToShowPreview(false);
 
+        select('#categorical-preview').selectAll('*').remove();
 
     };
 

@@ -197,6 +197,9 @@ const BarChart: FC<Props> = ({ dataHunchArray, retrieveData, showTable }: Props)
                         })}
                 </g>
 
+
+                <g id='categorical-preview' />
+
                 <g id='data-hunches-container'>
 
                     {sketchArray.map((sketchDP) => {
