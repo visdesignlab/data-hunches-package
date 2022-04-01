@@ -5,6 +5,7 @@ declare type dataAttribute = {
     name: string;
     dbTag: string;
     explanation: string;
+    lock: number[];
 };
 export declare const DataPreset: {
     [key: string]: dataAttribute;

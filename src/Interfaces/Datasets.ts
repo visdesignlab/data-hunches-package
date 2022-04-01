@@ -76,6 +76,7 @@ type dataAttribute = {
     name: string,
     dbTag: string,
     explanation: string;
+    lock: number[];
 };
 
 export const DataPreset: { [key: string]: dataAttribute; } = {
@@ -84,8 +85,8 @@ export const DataPreset: { [key: string]: dataAttribute; } = {
         data: COVIDData,
         name: 'COVID Cases',
         explanation: "New confirmed cases of COVID-19 (7-day smoothed) per 1,000,000 people, colored by stringency of country's response as of March 01, 2022. Strict Policies stringency indicates a stricter response. If policies vary at the subnational level, the result is shown as the response level of the strictest sub-region. Data shows Mar 01, 2022. Data Source: OurWorldInData",
-        categories: ['Relaxed Policies', 'Semi-Strict Policies', 'Strict Policies']
-
+        categories: ['Relaxed Policies', 'Semi-Strict Policies', 'Strict Policies'],
+        lock: [2, 3, 4],
     },
     test2: {
         dbTag: 'test2',
@@ -93,13 +94,15 @@ export const DataPreset: { [key: string]: dataAttribute; } = {
         name: 'DH Test Data',
         explanation: 'This is a test data for data hunch development purposes. Values have no real significance',
         categories: ['A', 'B', 'C', 'D'],
+        lock: []
     },
     student: {
         dbTag: 'student',
         data: StudentData,
         name: 'Student Area',
         explanation: 'Graduate student admitted of each area',
-        categories: ['Data & Visualization', 'Computer Systems', 'Theoretical CS', 'Other']
+        categories: ['Data & Visualization', 'Computer Systems', 'Theoretical CS', 'Other'],
+        lock: [1]
     },
     GreenhouseGas: {
         dbTag: 'GreenhouseGas',
@@ -107,5 +110,6 @@ export const DataPreset: { [key: string]: dataAttribute; } = {
         name: 'Greenhouse gas',
         explanation: 'Greenhouse gas emissions across the supply chain. They are measured in kilograms of carbon dioxide equivalents (kgCO₂eq) per kilogram of food. Colored by type of food',
         categories: ['Meat', 'Dairy', 'Seafood', 'Other'],
+        lock: [],
     }
 };

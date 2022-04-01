@@ -91,12 +91,14 @@ export class RootStore {
 
     async submitDH(dataHunchToSubmit: DataHunch) {
         this.inputMode = 'none';
-        const databaseRef = collection(firebaseSetup, this.dbTag, `sub${this.currentVol}`, 'dhs');
+        if (!DataPreset[this.dbTag].lock.includes(this.currentVol)) {
+            const databaseRef = collection(firebaseSetup, this.dbTag, `sub${this.currentVol}`, 'dhs');
 
-        await updateDoc(doc(collection(firebaseSetup, this.dbTag), `sub${this.currentVol}`), { nextIndex: this.nextIndex + 1 });
+            await updateDoc(doc(collection(firebaseSetup, this.dbTag), `sub${this.currentVol}`), { nextIndex: this.nextIndex + 1 });
 
-        await setDoc(doc(databaseRef, this.nextIndex.toString()), dataHunchToSubmit);
+            await setDoc(doc(databaseRef, this.nextIndex.toString()), dataHunchToSubmit);
 
+        }
         this.setNextIndex(this.nextIndex + 1);
         this.setTotalDH(this.numOfDH + 1);
     }

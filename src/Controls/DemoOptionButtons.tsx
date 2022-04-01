@@ -26,7 +26,7 @@ const DemoOptionButtons: FC<TopBarProps> = ({ showTable, makeShowTable }: TopBar
         if (result === 'new') {
             sendDialogSignal(true);
         } else {
-            store.setCurrentVol(result);
+            store.setCurrentVol(parseInt(result));
         }
     };
 

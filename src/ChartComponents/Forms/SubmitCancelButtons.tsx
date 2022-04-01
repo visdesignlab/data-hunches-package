@@ -3,6 +3,7 @@ import { select } from "d3-selection";
 import { observer } from "mobx-react-lite";
 import { useContext } from "react";
 import { FC } from "react";
+import { DataPreset } from "../../Interfaces/Datasets";
 import Store from "../../Interfaces/Store";
 import { NonCapButton } from "../../Interfaces/StyledComponents";
 import { DataHunch } from "../../Interfaces/Types";
@@ -33,10 +34,14 @@ const SubmitCancelButtons: FC<Props> = ({ dhToSubmit, disableSubmit }: Props) =>
 
     };
 
+    const checkIfLocked = () => {
+        return DataPreset[store.dbTag].lock.includes(store.currentVol);
+    };
+
     return <ButtonGroup style={{ display: 'block' }}>
         <NonCapButton size='small'
             onClick={submitClickHandler}
-            disabled={disableSubmit} >
+            disabled={disableSubmit || checkIfLocked()} >
             Submit
         </NonCapButton>
         <NonCapButton size='small' onClick={cancelClickHandler} variant='outlined'>
